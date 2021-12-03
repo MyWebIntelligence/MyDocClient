@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+{% import 'macros.html.twig' as macro %}
+
+{% block title %}{{ macro.title("Connexion") }}{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-12 col-lg-6 offset-lg-3">
+            <h1 class="my-4">Connexion</h1>
+
+            {% if error %}
+                <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+            {% endif %}
+
+            <form action="{{ path('login') }}" method="post">
+                <div class="mb-3">
+                    <label for="username" class="form-label">E-mail</label>
+                    <input type="text" id="username" name="_username" value="{{ last_username }}" class="form-control"/>
+                </div>
+
+                <div class="mb-3">
+                    <label for="password" class="form-label">Mot de passe</label>
+                    <input type="password" id="password" name="_password" class="form-control"/>
+                </div>
+
+                <div class="mb-3">
+                    <input type="checkbox" class="form-check-input" id="remember_me" name="_remember_me"/>
+                    <label for="remember_me" class="form-check-label">Rester connecté</label>
+                </div>
+
+                <div class="mb-3">
+                    <a href="{{ path('app_forgot_password_request') }}">Mot de passe oublié</a>
+                </div>
+
+                {#
+                If you want to control the URL the user is redirected to on success
+                <input type="hidden" name="_target_path" value="/account"/>
+                #}
+
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                <button type="submit" class="btn btn-primary">Connexion</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}
