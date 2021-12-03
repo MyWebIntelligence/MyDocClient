@@ -2,21 +2,30 @@
 $font-family-base: 'Nunito', sans-serif;
 
 // Colors
-$primary: #68b09a;
-$secondary: #808080;
-$success: #8ec50f;
-$info: #26b3cc;
-$warning: #da9157;
-$danger: #cb0303;
+$primary: #0d6efd;
+$secondary: #46484d;
+$success: #0b7239;
+$info: #2ba9ce;
+$warning: #cea80b;
+$danger: #bd1832;
 $light: #dcdcdc;
-$dark: #282828;
+$dark: #1D1E18;
 
 $body-bg: #fefefe;
 $body-color: #121212;
 
+// Border radius
+$border-radius: .15rem;
+$btn-border-radius: .15rem;
+
 // Buttons
-$btn-focus-width: .25rem;
+$input-btn-focus-width: .1rem;
 
 // Enable/disable styles
-$enable-rounded: true;
 $enable-gradients: true;
+$enable-transitions: true;
+$enable-shadows: true;
+$enable-rounded: true;
+
+// Offcanvas
+$offcanvas-horizontal-width: 600px;

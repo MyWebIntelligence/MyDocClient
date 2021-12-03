@@ -1,1 +1,16 @@
 @import "custom_bootstrap";
+
+.offcanvas {
+  background-color: rgba(255, 255, 255, .9);
+  backdrop-filter: blur(2px);
+}
+
+#markdownPreview {
+  max-height: 50vh;
+  min-height: 20vh;
+  overflow-y: scroll;
+  border: $border-width solid $border-color;
+  border-top: 0;
+  border-radius: $border-radius;
+  padding: $input-padding-x $input-padding-y;
+}
