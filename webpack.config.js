@@ -1,5 +1,5 @@
 const path = require('path')
-const glob = require('glob')
+const glob = require('glob-all')
 const Encore = require('@symfony/webpack-encore')
 const PurgeCSSPlugin = require("purgecss-webpack-plugin");
 
@@ -27,6 +27,8 @@ Encore
      * and one CSS file (e.g. app.scss) if your JavaScript imports CSS.
      */
     .addEntry('app', './assets/app.js')
+    .addEntry('project', './assets/components/project/index.js')
+    .addEntry('document', './assets/components/document/index.js')
 
     // enables the Symfony UX Stimulus bridge (used in assets/stimulus.js)
     //.enableStimulusBridge('./assets/controllers.json')
@@ -65,16 +67,15 @@ Encore
     .enableSassLoader()
 
     // enables PostCSS
-    .enablePostCssLoader((options) => {
-        options.postcssOptions = {
-            // the directory where the postcss.config.js file is stored
-            config: path.resolve(__dirname, 'postcss.config.js'),
-        }
-    })
+    .enablePostCssLoader()
 
-    .addPlugin(new PurgeCSSPlugin({
-        paths: glob.sync('./templates/**/*.html.twig', {nodir: true}),
-    }))
+    // .addPlugin(new PurgeCSSPlugin({
+    //     paths: glob.sync([
+    //         './templates/**/*.html.twig',
+    //         './vendor/symfony/twig-bridge/Resources/views/Form/bootstrap_5*.html.twig',
+    //     ], {nodir: true}),
+    //     safelist: ['/alert/', '/type/']
+    // }))
 
     // uncomment if you use React
     //.enableReactPreset()
@@ -85,5 +86,11 @@ Encore
 
     // uncomment if you're having problems with a jQuery plugin
     //.autoProvidejQuery()
+
+if (Encore.isProduction()) {
+    Encore.copyFiles([{context: './', from: './assets/images', to: 'images/[name].[hash:8].[ext]'}])
+} else {
+    Encore.copyFiles([{context: './', from: './assets/images', to: 'images/[name].[ext]'}])
+}
 
 module.exports = Encore.getWebpackConfig()
