@@ -1,0 +1,15 @@
+{% macro title(string) %}{{ string }} | {% endmacro %}
+
+{% macro buttonLink(href, text, button_class, icon_class) %}
+<a href="{{ href }}" class="btn {{ button_class }}" role="button">{% if icon_class %}<i class="{{ icon_class }} me-2"></i>{% endif %}{{ text }}</a>
+{% endmacro %}
+
+{% macro project_card(project) %}
+    <div class="card mb-3">
+        <div class="card-body">
+            <h5 class="card-title fw-bold">{{ project.name }}</h5>
+            <p class="card-text">{{ project.description|u.truncate(200, '...', false) }}</p>
+            {{ _self.buttonLink(path('user_view_project', {id: project.id}), 'Ouvrir', 'btn-primary', 'bi-folder2-open') }}
+        </div>
+    </div>
+{% endmacro %}
