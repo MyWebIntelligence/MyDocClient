@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+{% import 'macros.html.twig' as macro %}
+
+{% block title %}{{ macro.title("Créer un projet") }}{% endblock %}
+
+{% block body %}
+    <h2 class="mb-3">Créer un projet</h2>
+
+    {{ form_start(form, {action: path('user_new_project')}) }}
+        {{ form_row(form.project.name) }}
+        {{ form_row(form.project.description) }}
+        {{ form_row(form.project.language) }}
+        {{ form_row(form.import.files) }}
+        <button type="submit" class="btn btn-primary"><i class="bi-save me-2"></i>Enregistrer</button>
+    {{ form_end(form) }}
+{% endblock %}

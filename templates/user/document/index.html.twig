@@ -1,0 +1,264 @@
+{% extends 'base.html.twig' %}
+{% import 'macros.html.twig' as macro %}
+
+{% block title %}{{ macro.title(document.title) }}{% endblock %}
+{% block meta %}
+<meta property="og:type" content= "website" />
+<meta property="og:url" content="{{ url('user_document', {id: document.id}) }}"/>
+<meta property="og:site_name" content="MyDoc Intelligence" />
+<meta property="og:title" content="{{ document.title }}" />
+<meta property="og:description" content="{{ document.description }}" />
+{% endblock %}
+
+{% block body %}
+    {{ form_start(form) }}
+    <div class="mt-3">
+        <a href="{{ path('user_view_project', {id: document.project.id}) }}"
+           class="text-decoration-none">
+            <i class="bi-arrow-90deg-up"></i>
+            {{ document.project.name }}
+        </a>
+    </div>
+
+    <div class="row">
+        <div class="col-12 col-md-9">
+            <div class="d-flex justify-content-between align-items-start">
+                <h1 class="mb-3">{{ document.title ?? ('document ' ~ document.id) }}</h1>
+                <div><span id="changesUnsaved" class="badge bg-danger rounded-pill opacity-50 invisible">Non sauvegardé</span></div>
+            </div>
+
+
+            <p class="my-4">{{ document.description }}</p>
+
+            {# TABS #}
+            <ul class="nav nav-tabs" id="documentRenderMode" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active"
+                            id="renderPreview-tab"
+                            data-bs-toggle="tab"
+                            data-bs-target="#renderPreview"
+                            type="button"
+                            role="tab"
+                            aria-controls="renderPreview"
+                            aria-selected="true"><i class="bi-eye me-2"></i>Prévisualiser</button>
+                </li>
+                {% if canEdit %}
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link"
+                            id="renderEdit-tab"
+                            data-bs-toggle="tab"
+                            data-bs-target="#renderEdit"
+                            type="button"
+                            role="tab"
+                            aria-controls="renderEdit"
+                            aria-selected="true"><i class="bi-pen me-2"></i>Éditer</button>
+                </li>
+                {% endif %}
+            </ul>
+
+            <div class="tab-content" id="myTabContent">
+                {#  PREVIEW #}
+                <div class="tab-pane fade show active"
+                     id="renderPreview"
+                     role="tabpanel"
+                     aria-labelledby="renderPreview-tab">
+                    <div id="markdownPreview">
+                        {{ document.content(true)|raw }}
+                    </div>
+
+                    {# LINKS #}
+                    <div class="mt-5 mb-3">
+                        <div class="row">
+                            <div class="col-6">
+                                <h5 class="fw-bold">Liens internes</h5>
+                                <ul class="list-unstyled">
+                                    {% for link in links['internal'] %}
+                                        <li class="text-truncate">
+                                            <a href="{{ link }}" target="_blank" class="og-preview">{{ link }}</a>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            <div class="col-6">
+                                <h5 class="fw-bold">Liens externes</h5>
+                                <ul class="list-unstyled">
+                                    {% for link in links['external'] %}
+                                        <li class="text-truncate">
+                                            <a href="{{ link }}" target="_blank" class="og-preview">{{ link }}</a>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% if canEdit %}
+                {# EDIT #}
+                <div class="tab-pane fade show" id="renderEdit" role="tabpanel" aria-labelledby="renderEdit-tab">
+                    {{ form_row(form.content, {label: false, attr: {class: 'border-top-0 shadow-none'}}) }}
+                    <div class="text-end">
+                        <button id="init_meta_btn"
+                                type="button"
+                                class="btn btn-primary"
+                                data-id="{{ document.id }}"
+                                data-bs-toggle="modal"
+                                data-bs-target="#confirmInitMetaModal"
+                                role="button">
+                            <i class="bi-gear"></i>
+                            Initialiser méta-données
+                        </button>
+
+                        <div class="btn-group">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi-save me-2"></i>Enregistrer
+                            </button>
+                            <button type="button"
+                                    class="btn btn-primary dropdown-toggle dropdown-toggle-split"
+                                    data-bs-toggle="dropdown"
+                                    aria-expanded="false">
+                                <span class="visually-hidden">Options</span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li>
+                                    <a href="#" class="dropdown-item">
+                                        <i class="bi-download me-2"></i>Télécharger
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" class="dropdown-item text-danger">
+                                        <i class="bi-trash me-2"></i>Supprimer
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    {{ form_end(form) }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-12 col-md-3 mt-3 mt-md-0">
+            <div class="accordion accordion-flush" id="propertiesPanel">
+                <div class="accordion-item">
+                    <h5 class="accordion-header" id="propertiesPanel_metas_header">
+                        <button class="accordion-button collapsed fw-bold"
+                                type="button"
+                                data-bs-toggle="collapse"
+                                data-bs-target="#propertiesPanel_metas_content"
+                                aria-expanded="true"
+                                aria-controls="propertiesPanel_metas_content">
+                            Meta-données
+                        </button>
+                    </h5>
+                    <div id="propertiesPanel_metas_content"
+                         class="accordion-collapse collapse show"
+                         aria-labelledby="propertiesPanel_metas_header">
+                        <div class="accordion-body">
+                            {% for meta, label in document.metadataDict %}
+                                {% set value = attribute(document, meta) %}
+                                <div class="d-flex small mb-1">
+                                    <div class="text-muted">{{ label }}</div>
+                                    <div class="ms-2 me-auto">
+                                        {% if meta == 'Description' and value|length > 150 %}
+                                            {{ value|slice(0, 140) }}...
+                                        {% else %}
+                                            {{ value ?: '-' }}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <h5 class="accordion-header" id="propertiesPanel_lexicon_header">
+                        <button class="accordion-button collapsed fw-bold"
+                                type="button"
+                                data-bs-toggle="collapse"
+                                data-bs-target="#propertiesPanel_lexicon_content"
+                                aria-expanded="true"
+                                aria-controls="propertiesPanel_lexicon_content">
+                            Lexique
+                        </button>
+                    </h5>
+                    <div id="propertiesPanel_lexicon_content"
+                         class="accordion-collapse collapse"
+                         aria-labelledby="propertiesPanel_lexicon_header">
+                        <div class="accordion-body">
+                            <ul class="list-unstyled">
+                            {% for word, count in lexicon[0:10] %}
+                                <li class="d-flex justify-content-between">
+                                    <div>{{ word }}</div>
+                                    <div>
+                                        <span class="badge rounded-pill bg-info">{{ count }}</span>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <h5 class="accordion-header" id="propertiesPanel_annotations_header">
+                        <button class="accordion-button collapsed fw-bold"
+                                type="button"
+                                data-bs-toggle="collapse"
+                                data-bs-target="#propertiesPanel_annotations_content"
+                                aria-expanded="true"
+                                aria-controls="propertiesPanel_annotations_content">
+                            Annotations
+                        </button>
+                    </h5>
+                    <div id="propertiesPanel_annotations_content"
+                         class="accordion-collapse collapse"
+                         aria-labelledby="propertiesPanel_annotations_header">
+                        <div class="accordion-body">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade"
+         id="confirmInitMetaModal"
+         data-bs-backdrop="static"
+         tabindex="-1"
+         role="dialog"
+         aria-labelledby="confirmInitMetaModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog shadow">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="fw-bold m-0" id="confirmInitMetaModalLabel">Initialiser les méta-données</h5>
+                </div>
+                <div class="modal-body">
+                    Cette action va écraser les données non-sauvegardées. Souhaitez-vous continuer ?
+                </div>
+                <div class="modal-footer">
+                    <button type="button"
+                            class="btn btn-outline-secondary"
+                            data-bs-dismiss="modal">
+                        Annuler
+                    </button>
+                    <button type="button"
+                            class="btn btn-primary"
+                            id="confirmInitMeta"
+                            data-bs-dismiss="modal">
+                        Continuer
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('document') }}
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="my-4">
+        <a href="{{ path('user_view_project', {id: project.id}) }}"
+           class="text-decoration-none">
+            <i class="bi-arrow-90deg-up"></i>
+            {{ project.name }}
+        </a>
+        <h1>Import de documents</h1>
+    </div>
+
+
+    {% if succeeded is not empty %}
+        <div class="alert alert-success" style="max-height: 30vh">
+            <h5 class="fw-bold">Fichiers importés</h5>
+            <ul>
+                {% for file in succeeded %}
+                    <li>{{ file }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
+    {% if errors is not empty %}
+        <div class="alert alert-danger" style="max-height: 30vh">
+            <h5 class="fw-bold">Des erreurs ont été rencontrées</h5>
+            <ul>
+                {% for error in errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
+    {{ form_start(form) }}
+
+    <div class="mb-3">
+        {{ form_label(form.files) }}
+        {{ form_widget(form.files) }}
+    </div>
+
+    <button type="submit" class="btn btn-primary"><i class="bi-folder-plus me-2"></i>Importer</button>
+    {{ form_end(form) }}
+{% endblock %}

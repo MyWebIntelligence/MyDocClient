@@ -1,0 +1,473 @@
+{% extends 'base.html.twig' %}
+{% import 'macros.html.twig' as macro %}
+
+{% block title %}{{ macro.title("Projet " ~ project.name) }}{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-12 col-md-9">
+            <div class="d-flex align-items-center mb-3">
+                <h1 class="m-0">{{ project.name }}</h1>
+                <div class="ms-auto">
+                    {% if project.owner == app.user %}
+                    <a href="#"
+                       class="btn"
+                       role="button"
+                       data-bs-toggle="modal"
+                       data-bs-target="#shareProjectModal">
+                        <i class="h5 bi-share"></i>
+                    </a>
+
+                    <a href="#"
+                       class="btn"
+                       role="button"
+                       data-bs-toggle="modal"
+                       data-bs-target="#editProjectModal">
+                        <i class="h5 bi-gear"></i>
+                    </a>
+                    {% endif %}
+                    <span class="badge bg-info rounded-pill">{{ projectRole }}</span>
+                </div>
+            </div>
+
+            <p class="lead">{{ project.description }}</p>
+
+            <div class="row g-2 align-items-center">
+                <div class="col">
+                    {{ knp_pagination_render(documents) }}
+                </div>
+                <div class="col-auto">
+                    <div class="mb-2">{{ documents.getTotalItemCount }} documents</div>
+                </div>
+            </div>
+
+            <div class="row g-2">
+                {% if canEdit %}
+                <div class="col-auto">
+                    <a href="{{ path('user_document_new', {id:project.id}) }}"
+                       role="button"
+                       class="btn btn-primary">
+                        <i class="bi-plus me-2"></i>Nouveau
+                    </a>
+                </div>
+                <div class="col-auto">
+                    <button type="button"
+                            class="btn btn-primary"
+                            data-bs-toggle="modal"
+                            data-bs-target="#importDocumentModal">
+                        <i class="bi-folder-plus me-2"></i>Importer
+                    </button>
+                </div>
+                <div class="col-auto">
+                    <div class="btn-group">
+                        <button type="button"
+                                id="selection_menu"
+                                class="btn btn-primary dropdown-toggle"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false"
+                                disabled>
+                            <i class="bi-files me-2"></i>Pour la sélection
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                                <a class="dropdown-item" type="button">
+                                    <i class="bi-download me-2"></i>Télécharger archive MD
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item text-danger" type="button"
+                                   data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">
+                                    <i class="bi-trash me-2"></i>Supprimer les documents
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                {% endif %}
+                <div class="col">
+                    <form action="" method="get">
+                        <div class="row g-2">
+                            <div class="col">
+                                <label for="document_search" class="visually-hidden">
+                                    Rechercher dans les documents
+                                </label>
+                                <input id="document_search"
+                                       type="search"
+                                       name="q"
+                                       class="form-control"
+                                       value="{{ search }}"/>
+                            </div>
+                            <div class="col-auto">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi-search"></i>
+                                </button>
+                                <button class="btn btn-outline-secondary"
+                                        type="button"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#searchHelpModal">?</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+
+            <table class="table">
+                <thead>
+                <tr>
+                    <th style="width: 1rem">
+                        <div class="form-check">
+                            <label for="cb_document_all"
+                                   class="visually-hidden">
+                                Tout sélectionner
+                            </label>
+                            <input type="checkbox"
+                                   id="cb_document_all"
+                                   class="form-check-input">
+                        </div>
+                    </th>
+                    <th>
+                        {{ knp_pagination_sortable(documents, 'Titre', 'd.title') }}
+                        {% if documents.isSorted('d.title') %}
+                            <i class="{{ documents.direction == 'asc' ? 'bi-sort-down-alt' : 'bi-sort-down' }}"></i>
+                        {% endif %}
+                    </th>
+                    <th>
+                        {{ knp_pagination_sortable(documents, 'Créateur', 'd.creator') }}
+                        {% if documents.isSorted('d.creator') %}
+                            <i class="{{ documents.direction == 'asc' ? 'bi-sort-down-alt' : 'bi-sort-down' }}"></i>
+                        {% endif %}
+                    </th>
+                    <th>
+                        {{ knp_pagination_sortable(documents, 'Date', 'd.date') }}
+                        {% if documents.isSorted('d.date') %}
+                            <i class="{{ documents.direction == 'asc' ? 'bi-sort-down-alt' : 'bi-sort-down' }}"></i>
+                        {% endif %}
+                    </th>
+                    <th>
+                        {{ knp_pagination_sortable(documents, 'Publicateur', 'd.publisher') }}
+                        {% if documents.isSorted('d.publisher') %}
+                            <i class="{{ documents.direction == 'asc' ? 'bi-sort-down-alt' : 'bi-sort-down' }}"></i>
+                        {% endif %}
+                    </th>
+                    <th>
+                        {{ knp_pagination_sortable(documents, 'Type', 'd.type') }}
+                        {% if documents.isSorted('d.type') %}
+                            <i class="{{ documents.direction == 'asc' ? 'bi-sort-down-alt' : 'bi-sort-down' }}"></i>
+                        {% endif %}
+                    </th>
+                </tr>
+                </thead>
+
+                <tbody>
+                {% for document in documents %}
+                    <tr>
+                        <td>
+                            <div class="form-check">
+                                <label for="cb_document_{{ document.id }}"
+                                       class="visually-hidden">
+                                    Sélectionner {{ document.title }}
+                                </label>
+                                <input type="checkbox"
+                                       id="cb_document_{{ document.id }}"
+                                       data-id="{{ document.id }}"
+                                       class="form-check-input cb_document">
+                            </div>
+                        </td>
+                        <td>
+                            <a href="{{ path('user_document', {id: document.id}) }}">{{ document.title ?: 'document ' ~ document.id }}</a>
+                        </td>
+                        <td>{{ document.creator }}</td>
+                        <td>{{ document.date }}</td>
+                        <td>{{ document.publisher }}</td>
+                        <td>{{ document.type }}</td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center text-muted py-4">
+                            Aucun document dans ce projet
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="col-12 col-md-3 mt-3 mt-md-0">
+            <div class="accordion accordion-flush" id="propertiesPanel">
+                <div class="accordion-item">
+                    <h5 class="accordion-header" id="propertiesPanel_lexicon_header">
+                        <button class="accordion-button collapsed fw-bold"
+                                type="button"
+                                data-bs-toggle="collapse"
+                                data-bs-target="#propertiesPanel_lexicon_content"
+                                aria-expanded="true"
+                                aria-controls="propertiesPanel_lexicon_content">
+                            Lexique
+                        </button>
+                    </h5>
+                    <div id="propertiesPanel_lexicon_content"
+                         class="accordion-collapse collapse"
+                         aria-labelledby="propertiesPanel_lexicon_header">
+                        <div class="accordion-body">
+                            <div class="alert alert-info">
+                                <a href="{{ path('user_project_lexicon', {id: project.id}) }}"
+                                   class="btn btn-sm btn-primary text-nowrap">
+                                    <i class="bi-magic me-2"></i>Analyser maintenant
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade"
+         id="importDocumentModal"
+         tabindex="-1"
+         aria-labelledby="importDocumentModalLabel"
+         aria-hidden="true">
+        {{ form_start(importForm) }}
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold" id="importDocumentModalLabel">Import documents</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Vous pouvez importer plusieurs fichiers au format TXT ou MD, les archives au format ZIP
+                        seront décompressées et leur contenu (TXT ou MD) importé.</p>
+
+                    {{ form_row(importForm.files) }}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fermer</button>
+                    <button type="submit" class="btn btn-primary">Importer</button>
+                </div>
+            </div>
+        </div>
+        {{ form_end(importForm) }}
+    </div>
+
+    {# OWNER EDITION MODALS #}
+    {% if project.owner == app.user %}
+        <div id="editProjectModal"
+             class="modal fade"
+             tabindex="-1"
+             aria-labelledby="editProjectModalLabel"
+             aria-hidden="true">
+            {{ form_start(editForm) }}
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title fw-bold" id="editProjectModalLabel">Édition projet</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                    </div>
+                    <div class="modal-body">
+                        {{ form_row(editForm.name) }}
+
+                        {{ form_row(editForm.description) }}
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ path('user_delete_project', {id: project.id}) }}"
+                               class="text-danger">Supprimer le projet</a>
+                            <span class="text-muted">Projet créé le {{ project.createdAt|date('d/m/Y') }}</span>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fermer</button>
+                        <button type="submit" class="btn btn-primary">Sauver</button>
+                    </div>
+                </div>
+            </div>
+            {{ form_end(editForm) }}
+        </div>
+
+        <div id="shareProjectModal"
+             class="modal fade"
+             tabindex="-1"
+             aria-labelledby="shareProjectModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title fw-bold" id="shareProjectModalLabel">Partager</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="sendInviteForm"
+                              method="post"
+                              action="{{ path('user_project_invite', {id: project.id}) }}"
+                              class="mb-3">
+                            <div class="row align-items-end g-1">
+                                <div class="col">
+                                    <label class="form-label" for="email">E-mail de l'invité</label>
+                                    <input class="form-control" id="email" type="email" name="email">
+                                </div>
+                                <div class="col-auto">
+                                    <label class="form-label" for="permission">Permission sur le projet</label>
+                                    <select id="permission" name="permission" class="form-select">
+                                        <option value="ROLE_READER">Lecteur</option>
+                                        <option value="ROLE_EDITOR">Éditeur</option>
+                                    </select>
+                                </div>
+                                <div class="col-auto">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="bi-send me-2"></i>Inviter
+                                    </button>
+                                </div>
+                            </div>
+                            <div id="shareMessage" class="mt-1 text-info"></div>
+                        </form>
+
+                        <h5>Invités</h5>
+
+                        {% macro shareProto(permission) %}
+                            <div class="p-2 mb-2 border border-light border-1">
+                                <div class="row align-items-center">
+                                    <div class="col">{{ permission ? permission.user.email : '__email__' }}</div>
+                                    <div class="col-auto text-center">
+                                        <select class="form-select form-select-sm">
+                                            {% for role, label in {ROLE_READER: 'Lecteur', ROLE_EDITOR: 'Éditeur'} %}
+                                                <option value="{{ role }}" {{ role == (permission ? permission.role : '') ? 'selected' : '' }}>{{ label }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col-auto text-right">
+                                        <button class="btn btn-sm btn-outline-danger">Supprimer</button>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endmacro %}
+
+                        <div id="sharedPermissions" data-prototype="{{ _self.shareProto|e('html_attr') }}">
+                            {% for permission in project.permissions %}
+                                <div>{{ _self.shareProto(permission) }}</div>
+                            {% else %}
+                                <div class="text-center display-6 text-muted">Aucun invité</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fermer</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <div id="searchHelpModal"
+         class="modal fade"
+         tabindex="-1"
+         aria-labelledby="searchHelpModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold" id="searchHelpModalLabel">Aide sur la recherche Full Text</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                </div>
+                <div class="modal-body">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Opérateur</th>
+                            <th>Description</th>
+                            <th>Exemple</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>Aucun</td>
+                            <td>Par défaut le mot est facultatif mais les documents qui le contiennent sont mieux notés.</td>
+                            <td><b>'mot1 mot2'</b> Recherche des documents contenant au moins un des deux mots.</td>
+                        </tr>
+                        <tr>
+                            <td>+</td>
+                            <td>Un signe + en début du mot indique qu'un mot doit être présent dans chaque document renvoyée.</td>
+                            <td>
+                                <b>'+mot1 +mot2'</b> Recherche les documents contenant les deux mots.<br>
+                                <b>'+mot1 mot2'</b> Recherche les documents qui contiennent le mot 'mot1', mais classe les documents plus haut si ils contiennent également 'mot2'
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>-</td>
+                            <td>Un signe - en début de mot indique qu'un mot particulier ne doit être présent dans aucun des documents renvoyés.
+                                L'opérateur - agit uniquement pour exclure les documents qui correspondent par ailleurs à d'autres termes de recherche.</td>
+                            <td><b>'+mot1 -mot2'</b> Recherche les documents contenant le mot 'mot1' mais pas 'mot2'.</td>
+                        </tr>
+                        <tr>
+                            <td>&gt; &lt;</td>
+                            <td>Ces deux opérateurs sont utilisés pour modifier la contribution d'un mot à la valeur de pertinence attribuée à un document.
+                                L'opérateur &gt; augmente la contribution et l'opérateur &lt; la diminue.</td>
+                            <td><b>'+mot1 +(&gt;mot2 &lt;mot3)'</b> Trouve les documents qui contiennent les mots 'mot1' et 'mot2' ou 'mot1' et 'mot3' (dans n'importe quel ordre), mais classe 'mot1 mot2' plus haut que 'mot1 mot3'.</td>
+                        </tr>
+                        <tr>
+                            <td>( )</td>
+                            <td>Les parenthèses regroupent les mots en sous-expressions. Les groupes entre parenthèses peuvent être imbriqués.</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>~</td>
+                            <td>Un tilde en début de mot agit comme un opérateur de négation, rendant négative la contribution du mot à la pertinence du document.</td>
+                            <td><b>'+mot1 ~mot2'</b> Trouve les documents qui contient le mot 'mot1', mais si le document contient également le mot 'mot2', le score de pertinence sera plus bas que si le document ne le contient pas.</td>
+                        </tr>
+                        <tr>
+                            <td>*</td>
+                            <td>L'astérisque sert d'opérateur de troncature (ou caractère générique). Contrairement aux autres opérateurs, il est ajouté au mot à affecter. Les mots correspondent s'ils commencent par le mot précédant l'opérateur *.</td>
+                            <td><b>'mot*'</b> Recherche les documents contenant des mots tels que 'mot', 'mots', 'motif' etc.</td>
+                        </tr>
+                        <tr>
+                            <td>"</td>
+                            <td>Une phrase entre doubles guillemets correspond aux documents qui contiennent la phrase littéralement, telle qu'elle a été saisie.</td>
+                            <td><b>'"mot1 mot2"'</b> Recherche les documents contenant l'expression exacte "mot1 mot2"</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fermer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="confirmDeleteModal"
+         class="modal fade"
+         tabindex="-1"
+         aria-labelledby="confirmDeleteModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold" id="confirmDeleteModalLabel">Suppression de documents</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                </div>
+                <div class="modal-body">
+                    Êtes-vous certain de vouloir supprimer les documents sélectionnés ?
+                </div>
+                <div class="modal-footer">
+                    <form action="{{ path('user_project_delete_documents', {id: project.id}) }}" method="post">
+                        <div class="visually-hidden">
+                            <label for="delete_documents" class="form-label">Documents sélectionnés</label>
+                            <select id="delete_documents" name="delete_documents[]" class="form-select" multiple
+                                    readonly>
+                                {% for document in documents %}
+                                    <option value="{{ document.id }}">{{ document.title }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
+                        <button type="submit" class="btn btn-danger">Supprimer</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('project') }}
+{% endblock %}

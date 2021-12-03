@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Suppression projet</h1>
+
+    <div class="row">
+        <div class="alert border-danger bg-danger text-white my-4 col-12 col-lg-6 offset-lg-3 p-5">
+            <p class="lead">Êtes-vous sûr de vouloir supprimer le projet <b class="fw-bold">&laquo;&nbsp;{{ project.name }}&nbsp;&raquo;</b> et
+                tout ce qu'il contient  ?</p>
+            <p class="m-0">(documents, tâches, permissions des collaborateurs)</p>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-center">
+        <a href="{{ path('user_view_project', {id: project.id}) }}" class="btn btn-outline-secondary me-2">Annuler</a>
+        <form method="post" action="{{ path('user_delete_project', {id: project.id}) }}">
+            <button type="submit" class="btn btn-danger">Supprimer</button>
+        </form>
+    </div>
+{% endblock %}

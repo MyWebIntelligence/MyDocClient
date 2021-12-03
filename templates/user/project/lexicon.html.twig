@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+{% import 'macros.html.twig' as macro %}
+
+{% block title %}{{ macro.title('Lexique ' ~ project.name) }}{% endblock %}
+
+{% block body %}
+    <div>
+        <a href="{{ path('user_view_project', {id: project.id}) }}"
+           class="text-decoration-none">
+            <i class="bi-arrow-90deg-up"></i>
+            {{ project.name }}
+        </a>
+    </div>
+
+    <h1 class="mb-3">Lexique {{ project.name }}</h1>
+
+    <div class="alert alert-info">
+        <div class="row">
+            <div class="col"><span class="display-6">{{ totalWords|number_format(0, ",", " ") }}</span> mots dans le corpus</div>
+            <div class="col"><span class="display-6">{{ filterWords|number_format(0, ",", " ") }}</span> mots correspondant aux critères</div>
+        </div>
+    </div>
+
+    {{ form_start(form) }}
+    <div class="row align-items-end">
+        <div class="col">
+            {{ form_row(form.minCount) }}
+        </div>
+        <div class="col">
+            {{ form_row(form.sort) }}
+        </div>
+        <div class="col">
+            {{ form_row(form.limit) }}
+        </div>
+        <div class="col">
+            <button type="submit" class="btn btn-primary mb-3">
+                <i class="bi-filter me-2"></i>
+                Filtrer
+            </button>
+        </div>
+    </div>
+    {{ form_end(form) }}
+
+    <hr>
+
+    <div class="row">
+    {% set prevIndex = null %}
+    {% for word, count in lexicon %}
+        {% set currentIndex = word|slice(0, 1) %}
+        {% if prevIndex != currentIndex %}
+        <div class="col-12 mt-3 mb-2">
+            <h5 class="fw-bold">{{ currentIndex|upper }}</h5>
+        </div>
+        {% endif %}
+        <div class="col-6 col-md-3 mb-2">
+            <span class="fw-bold">{{ word }}</span>
+            <span class="text-info">{{ count }}</span>
+        </div>
+        {% set prevIndex = currentIndex %}
+    {% endfor %}
+    </div>
+{% endblock %}

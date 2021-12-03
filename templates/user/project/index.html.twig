@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+{% import 'macros.html.twig' as macro %}
+
+{% block title %}{{ macro.title("Mes projets") }}{% endblock %}
+
+{% block body %}
+    {% set sections = {
+        'Mes projets': {projects: projects, isOwner: true},
+        'Collaborations': {projects: editableProjects, isOwner: false},
+        'Favoris': {projects: readableProjects, isOwner: false},
+    } %}
+
+    {% for label, collection in sections %}
+        <div class="my-4">
+            <div class="d-flex">
+                <h2 class="mb-3">{{ label }}</h2>
+                {% if collection.isOwner %}
+                <div class="ms-auto">
+                    <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#projectOffCanvas" aria-controls="projectOffCanvas">
+                        <i class="bi-folder-plus me-2"></i>Nouveau projet
+                    </button>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="row">
+                {% for project in collection.projects %}
+                    <div class="col-3 mb-2">
+                        {{ macro.project_card(project) }}
+                    </div>
+                {% else %}
+                    {% if collection.isOwner %}
+                    <p>Vous n'avez pas encore créé de projets.</p>
+                    {% else %}
+                    <p>Vous n'avez pas encore été invité à rejoindre un projet.</p>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
+
+    {# OFFCANVAS #}
+    <div class="offcanvas offcanvas-end" tabindex="-1" data-bs-backdrop="false" id="projectOffCanvas" aria-labelledby="projectOffCanvasLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title fw-bold" id="projectOffCanvasLabel">Créer un projet</h5>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Fermer"></button>
+        </div>
+        <div class="offcanvas-body">
+            {{ form_start(form, {action: path('user_new_project')}) }}
+            {{ form_row(form.project.name) }}
+            {{ form_row(form.project.description) }}
+            {{ form_row(form.project.language) }}
+            {{ form_row(form.import.files) }}
+            <button type="submit" class="btn btn-primary"><i class="bi-save me-2"></i>Enregistrer</button>
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}
