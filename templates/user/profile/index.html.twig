@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+{% import 'macros.html.twig' as macro %}
+
+{% block title %}{{ macro.title("Profil") }}{% endblock %}
+
+{% block body %}
+<h1 class="mb-3">Profil</h1>
+
+{{ form_start(form) }}
+    {{ form_row(form.email) }}
+    {{ form_row(form.changePassword) }}
+
+    <div class="mb-3">
+        <button type="submit" class="btn btn-primary"><i class="bi-save me-2"></i>Enregistrer</button>
+    </div>
+{{ form_end(form) }}
+{% endblock %}
