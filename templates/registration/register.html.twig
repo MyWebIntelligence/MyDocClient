@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+{% import 'macros.html.twig' as macro %}
+
+{% block title %}{{ macro.title("Créer un compte") }}{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-12 col-lg-6 offset-lg-3">
+            <h1 class="my-4">Créer un compte</h1>
+
+            {% for flashError in app.flashes('verify_email_error') %}
+                <div class="alert alert-danger" role="alert">{{ flashError }}</div>
+            {% endfor %}
+
+            {{ form_start(registrationForm) }}
+            {{ form_row(registrationForm.email) }}
+            {{ form_row(registrationForm.plainPassword) }}
+            {{ form_row(registrationForm.agreeTerms) }}
+
+            <button type="submit" class="btn btn-primary">S'enregistrer</button>
+            {{ form_end(registrationForm) }}
+        </div>
+    </div>
+{% endblock %}
