@@ -10,9 +10,9 @@ use App\Form\ImportDocumentType;
 use App\Form\LexiconType;
 use App\Form\ProjectType;
 use App\Repository\DocumentRepository;
+use App\Repository\TagRepository;
 use App\Service\DocumentService;
 use App\Service\TextProcessor;
-use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Knp\Component\Pager\PaginatorInterface;
@@ -24,7 +24,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @IsGranted("ROLE_USER")
+ * @IsGranted("IS_AUTHENTICATED")
  */
 class ProjectController extends AbstractController
 {
@@ -105,12 +105,17 @@ class ProjectController extends AbstractController
     }
 
     /**
-     * @Route("/user/project/{id}", name="user_view_project", methods={"GET"}, requirements={"id": "\d+"})
+     * @Route("/user/project/{id}",
+     *     name="user_view_project",
+     *     requirements={"id": "\d+"},
+     *     methods={"GET"})
      */
     public function view(
         Request $request,
         Project $project,
         DocumentRepository $documentRepository,
+        EntityManagerInterface $entityManager,
+        TagRepository $tagRepository,
         PaginatorInterface $paginator): Response
     {
         /** @var User $user */
@@ -156,6 +161,7 @@ class ProjectController extends AbstractController
             'project' => $project,
             'projectRole' => $this->getRole($user, $project),
             'documents' => $documents,
+            'tagTree' => $tagRepository->getProjectTags($project, true),
             'canEdit' => $this->canEdit($user, $project),
             'editForm' => $editForm->createView(),
             'importForm' => $importForm->createView(),
@@ -164,7 +170,10 @@ class ProjectController extends AbstractController
     }
 
     /**
-     * @Route("/user/project/{id}", name="user_edit_project", methods={"POST"}, requirements={"id": "\d+"})
+     * @Route("/user/project/{id}",
+     *     name="user_edit_project",
+     *     requirements={"id": "\d+"},
+     *     methods={"POST"})
      */
     public function edit(Project $project, Request $request, ManagerRegistry $doctrine): RedirectResponse
     {
@@ -190,7 +199,9 @@ class ProjectController extends AbstractController
     }
 
     /**
-     * @Route("/user/project/{id}/word-count", name="user_project_lexicon", requirements={"id": "\d+"})
+     * @Route("/user/project/{id}/word-count",
+     *     name="user_project_lexicon",
+     *     requirements={"id": "\d+"})
      */
     public function lexicon(Project $project, Request $request, TextProcessor $textProcessor): Response
     {
@@ -243,7 +254,9 @@ class ProjectController extends AbstractController
     }
 
     /**
-     * @Route("/user/project/{id}/delete", name="user_delete_project", requirements={"id": "\d+"})
+     * @Route("/user/project/{id}/delete",
+     *     name="user_delete_project",
+     *     requirements={"id": "\d+"})
      */
     public function delete(Project $project, Request $request, ManagerRegistry $doctrine): Response
     {
@@ -267,68 +280,6 @@ class ProjectController extends AbstractController
         return $this->render('user/project/delete.html.twig', [
             'project' => $project,
         ]);
-    }
-
-    /**
-     * @Route("/user/project/{id}/import", name="user_project_import_documents", requirements={"id": "\d+"})
-     */
-    public function importDocuments(Project $project, Request $request, DocumentService $documentService): Response
-    {
-        /** @var User $user */
-        $user = $this->getUser();
-
-        if (!$this->canEdit($user, $project)) {
-            $this->addFlash("danger", "Vous n'êtes pas autorisé à agir sur ce projet.");
-            return $this->redirectToRoute('home');
-        }
-
-        $importForm = $this->createForm(ImportDocumentType::class);
-        $importForm->handleRequest($request);
-
-        if ($importForm->isSubmitted()) {
-            [$succeeded, $errors] = $documentService->importDocuments($project, $importForm);
-
-            $message = empty($errors)
-                ? sprintf('%s document(s) importé(s)', count($succeeded))
-                : sprintf('%s document(s) importés, %s erreur(s)', count($succeeded), count($errors));
-            $this->addFlash('info', $message);
-
-            if (empty($errors)) {
-                return $this->redirectToRoute('user_view_project', ['id' => $project->getId()]);
-            }
-
-        }
-
-        return $this->render('user/project/import.html.twig', [
-            'project' => $project,
-            'form' => $importForm->createView(),
-            'succeeded' => $succeeded ?? [],
-            'errors' => $errors ?? [],
-        ]);
-    }
-
-    /**
-     * @Route("/user/project/{id}/delete-documents", name="user_project_delete_documents", requirements={"id": "\d+"})
-     */
-    public function deleteDocuments(Project $project, Request $request, DocumentRepository $documentRepository): RedirectResponse
-    {
-        /** @var User $user */
-        $user = $this->getUser();
-
-        if (!$this->canEdit($user, $project)) {
-            $this->addFlash("danger", "Vous n'êtes pas autorisé à agir sur ce projet.");
-            return $this->redirectToRoute('home');
-        }
-
-        $ids = $request->request->get('delete_documents', []);
-        $qb = $documentRepository->createQueryBuilder('d')
-            ->delete()
-            ->where('d.id IN (:ids)')
-            ->setParameter('ids', $ids, Connection::PARAM_INT_ARRAY);
-        $qb->getQuery()->execute();
-        $this->addFlash('info', sprintf("%s document(s) supprimé(s)", count($ids)));
-
-        return $this->redirectToRoute('user_view_project', ['id' => $project->getId()]);
     }
 
 }

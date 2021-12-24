@@ -1,0 +1,78 @@
+{% macro shareProto(project, permission) %}
+    <div class="p-2 mb-2 border border-light border-1 permission-item">
+        <div class="row align-items-center g-2">
+            <div class="col">{{ permission ? permission.user.email : '__email__' }}</div>
+            <div class="col-auto text-center">
+                <select class="form-select form-select-sm select-user-role"
+                        name="permission"
+                        data-user-email="{{ permission ? permission.user.email : '__email__' }}"
+                        data-update-url="{{ path('user_project_invite_update', {id: project.id}) }}">
+                    {% for role, label in {ROLE_READER: 'Lecteur', ROLE_EDITOR: 'Éditeur'} %}
+                        <option value="{{ role }}" {{ role == (permission ? permission.role : '') ? 'selected' : '' }}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-auto text-right">
+                <button class="btn btn-sm btn-outline-danger delete-user-role"
+                        data-user-email="{{ permission ? permission.user.email : '__email__' }}"
+                        data-delete-url="{{ path('user_project_invite_delete', {id: project.id}) }}">
+                    <i class="bi-trash"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+{% endmacro %}
+
+<div id="shareProjectModal"
+     class="modal fade"
+     tabindex="-1"
+     aria-labelledby="shareProjectModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold" id="shareProjectModalLabel">Partager</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body">
+                <form id="sendInviteForm"
+                      method="post"
+                      action="{{ path('user_project_invite', {id: project.id}) }}"
+                      class="mb-3 py-3">
+                    <div class="row align-items-end g-1">
+                        <div class="col">
+                            <label class="form-label" for="email">E-mail de l'invité</label>
+                            <input class="form-control" id="email" type="email" name="email">
+                        </div>
+                        <div class="col-auto">
+                            <label class="form-label" for="permission">Permission sur le projet</label>
+                            <select id="permission" name="permission" class="form-select">
+                                <option value="ROLE_READER">Lecteur</option>
+                                <option value="ROLE_EDITOR">Éditeur</option>
+                            </select>
+                        </div>
+                        <div class="col-auto">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi-send me-2"></i>Inviter
+                            </button>
+                        </div>
+                    </div>
+                    <div id="shareMessage" class="mt-1 text-info"></div>
+                </form>
+
+                <div id="sharedPermissions" data-prototype="{{ _self.shareProto(project)|e('html_attr') }}">
+                    <h5>Invités</h5>
+
+                    {% for permission in project.permissions %}
+                    <div>{{ _self.shareProto(project, permission) }}</div>
+                    {% else %}
+                    <div id="sharedEmpty" class="text-center h3 fw-light text-muted my-3">Aucun invité</div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fermer</button>
+            </div>
+        </div>
+    </div>
+</div>

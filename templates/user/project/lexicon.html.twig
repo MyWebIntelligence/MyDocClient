@@ -47,9 +47,9 @@
     {% set prevIndex = null %}
     {% for word, count in lexicon %}
         {% set currentIndex = word|slice(0, 1) %}
-        {% if prevIndex != currentIndex %}
+        {% if form.sort.vars.value == 'word' and prevIndex != currentIndex %}
         <div class="col-12 mt-3 mb-2">
-            <h5 class="fw-bold">{{ currentIndex|upper }}</h5>
+            <h5 class="fw-bold text-primary">{{ currentIndex|upper }}</h5>
         </div>
         {% endif %}
         <div class="col-6 col-md-3 mb-2">

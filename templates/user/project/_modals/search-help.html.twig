@@ -1,0 +1,75 @@
+<div id="searchHelpModal"
+     class="modal fade"
+     tabindex="-1"
+     aria-labelledby="searchHelpModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold" id="searchHelpModalLabel">Aide sur la recherche Full Text</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Opérateur</th>
+                        <th>Description</th>
+                        <th>Exemple</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>Aucun</td>
+                        <td>Par défaut le mot est facultatif mais les documents qui le contiennent sont mieux notés.</td>
+                        <td><b>'mot1 mot2'</b> Recherche des documents contenant au moins un des deux mots.</td>
+                    </tr>
+                    <tr>
+                        <td><kbd>+</kbd></td>
+                        <td>Un signe + en début du mot indique qu'un mot doit être présent dans chaque document renvoyée.</td>
+                        <td>
+                            <b>'+mot1 +mot2'</b> Recherche les documents contenant les deux mots.<br>
+                            <b>'+mot1 mot2'</b> Recherche les documents qui contiennent le mot 'mot1', mais classe les documents plus haut si ils contiennent également 'mot2'
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><kbd>-</kbd></td>
+                        <td>Un signe - en début de mot indique qu'un mot particulier ne doit être présent dans aucun des documents renvoyés.
+                            L'opérateur - agit uniquement pour exclure les documents qui correspondent par ailleurs à d'autres termes de recherche.</td>
+                        <td><b>'+mot1 -mot2'</b> Recherche les documents contenant le mot 'mot1' mais pas 'mot2'.</td>
+                    </tr>
+                    <tr>
+                        <td><kbd>&gt;</kbd> <kbd>&lt;</kbd></td>
+                        <td>Ces deux opérateurs sont utilisés pour modifier la contribution d'un mot à la valeur de pertinence attribuée à un document.
+                            L'opérateur &gt; augmente la contribution et l'opérateur &lt; la diminue.</td>
+                        <td><b>'+mot1 +(&gt;mot2 &lt;mot3)'</b> Trouve les documents qui contiennent les mots 'mot1' et 'mot2' ou 'mot1' et 'mot3' (dans n'importe quel ordre), mais classe 'mot1 mot2' plus haut que 'mot1 mot3'.</td>
+                    </tr>
+                    <tr>
+                        <td><kbd>(</kbd> <kbd>)</kbd></td>
+                        <td>Les parenthèses regroupent les mots en sous-expressions. Les groupes entre parenthèses peuvent être imbriqués.</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><kbd>~</kbd></td>
+                        <td>Un tilde en début de mot agit comme un opérateur de négation, rendant négative la contribution du mot à la pertinence du document.</td>
+                        <td><b>'+mot1 ~mot2'</b> Trouve les documents qui contient le mot 'mot1', mais si le document contient également le mot 'mot2', le score de pertinence sera plus bas que si le document ne le contient pas.</td>
+                    </tr>
+                    <tr>
+                        <td><kbd>*</kbd></td>
+                        <td>L'astérisque sert d'opérateur de troncature (ou caractère générique). Contrairement aux autres opérateurs, il est ajouté au mot à affecter. Les mots correspondent s'ils commencent par le mot précédant l'opérateur *.</td>
+                        <td><b>'mot*'</b> Recherche les documents contenant des mots tels que 'mot', 'mots', 'motif' etc.</td>
+                    </tr>
+                    <tr>
+                        <td><kbd>"</kbd></td>
+                        <td>Une phrase entre doubles guillemets correspond aux documents qui contiennent la phrase littéralement, telle qu'elle a été saisie.</td>
+                        <td><b>'"mot1 mot2"'</b> Recherche les documents contenant l'expression exacte "mot1 mot2"</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fermer</button>
+            </div>
+        </div>
+    </div>
+</div>

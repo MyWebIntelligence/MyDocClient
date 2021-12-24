@@ -25,50 +25,56 @@ class Project
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $name;
+    private ?string $name;
 
     /**
      * @ORM\Column(type="text", nullable=true)
      */
-    private $description;
+    private ?string $description;
 
     /**
      * @ORM\Column(type="string", length=2, nullable=true)
      */
-    private $language;
+    private ?string $language;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $linkHash;
+    private ?string $linkHash;
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="projects")
      * @ORM\JoinColumn(nullable=false)
      * @Gedmo\Blameable(on="create")
      */
-    private $owner;
+    private ?User $owner;
 
     /**
      * @ORM\Column(type="datetime_immutable")
      */
-    private $createdAt;
+    private ?DateTimeImmutable $createdAt;
 
     /**
      * @ORM\OneToMany(targetEntity=Document::class, mappedBy="project", cascade={"remove"})
      */
-    private $documents;
+    private Collection $documents;
 
     /**
-     * @ORM\OneToMany(targetEntity=Permission::class, mappedBy="project")
+     * @ORM\OneToMany(targetEntity=Permission::class, mappedBy="project", cascade={"remove"})
      */
-    private $permissions;
+    private Collection $permissions;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Tag::class, mappedBy="root", orphanRemoval=true, cascade={"remove"})
+     */
+    private Collection $tags;
 
     public function __construct()
     {
         $this->documents = new ArrayCollection();
         $this->permissions = new ArrayCollection();
         $this->setCreatedAt(new DateTimeImmutable());
+        $this->tags = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -137,9 +143,9 @@ class Project
         return $this->owner;
     }
 
-    public function setOwner(?User $owner): self
+    public function setOwner(?User $user): self
     {
-        $this->owner = $owner;
+        $this->owner = $user;
 
         return $this;
     }
@@ -221,6 +227,36 @@ class Project
             // set the owning side to null (unless already changed)
             if ($permission->getProject() === $this) {
                 $permission->setProject(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Tag[]
+     */
+    public function getTags(): Collection
+    {
+        return $this->tags;
+    }
+
+    public function addTag(Tag $tag): self
+    {
+        if (!$this->tags->contains($tag)) {
+            $this->tags[] = $tag;
+            $tag->setProject($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTag(Tag $tag): self
+    {
+        if ($this->tags->removeElement($tag)) {
+            // set the owning side to null (unless already changed)
+            if ($tag->getProject() === $this) {
+                $tag->setProject(null);
             }
         }
 

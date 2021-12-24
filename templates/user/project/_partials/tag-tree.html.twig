@@ -1,0 +1,63 @@
+{% macro tagTree(tagTree, canEdit) %}
+    <div class="tag-tree {{ canEdit ? 'sortable' : '' }}">
+        {% for tag in tagTree %}
+            {{ _self.tagNode(tag, canEdit) }}
+        {% endfor %}
+    </div>
+{% endmacro %}
+
+{% macro tagNode(tag, canEdit) %}
+    <div class="px-2 py-1 mb-1 border border-light rounded bg-opacity-25" data-id="{{ tag.id }}">
+        <div class="tag-label pt-1 pb-2 position-relative">
+            <span>{{ tag.name }}</span>
+            {% if canEdit %}
+                <div class="tag-tools visually-hidden p-1 small bg-white rounded-pill border border-light">
+                    {# EDIT #}
+                    <i class="bi-pen mx-1 text-primary"
+                       data-bs-toggle="modal"
+                       data-bs-target="#renameTagModal"
+                       data-id="{{ tag.id }}"
+                       data-name="{{ tag.name }}"></i>
+                    {# ADD #}
+                    <i class="bi-plus-circle mx-1 text-primary"
+                       data-bs-toggle="modal"
+                       data-bs-target="#newTagModal"
+                       data-parent-id="{{ tag.id }}"
+                       data-name="{{ tag.name }}"></i>
+                    {# DELETE #}
+                    <i class="bi-trash mx-1 text-danger"
+                       data-bs-toggle="modal"
+                       data-bs-target="#deleteTagModal"
+                       data-id="{{ tag.id }}"
+                       data-name="{{ tag.name }}"></i>
+                    {# MOVE #}
+                    <i class="bi-arrows-move mx-1"></i>
+                </div>
+            {% endif %}
+        </div>
+
+        {{ _self.tagTree(tag.children, canEdit) }}
+    </div>
+{% endmacro %}
+
+{% if tagTree|length > 0 %}
+    <div id="tagRoot"
+         class="mb-3 user-select-none"
+         data-save-url="{{ path('user_project_save_tags', {id: project.id}) }}">
+        {{ _self.tagTree(tagTree, canEdit) }}
+    </div>
+{% else %}
+<p class="text-muted text-center">Aucun tag</p>
+{% endif %}
+
+{% if canEdit %}
+    <button class="btn btn-primary btn-sm"
+            type="button"
+            data-bs-toggle="modal"
+            data-bs-target="#newTagModal"
+            data-parent-id=""
+            data-name="">
+        <i class="bi-tag me-1"></i>
+        Nouveau tag
+    </button>
+{% endif %}

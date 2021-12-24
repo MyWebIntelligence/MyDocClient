@@ -1,0 +1,25 @@
+<div id="newTagModal"
+     class="modal fade"
+     tabindex="-1"
+     aria-labelledby="newTagModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form id="newTagForm" action="{{ path('user_project_add_tag', {id: project.id}) }}" method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold" id="newTagModalLabel">Ajouter un tag <span id="newTag_parentName"></span></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                </div>
+                <div class="modal-body">
+                    <input id="newTag_parentId" type="hidden" name="parentId"/>
+                    <label for="newTag_name" class="form-label">Nom du tag</label>
+                    <input id="newTag_name" type="text" name="name" class="form-control" required/>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fermer</button>
+                    <button type="submit" class="btn btn-primary">Sauver</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

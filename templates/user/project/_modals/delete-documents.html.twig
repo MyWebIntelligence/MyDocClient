@@ -1,0 +1,32 @@
+<div id="confirmDeleteModal"
+     class="modal fade"
+     tabindex="-1"
+     aria-labelledby="confirmDeleteModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold" id="confirmDeleteModalLabel">Suppression de documents</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body">
+                Êtes-vous certain de vouloir supprimer les documents sélectionnés ?
+            </div>
+            <div class="modal-footer">
+                <form action="{{ path('user_project_delete_documents', {id: project.id}) }}" method="post">
+                    <div class="visually-hidden">
+                        <label for="delete_documents" class="form-label">Documents sélectionnés</label>
+                        <select id="delete_documents" name="delete_documents[]" class="form-select" multiple
+                                readonly>
+                            {% for document in documents %}
+                                <option value="{{ document.id }}">{{ document.title }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-danger">Supprimer</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

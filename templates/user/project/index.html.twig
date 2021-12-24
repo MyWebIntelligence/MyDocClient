@@ -11,8 +11,8 @@
     } %}
 
     {% for label, collection in sections %}
-        <div class="my-4">
-            <div class="d-flex">
+        <div class="mt-4 mb-5">
+            <div class="d-flex mb-3">
                 <h2 class="mb-3">{{ label }}</h2>
                 {% if collection.isOwner %}
                 <div class="ms-auto">
@@ -23,19 +23,23 @@
                 {% endif %}
             </div>
 
-            <div class="row">
+            <div class="row row-cols-1 row-cols-md-4 g-4">
                 {% for project in collection.projects %}
-                    <div class="col-3 mb-2">
-                        {{ macro.project_card(project) }}
+                    <div class="col">
+                    {{ macro.project_card(project) }}
                     </div>
-                {% else %}
-                    {% if collection.isOwner %}
-                    <p>Vous n'avez pas encore créé de projets.</p>
-                    {% else %}
-                    <p>Vous n'avez pas encore été invité à rejoindre un projet.</p>
-                    {% endif %}
                 {% endfor %}
             </div>
+
+            {% if collection.projects|length == 0 %}
+                <div class="my-4">
+                {% if collection.isOwner %}
+                    <p class="text-muted">Vous n'avez pas encore créé de projets.</p>
+                {% else %}
+                    <p class="text-muted">Vous n'avez pas encore été invité à rejoindre un projet.</p>
+                {% endif %}
+                </div>
+            {% endif %}
         </div>
     {% endfor %}
 

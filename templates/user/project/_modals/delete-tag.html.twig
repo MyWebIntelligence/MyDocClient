@@ -1,0 +1,25 @@
+<div id="deleteTagModal"
+     class="modal fade"
+     tabindex="-1"
+     aria-labelledby="deleteTagModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form id="deleteTagForm" action="{{ path('user_project_delete_tag', {id: project.id}) }}" method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold" id="deleteTagModalLabel">Suppression du tag</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                </div>
+                <div class="modal-body">
+                    <input id="deleteTag_id" type="hidden" name="id"/>
+                    <p>Êtes-vous sûr de vouloir supprimer le tag <b id="deleteTag_name"></b>,
+                        ses sous-tags et toutes les annotations qui y sont rattachées ?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fermer</button>
+                    <button type="submit" class="btn btn-danger">Supprimer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,11 +1,14 @@
-window.addEventListener('load', (event) => {
+import './new-tag'
+import './delete-tag'
+import './rename-tag'
+import './share'
+import './tag-tree'
+
+window.addEventListener('load', () => {
     const cbCheckAll = document.getElementById('cb_document_all')
     const cbChecks = document.querySelectorAll('.cb_document')
     const selectionMenu = document.getElementById('selection_menu')
     const deleteDocuments = document.getElementById('delete_documents')
-    const sendInviteForm = document.getElementById('sendInviteForm')
-    const sharedPermissions = document.getElementById('sharedPermissions')
-    const shareMessage = document.getElementById('shareMessage')
 
     function getSelectedDelete(item) {
         return deleteDocuments.querySelector(`option[value="${item.dataset.id}"]`)
@@ -16,7 +19,8 @@ window.addEventListener('load', (event) => {
               : selectionMenu.setAttribute('disabled', 'disabled')
     }
 
-    cbCheckAll.addEventListener('click', (event) => {
+
+    cbCheckAll && cbCheckAll.addEventListener('click', (event) => {
         cbChecks.forEach((item) => {
             const selectedDelete = getSelectedDelete(item)
             item.checked = event.target.checked
@@ -35,24 +39,4 @@ window.addEventListener('load', (event) => {
         })
     })
 
-    sendInviteForm.addEventListener('submit', (event) => {
-        event.preventDefault();
-        const url = event.target.getAttribute('action')
-        const formData = new FormData(event.target)
-        const element = document.createElement('div')
-        element.innerHTML = sharedPermissions.dataset.prototype.replace('__email__', formData.get('email'))
-
-        fetch(url,{
-            method: 'POST',
-            body: formData
-        }).then(res => res.json())
-            .then(data => {
-                if (data.res) {
-                    sharedPermissions.appendChild(element)
-                    element.querySelector(`option[value=${formData.get('permission')}]`).selected = true
-                }
-                shareMessage.innerHTML = data.message
-                event.target.reset()
-            })
-    })
 })

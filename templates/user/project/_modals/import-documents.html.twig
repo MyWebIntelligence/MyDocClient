@@ -1,0 +1,26 @@
+<div class="modal fade"
+     id="importDocumentModal"
+     tabindex="-1"
+     aria-labelledby="importDocumentModalLabel"
+     aria-hidden="true">
+    {{ form_start(importForm) }}
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold" id="importDocumentModalLabel">Import documents</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body">
+                <p>Vous pouvez importer plusieurs fichiers au format TXT ou MD, les archives au format ZIP
+                    seront décompressées et leur contenu (TXT ou MD) importé.</p>
+
+                {{ form_row(importForm.files) }}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fermer</button>
+                <button type="submit" class="btn btn-primary">Importer</button>
+            </div>
+        </div>
+    </div>
+    {{ form_end(importForm) }}
+</div>

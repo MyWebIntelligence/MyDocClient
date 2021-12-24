@@ -1,0 +1,31 @@
+<div id="editProjectModal"
+     class="modal fade"
+     tabindex="-1"
+     aria-labelledby="editProjectModalLabel"
+     aria-hidden="true">
+    {{ form_start(editForm) }}
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold" id="editProjectModalLabel">Édition projet</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body">
+                {{ form_row(editForm.name) }}
+
+                {{ form_row(editForm.description) }}
+
+                <div class="d-flex justify-content-between">
+                    <a href="{{ path('user_delete_project', {id: project.id}) }}"
+                       class="text-danger">Supprimer le projet</a>
+                    <span class="text-muted">Projet créé le {{ project.createdAt|date('d/m/Y') }}</span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fermer</button>
+                <button type="submit" class="btn btn-primary">Sauver</button>
+            </div>
+        </div>
+    </div>
+    {{ form_end(editForm) }}
+</div>
