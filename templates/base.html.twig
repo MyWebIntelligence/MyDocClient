@@ -20,7 +20,7 @@
 </head>
 <body>
 <div class="container">
-    <nav class="navbar navbar-light navbar-expand-lg">
+    <nav class="navbar navbar-light navbar-expand-lg py-4">
         <a class="navbar-brand" href="{{ path('home') }}">MyDoc Intelligence</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                 data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
@@ -30,7 +30,7 @@
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mb-2 mb-lg-0">
-            {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+            {% if is_granted('IS_AUTHENTICATED') %}
                 <li class="nav-item">
                     <a href="{{ path('user_projects') }}" class="nav-link">Projets</a>
                 </li>
@@ -38,7 +38,7 @@
             </ul>
 
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                {% if is_granted('IS_AUTHENTICATED') %}
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle"
                            href="#"
@@ -79,7 +79,7 @@
             {% for type, messages in app.flashes %}
                 <div class="alert alert-{{ type }} alert-dismissible fade show" role="alert">
                     {% for message in messages %}
-                        {{ message }}
+                        <p class="m-2">{{ message }}</p>
                     {% endfor %}
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
                 </div>

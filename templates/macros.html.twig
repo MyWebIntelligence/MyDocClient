@@ -1,15 +1,41 @@
 {% macro title(string) %}{{ string }} | {% endmacro %}
 
 {% macro buttonLink(href, text, button_class, icon_class) %}
-<a href="{{ href }}" class="btn {{ button_class }}" role="button">{% if icon_class %}<i class="{{ icon_class }} me-2"></i>{% endif %}{{ text }}</a>
+    <a href="{{ href }}" class="btn {{ button_class }}" role="button">{% if icon_class %}<i
+            class="{{ icon_class }} me-2"></i>{% endif %}{{ text }}</a>
 {% endmacro %}
 
 {% macro project_card(project) %}
-    <div class="card mb-3">
+    <div class="card mb-3 h-100">
+        <div class="card-header h5 fw-bold">{{ project.name }}</div>
         <div class="card-body">
-            <h5 class="card-title fw-bold">{{ project.name }}</h5>
             <p class="card-text">{{ project.description|u.truncate(200, '...', false) }}</p>
-            {{ _self.buttonLink(path('user_view_project', {id: project.id}), 'Ouvrir', 'btn-primary', 'bi-folder2-open') }}
+        </div>
+        <div class="card-footer">
+            {{ _self.buttonLink(path('user_view_project', {id: project.id}), 'Ouvrir', 'btn-primary rounded-pill', 'bi-folder2-open') }}
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro document_header(document, role) %}
+    <div class="mb-4">
+        <div class="row">
+            <div class="col me-auto">
+                <h1 class="m-0">{{ document.title ? document.title : 'document ' ~ document.id }}</h1>
+            </div>
+            <div class="col-auto text-end">
+                <span class="badge bg-info rounded-pill">{{ role }}</span>
+                <span id="changesUnsaved" class="badge bg-danger rounded-pill opacity-50 visually-hidden">Non sauvegardé</span>
+            </div>
+        </div>
+
+        <div class="row">
+            <div>
+                <p class="text-muted">{{ [document.creator, document.date]|filter(v => v != '')|join(', ') }}</p>
+                {% if document.description %}
+                    <p class="my-4">{{ document.description }}</p>
+                {% endif %}
+            </div>
         </div>
     </div>
 {% endmacro %}
