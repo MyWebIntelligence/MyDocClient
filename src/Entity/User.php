@@ -12,7 +12,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
- * @UniqueEntity(fields={"email"}, message="There is already an account with this email")
+ * @UniqueEntity(fields={"email"}, message="Un compte existe déjà avec cette adresse e-mail")
  */
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -26,38 +26,49 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @ORM\Column(type="string", length=180, unique=true)
      */
-    private $email;
+    private ?string $email;
 
     /**
      * @ORM\Column(type="json")
      */
-    private $roles = [];
+    private array $roles = [];
 
     /**
-     * @var string The hashed password
      * @ORM\Column(type="string")
      */
-    private $password;
+    private ?string $password;
 
     /**
      * @ORM\Column(type="boolean")
      */
-    private $isVerified = false;
+    private bool $isVerified = false;
 
     /**
-     * @ORM\OneToMany(targetEntity=Project::class, mappedBy="owner")
+     * @ORM\OneToMany(targetEntity=Project::class, mappedBy="owner", orphanRemoval=true)
      */
-    private $projects;
+    private Collection $projects;
 
     /**
-     * @ORM\OneToMany(targetEntity=Permission::class, mappedBy="user")
+     * @ORM\OneToMany(targetEntity=Permission::class, mappedBy="user", orphanRemoval=true)
      */
-    private $permissions;
+    private Collection $permissions;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Annotation::class, mappedBy="createdBy", orphanRemoval=true)
+     */
+    private Collection $annotations;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Annotation::class, mappedBy="createdBy", orphanRemoval=true)
+     */
+    private Collection $tags;
 
     public function __construct()
     {
         $this->projects = new ArrayCollection();
         $this->permissions = new ArrayCollection();
+        $this->annotations = new ArrayCollection();
+        $this->tags = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -215,6 +226,66 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($permission->getUser() === $this) {
                 $permission->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Annotation[]
+     */
+    public function getAnnotations(): Collection
+    {
+        return $this->annotations;
+    }
+
+    public function addAnnotation(Annotation $annotation): self
+    {
+        if (!$this->annotations->contains($annotation)) {
+            $this->annotations[] = $annotation;
+            $annotation->setCreatedBy($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAnnotation(Annotation $annotation): self
+    {
+        if ($this->annotations->removeElement($annotation)) {
+            // set the owning side to null (unless already changed)
+            if ($annotation->getCreatedBy() === $this) {
+                $annotation->setCreatedBy(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Annotation[]
+     */
+    public function getTags(): Collection
+    {
+        return $this->tags;
+    }
+
+    public function addTag(Tag $tag): self
+    {
+        if (!$this->tags->contains($tag)) {
+            $this->tags[] = $tag;
+            $tag->setCreatedBy($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTag(Tag $tag): self
+    {
+        if ($this->tags->removeElement($tag)) {
+            // set the owning side to null (unless already changed)
+            if ($tag->getCreatedBy() === $this) {
+                $tag->setCreatedBy(null);
             }
         }
 

@@ -5,6 +5,8 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Form\ChangePasswordFormType;
 use App\Form\ResetPasswordRequestFormType;
+use App\Repository\UserRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -37,7 +39,7 @@ class ResetPasswordController extends AbstractController
      *
      * @Route("", name="app_forgot_password_request")
      */
-    public function request(Request $request, MailerInterface $mailer): Response
+    public function request(Request $request, MailerInterface $mailer, UserRepository $userRepository): Response
     {
         $form = $this->createForm(ResetPasswordRequestFormType::class);
         $form->handleRequest($request);
@@ -45,7 +47,8 @@ class ResetPasswordController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             return $this->processSendingPasswordResetEmail(
                 $form->get('email')->getData(),
-                $mailer
+                $mailer,
+                $userRepository
             );
         }
 
@@ -77,7 +80,11 @@ class ResetPasswordController extends AbstractController
      *
      * @Route("/reset/{token}", name="app_reset_password")
      */
-    public function reset(Request $request, UserPasswordHasherInterface $userPasswordHasherInterface, string $token = null): Response
+    public function reset(
+        Request $request,
+        UserPasswordHasherInterface $userPasswordHasherInterface,
+        EntityManagerInterface $entityManager,
+        string $token = null): Response
     {
         if ($token) {
             // We store the token in session and remove it from the URL, to avoid the URL being
@@ -89,14 +96,14 @@ class ResetPasswordController extends AbstractController
 
         $token = $this->getTokenFromSession();
         if (null === $token) {
-            throw $this->createNotFoundException('No reset password token found in the URL or in the session.');
+            throw $this->createNotFoundException("Le token de réinitialisation n'as pas été trouvé.");
         }
 
         try {
             $user = $this->resetPasswordHelper->validateTokenAndFetchUser($token);
         } catch (ResetPasswordExceptionInterface $e) {
-            $this->addFlash('reset_password_error', sprintf(
-                'There was a problem validating your reset request - %s',
+            $this->addFlash('danger', sprintf(
+                'Nous avons rencontré un problème en validant votre demande de réinitialisation de mot de passe - %s',
                 $e->getReason()
             ));
 
@@ -118,7 +125,7 @@ class ResetPasswordController extends AbstractController
             );
 
             $user->setPassword($encodedPassword);
-            $this->getDoctrine()->getManager()->flush();
+            $entityManager->flush();
 
             // The session is cleaned up after the password has been changed.
             $this->cleanSessionAfterReset();
@@ -131,9 +138,12 @@ class ResetPasswordController extends AbstractController
         ]);
     }
 
-    private function processSendingPasswordResetEmail(string $emailFormData, MailerInterface $mailer): RedirectResponse
+    private function processSendingPasswordResetEmail(
+        string $emailFormData,
+        MailerInterface $mailer,
+        UserRepository $userRepository): RedirectResponse
     {
-        $user = $this->getDoctrine()->getRepository(User::class)->findOneBy([
+        $user = $userRepository->findOneBy([
             'email' => $emailFormData,
         ]);
 
