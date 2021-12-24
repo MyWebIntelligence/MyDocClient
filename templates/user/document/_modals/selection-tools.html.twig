@@ -1,0 +1,83 @@
+<div class="modal fade"
+     id="selectionToolsModal"
+     data-bs-backdrop="static"
+     tabindex="-1"
+     role="dialog"
+     aria-labelledby="selectionToolsModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg shadow">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="fw-bold m-0" id="selectionToolsModalLabel">Liens et annotations</h5>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <textarea id="annotationSelection" class="form-control" readonly="readonly"></textarea>
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active"
+                                    id="selectionToolsAnnotationsLabel"
+                                    data-bs-toggle="tab"
+                                    data-bs-target="#selectionToolsAnnotations"
+                                    type="button"
+                                    role="tab"
+                                    aria-controls="home"
+                                    aria-selected="true">Annotations</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link"
+                                    id="selectionToolsLinksLabel"
+                                    data-bs-toggle="tab"
+                                    data-bs-target="#selectionToolsLinks"
+                                    type="button"
+                                    role="tab"
+                                    aria-controls="profile"
+                                    aria-selected="false">Liens</button>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="selectionToolsTabs">
+                        <div class="tab-pane fade show active"
+                             id="selectionToolsAnnotations"
+                             role="tabpanel"
+                             aria-labelledby="selectionToolsAnnotationsLabel">
+                            <div class="row g-1">
+                                <div class="col">
+                                    <select class="form-select form-select-sm">
+                                        {% for tag in document.project.tags %}
+                                            <option value="{{ tag.id }}">
+                                                {% for i in range(0, tag.lvl*2) %}{{ "&nbsp;" }}{% endfor %}
+                                                {{ tag.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-auto">
+                                    <button type="submit" class="btn btn-primary btn-sm"><i class="bi-tag me-1"></i>Tagger
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade"
+                             id="selectionToolsLinks"
+                             role="tabpanel"
+                             aria-labelledby="selectionToolsLinksLabel">
+                            links
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button"
+                        class="btn btn-outline-secondary"
+                        data-bs-dismiss="modal">
+                    Annuler
+                </button>
+                <button type="button"
+                        class="btn btn-primary"
+                        id="selectionTools"
+                        data-bs-dismiss="modal">
+                    Continuer
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

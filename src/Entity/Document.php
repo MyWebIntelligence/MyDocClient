@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Repository\DocumentRepository;
 use DateTimeImmutable;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Yaml\Yaml;
@@ -125,6 +127,7 @@ class Document
     public function __construct()
     {
         $this->setCreatedAt(new DateTimeImmutable());
+        $this->annotations = new ArrayCollection();
     }
 
     private array $metas = [
@@ -144,6 +147,11 @@ class Document
         'Rights' => 'Droits',
         'Source' => 'Source',
     ];
+
+    /**
+     * @ORM\OneToMany(targetEntity=Annotation::class, mappedBy="document", orphanRemoval=true)
+     */
+    private $annotations;
 
     public function getId(): ?int
     {
@@ -363,9 +371,9 @@ class Document
         return $this->owner;
     }
 
-    public function setOwner(?User $owner): self
+    public function setOwner(?User $user): self
     {
-        $this->owner = $owner;
+        $this->owner = $user;
 
         return $this;
     }
@@ -399,7 +407,9 @@ class Document
             && is_array($metas)
         ) {
             foreach ($metas as $property => $value) {
-                $this->{'set' . $property}($value);
+                if (method_exists($this, 'set' . $property)) {
+                    $this->{'set' . $property}($value);
+                }
             }
         }
     }
@@ -459,6 +469,36 @@ class Document
         preg_match_all($re, $this->getContent(true), $matches);
 
         return $matches[0] ?? [];
+    }
+
+    /**
+     * @return Collection|Annotation[]
+     */
+    public function getAnnotations(): Collection
+    {
+        return $this->annotations;
+    }
+
+    public function addAnnotation(Annotation $annotation): self
+    {
+        if (!$this->annotations->contains($annotation)) {
+            $this->annotations[] = $annotation;
+            $annotation->setDocument($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAnnotation(Annotation $annotation): self
+    {
+        if ($this->annotations->removeElement($annotation)) {
+            // set the owning side to null (unless already changed)
+            if ($annotation->getDocument() === $this) {
+                $annotation->setDocument(null);
+            }
+        }
+
+        return $this;
     }
 
 }

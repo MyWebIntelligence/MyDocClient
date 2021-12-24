@@ -1,20 +1,20 @@
+import '../project/new-tag'
+import '../project/delete-tag'
+import '../project/rename-tag'
+import '../project/tag-tree'
+import {Modal} from 'bootstrap'
+
 import {marked} from 'marked'
 
-window.addEventListener('load', (event) => {
+window.addEventListener('load', () => {
     const documentContent = document.getElementById('document_content')
-    const initialContent = documentContent.value;
+    const initialContent = documentContent ? documentContent.value : '';
     const changesUnsaved = document.getElementById('changesUnsaved');
     const initMetaBtn = document.getElementById('init_meta_btn')
+    const annotationSelection = document.getElementById('annotationSelection')
     const preview = document.getElementById('markdownPreview')
     const links = document.querySelectorAll('.og-preview')
-
-    const fetchMeta = () => {
-        fetch(`/user/document/meta/${initMetaBtn.dataset.id}`)
-            .then(response => response.json())
-            .then(data => {
-                documentContent.value = data.formatted
-            })
-    }
+    const toolsModal = new Modal(document.getElementById('selectionToolsModal'))
 
     const extractOg = (response) => {
         const parser = new DOMParser()
@@ -32,25 +32,82 @@ window.addEventListener('load', (event) => {
         })
     }
 
-    // Set Markdown preview
-    preview.innerHTML = marked.parse(preview.innerHTML)
-
-    // Init document meta-data
-    document.getElementById('confirmInitMeta').addEventListener('click', () => {
-        fetchMeta()
-    })
-
-
     const watchUnsaved = (event) => {
         if (event.target.value !== initialContent) {
-            changesUnsaved.classList.remove('invisible')
+            changesUnsaved.classList.remove('visually-hidden')
         } else {
-            changesUnsaved.classList.add('invisible')
+            changesUnsaved.classList.add('visually-hidden')
         }
     }
 
-    documentContent.addEventListener('change', watchUnsaved)
-    documentContent.addEventListener('keyup', watchUnsaved)
+    const calculateOffset = (child, relativeOffset) => {
+        let parent = child.parentElement
+        const children = []
+
+        if (parent.tagName !== 'P') {
+            parent = parent.closest('p')
+            child = child.parentElement
+        }
+
+        for (let c of parent.childNodes) {
+            if (c === child) break
+            children.push(c)
+        }
+
+        return relativeOffset + children.reduce((a, c) => a + c.textContent.length, 0)
+    }
+
+
+    const selectText = (event) => {
+        let textSelection
+
+        if (event.target.value) {
+            textSelection = event.target.value.substring(event.target.selectionStart, event.target.selectionEnd)
+        } else {
+            const text = event.target.innerText
+            const selection = window.getSelection()
+            const start = selection.anchorOffset
+            const end = selection.extentOffset
+            const anchorNode = selection.anchorNode
+            const extentNode = selection.extentNode
+            textSelection = text.substring(calculateOffset(anchorNode, start), calculateOffset(extentNode, end))
+        }
+
+        if (textSelection !== '') {
+            annotationSelection.value = textSelection
+            toolsModal.show()
+        } else {
+            annotationSelection.value = ''
+        }
+    }
+
+    // Set Markdown preview
+    preview.innerHTML = marked.parse(preview.innerHTML)
+
+    if (documentContent) {
+        const fetchMeta = () => {
+            fetch(`/user/document/meta/${initMetaBtn.dataset.id}`)
+                .then(response => response.json())
+                .then(data => {
+                    documentContent.value = data.formatted
+                    changesUnsaved.classList.remove('invisible')
+                })
+        }
+
+        documentContent.addEventListener('mouseup', selectText)
+
+        document.getElementById('confirmInitMeta').addEventListener('click', () => {
+            fetchMeta()
+        })
+
+        // Init document meta-data
+        documentContent.addEventListener('change', watchUnsaved)
+        documentContent.addEventListener('keyup', watchUnsaved)
+    }
+
+    if (preview) {
+        preview.addEventListener('mouseup', selectText)
+    }
 
     // Add Open Graph preview for links
     /*
