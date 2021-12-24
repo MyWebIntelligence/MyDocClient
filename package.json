@@ -26,7 +26,8 @@
         "build": "encore production --progress"
     },
     "dependencies": {
-        "marked": "^4.0.5"
+        "marked": "^4.0.5",
+        "sortablejs": "^1.14.0"
     },
     "peerDependencies": {
         "postcss": "^8.1.0",
