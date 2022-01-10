@@ -10,12 +10,16 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
             </div>
             <div class="modal-body">
+                {% if document is defined %}
                 Êtes-vous certain de vouloir supprimer le document <b>{{ document.title }}</b> ?
+                {% else %}
+                <p class="alert alert-danger">Le document n'a pas été enregistré, il ne peut être supprimé.</p>
+                {% endif %}
             </div>
             <div class="modal-footer">
-                <form action="{{ path('user_project_delete_document', {projectId: project.id, documentId: document.id}) }}" method="post">
+                <form action="{{ path('user_delete_document', {id: document.id ?? 0}) }}" method="post">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
-                    <button type="submit" class="btn btn-danger">Supprimer</button>
+                    {% if document is defined %}<button type="submit" class="btn btn-danger">Supprimer</button>{% endif %}
                 </form>
             </div>
         </div>
