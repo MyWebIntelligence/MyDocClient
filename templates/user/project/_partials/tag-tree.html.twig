@@ -7,7 +7,7 @@
 {% endmacro %}
 
 {% macro tagNode(tag, canEdit) %}
-    <div class="px-2 py-1 mb-1 border border-light rounded bg-opacity-25" data-id="{{ tag.id }}">
+    <div class="px-2 py-1 mb-1 border border-light rounded" data-id="{{ tag.id }}">
         <div class="tag-label pt-1 pb-2 position-relative">
             <span>{{ tag.name }}</span>
             {% if canEdit %}
@@ -51,6 +51,7 @@
 {% endif %}
 
 {% if canEdit %}
+<div class="text-center">
     <button class="btn btn-primary btn-sm"
             type="button"
             data-bs-toggle="modal"
@@ -60,4 +61,5 @@
         <i class="bi-tag me-1"></i>
         Nouveau tag
     </button>
+</div>
 {% endif %}

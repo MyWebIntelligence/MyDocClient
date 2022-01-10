@@ -51,86 +51,9 @@
             } only %}
 
             {# DOCUMENTS #}
-            <div class="table-responsive">
-                <table class="table">
-                    <thead>
-                    <tr>
-                        <th style="width: 1rem">
-                            <div class="form-check">
-                                <label for="cb_document_all"
-                                       class="visually-hidden">
-                                    Tout sélectionner
-                                </label>
-                                <input type="checkbox"
-                                       id="cb_document_all"
-                                       class="form-check-input">
-                            </div>
-                        </th>
-                        <th>
-                            {{ knp_pagination_sortable(documents, 'Titre', 'd.title') }}
-                            {% if documents.isSorted('d.title') %}
-                                <i class="{{ documents.direction == 'asc' ? 'bi-sort-down-alt' : 'bi-sort-down' }}"></i>
-                            {% endif %}
-                        </th>
-                        <th>
-                            {{ knp_pagination_sortable(documents, 'Créateur', 'd.creator') }}
-                            {% if documents.isSorted('d.creator') %}
-                                <i class="{{ documents.direction == 'asc' ? 'bi-sort-down-alt' : 'bi-sort-down' }}"></i>
-                            {% endif %}
-                        </th>
-                        <th>
-                            {{ knp_pagination_sortable(documents, 'Date', 'd.date') }}
-                            {% if documents.isSorted('d.date') %}
-                                <i class="{{ documents.direction == 'asc' ? 'bi-sort-down-alt' : 'bi-sort-down' }}"></i>
-                            {% endif %}
-                        </th>
-                        <th>
-                            {{ knp_pagination_sortable(documents, 'Publicateur', 'd.publisher') }}
-                            {% if documents.isSorted('d.publisher') %}
-                                <i class="{{ documents.direction == 'asc' ? 'bi-sort-down-alt' : 'bi-sort-down' }}"></i>
-                            {% endif %}
-                        </th>
-                        <th>
-                            {{ knp_pagination_sortable(documents, 'Type', 'd.type') }}
-                            {% if documents.isSorted('d.type') %}
-                                <i class="{{ documents.direction == 'asc' ? 'bi-sort-down-alt' : 'bi-sort-down' }}"></i>
-                            {% endif %}
-                        </th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for document in documents %}
-                        <tr>
-                            <td>
-                                <div class="form-check">
-                                    <label for="cb_document_{{ document.id }}"
-                                           class="visually-hidden">
-                                        Sélectionner {{ document.title }}
-                                    </label>
-                                    <input type="checkbox"
-                                           id="cb_document_{{ document.id }}"
-                                           data-id="{{ document.id }}"
-                                           class="form-check-input cb_document">
-                                </div>
-                            </td>
-                            <td>
-                                <a href="{{ path('user_document', {id: document.id}) }}">{{ document.title ?: 'document ' ~ document.id }}</a>
-                            </td>
-                            <td>{{ document.creator }}</td>
-                            <td>{{ document.date }}</td>
-                            <td>{{ document.publisher }}</td>
-                            <td>{{ document.type }}</td>
-                        </tr>
-                    {% else %}
-                        <tr>
-                            <td colspan="6" class="text-center text-muted py-4">
-                                Aucun document dans ce projet
-                            </td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+            {% include 'user/project/_partials/documents.html.twig' with {
+                documents: documents
+            } only %}
         </div>
 
         <div class="col-12 col-md-3 mt-3 mt-md-0">

@@ -13,7 +13,7 @@
                 Êtes-vous certain de vouloir supprimer les documents sélectionnés ?
             </div>
             <div class="modal-footer">
-                <form action="{{ path('user_project_delete_documents', {id: project.id}) }}" method="post">
+                <form action="{{ path('user_delete_documents', {id: project.id}) }}" method="post">
                     <div class="visually-hidden">
                         <label for="delete_documents" class="form-label">Documents sélectionnés</label>
                         <select id="delete_documents" name="delete_documents[]" class="form-select" multiple

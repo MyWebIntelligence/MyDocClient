@@ -154,7 +154,7 @@ class ProjectController extends AbstractController
 
         $editForm = $this->createForm(ProjectType::class, $project);
         $importForm = $this->createForm(ImportDocumentType::class, null, [
-            'action' => $this->generateUrl('user_project_import_documents', ['id' => $project->getId()])
+            'action' => $this->generateUrl('user_import_documents', ['id' => $project->getId()])
         ]);
 
         return $this->render('user/project/view.html.twig', [
