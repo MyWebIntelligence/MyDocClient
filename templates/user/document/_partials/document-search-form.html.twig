@@ -1,0 +1,24 @@
+<form action="" method="get">
+    <div class="row g-2">
+        <div class="col">
+            <label for="document_search" class="visually-hidden">
+                Rechercher dans les documents
+            </label>
+            <input id="document_search"
+                   type="search"
+                   name="q"
+                   placeholder="Rechercher..."
+                   class="form-control"
+                   value="{{ search }}"/>
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary">
+                <i class="bi-search"></i>
+            </button>
+            <span class="badge rounded-circle bg-secondary"
+                  type="button"
+                  data-bs-toggle="modal"
+                  data-bs-target="#searchHelpModal">?</span>
+        </div>
+    </div>
+</form>
