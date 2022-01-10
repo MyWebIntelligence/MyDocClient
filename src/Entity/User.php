@@ -59,7 +59,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $annotations;
 
     /**
-     * @ORM\OneToMany(targetEntity=Annotation::class, mappedBy="createdBy", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=Tag::class, mappedBy="createdBy", orphanRemoval=true)
      */
     private Collection $tags;
 
