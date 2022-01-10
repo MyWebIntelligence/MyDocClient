@@ -1,0 +1,12 @@
+<h1 style="font-family: sans-serif">My Doc Intelligence</h1>
+
+<p style="font-family: sans-serif">Bonjour,</p>
+
+<p style="font-family: sans-serif">Vous avez été invité par {{ host.email }} à collaborer sur son projet {{ project.name }}.</p>
+
+<a style="font-family: sans-serif" href="{{ url('user_view_project', {id: project.id}) }}">{{ url('user_view_project', {id: project.id}) }}</a>
+
+<p style="font-family: sans-serif">Si vous n'aviez pas de compte sur My Doc Intelligence, il a été créé pour vous,
+    procédez à la réinitialisation de mot de passe pour accéder au projet.</p>
+
+<p style="font-family: sans-serif">À bientôt sur My Doc Intelligence</p>

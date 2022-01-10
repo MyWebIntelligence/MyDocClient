@@ -10,10 +10,13 @@ use App\Repository\PermissionRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Address;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -37,7 +40,8 @@ class ShareController extends AbstractController
         UserPasswordHasherInterface $hasher,
         EntityManagerInterface      $entityManager,
         UserRepository              $userRepository,
-        PermissionRepository        $permissionRepository): Response
+        PermissionRepository        $permissionRepository,
+        MailerInterface             $mailer): Response
     {
         if ($project->getOwner() === $this->getUser()) {
             if ($email = $request->request->get('email')) {
@@ -65,9 +69,16 @@ class ShareController extends AbstractController
                     $entityManager->persist($permission);
                     $entityManager->flush();
 
-                    /**
-                     * @TODO Send invitation e-mail
-                     */
+                    $email = new TemplatedEmail();
+                    $email->from(new Address('contact@daten.fr', 'My Doc Intelligence'))
+                        ->to($user->getEmail())
+                        ->subject('Invitation à collaborer - My Doc Intelligence')
+                        ->htmlTemplate('user/share/email.html.twig');
+                    $context = $email->getContext();
+                    $context['host'] = $this->getUser();
+                    $context['project'] = $project;
+                    $email->context($context);
+                    $mailer->send($email);
 
                     return new JsonResponse(['res' => true, 'message' => '']);
                 }

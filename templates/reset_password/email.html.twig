@@ -1,9 +1,9 @@
-<h1>Bonjour,</h1>
+<h1 style="font-family: sans-serif">My Doc Intelligence</h1>
 
-<p>Pour définir votre mot de passe, merci de visiter le lien suivant :</p>
+<p style="font-family: sans-serif">Pour définir votre mot de passe, merci de visiter le lien suivant :</p>
 
-<a href="{{ url('app_reset_password', {token: resetToken.token}) }}">{{ url('app_reset_password', {token: resetToken.token}) }}</a>
+<a style="font-family: sans-serif" href="{{ url('app_reset_password', {token: resetToken.token}) }}">{{ url('app_reset_password', {token: resetToken.token}) }}</a>
 
-<p>Ce lien expirera dans {{ resetToken.expirationMessageKey|trans(resetToken.expirationMessageData, 'ResetPasswordBundle') }}.</p>
+<p style="font-family: sans-serif">Ce lien expirera dans {{ resetToken.expirationMessageKey|trans(resetToken.expirationMessageData, 'ResetPasswordBundle') }}.</p>
 
-<p>A bientôt sur My Doc Intelligence !</p>
+<p style="font-family: sans-serif">À bientôt sur My Doc Intelligence</p>
