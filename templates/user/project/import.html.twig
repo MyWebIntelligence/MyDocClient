@@ -12,7 +12,7 @@
 
 
     {% if succeeded is not empty %}
-        <div class="alert alert-success" style="max-height: 30vh">
+        <div class="alert alert-success" style="max-height: 30vh; overflow-y: scroll">
             <h5 class="fw-bold">Fichiers importés</h5>
             <ul>
                 {% for file in succeeded %}
@@ -23,7 +23,7 @@
     {% endif %}
 
     {% if errors is not empty %}
-        <div class="alert alert-danger" style="max-height: 30vh">
+        <div class="alert alert-danger" style="max-height: 30vh; overflow-y: scroll">
             <h5 class="fw-bold">Des erreurs ont été rencontrées</h5>
             <ul>
                 {% for error in errors %}
