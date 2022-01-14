@@ -25,7 +25,7 @@
             </div>
             <div class="col-auto text-end">
                 <span class="badge bg-info rounded-pill">{{ role }}</span>
-                <span id="changesUnsaved" class="badge bg-danger rounded-pill opacity-50 visually-hidden">Non sauvegardé</span>
+                <span id="changesUnsaved" class="badge bg-danger rounded-pill opacity-50 {% if document.id %}visually-hidden{% endif %}">Non sauvegardé</span>
             </div>
         </div>
 

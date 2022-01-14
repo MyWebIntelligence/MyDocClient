@@ -16,9 +16,7 @@ use App\Service\DocumentService;
 use App\Service\TextProcessor;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
-use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -43,10 +41,8 @@ class DocumentController extends AbstractController
         Document $document,
         Request $request,
         DocumentService $documentService,
-        DocumentRepository $documentRepository,
         TextProcessor $textProcessor,
-        TagRepository $tagRepository,
-        PaginatorInterface $paginator): Response
+        TagRepository $tagRepository): Response
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -65,17 +61,9 @@ class DocumentController extends AbstractController
             return $this->redirectToRoute('user_document', ['id' => $document->getId()]);
         }
 
-        $documents = $paginator->paginate(
-            $documentRepository->createQueryBuilder('d')
-                ->where('d.project = :project')
-                ->setParameter('project', $document->getProject()),
-            $request->query->get('page', 1),
-            25
-        );
-
         return $this->render('user/document/index.html.twig', [
             'document' => $document,
-            'documents' => $documents,
+            'documents' => $documentService->getDocumentsPaginated($document->getProject(), $request, $document),
             'form' => $form->createView(),
             'projectRole' => $this->getRole($user, $document->getProject()),
             'canEdit' => $this->canEdit($user, $document->getProject()),
@@ -121,11 +109,13 @@ class DocumentController extends AbstractController
 
         return $this->render('user/document/index.html.twig', [
             'document' => $document,
+            'documents' => $documentService->getDocumentsPaginated($document->getProject(), $request),
             'form' => $form->createView(),
             'projectRole' => $this->getRole($user, $document->getProject()),
             'canEdit' => $this->canEdit($user, $project),
             'lexicon' => $textProcessor->countWords($document->getWords()),
             'tagTree' => $tagRepository->getProjectTags($document->getProject(), true),
+            'search' => $request->query->get('q'),
         ]);
     }
 
@@ -285,5 +275,17 @@ class DocumentController extends AbstractController
         }
 
         return $this->redirectToRoute('user_document', ['id' => $document->getId()]);
+    }
+
+    /**
+     * @Route("/user/link-documents/{source}/{target}",
+     *     name="user_link_documents",
+     *     requirements={"source":"\d+","target":"\d+"})
+     */
+    public function linkDocuments(Request $request, $source, $target)
+    {
+        if ($request->isMethod('POST')) {
+
+        }
     }
 }

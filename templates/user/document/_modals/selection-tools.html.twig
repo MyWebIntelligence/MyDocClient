@@ -11,7 +11,7 @@
                 <h5 class="fw-bold m-0" id="selectionToolsModalLabel">Liens et annotations</h5>
             </div>
             <div class="modal-body">
-                {% if document is defined %}
+                {% if document.id %}
                 <form method="post" action="{{ path('user_tag_document', {id: document.id ?? 0}) }}">
                     <label for="annotationSelection" class="visually-hidden mb-2">Sélection</label>
                     <textarea id="annotationSelection"
@@ -74,6 +74,7 @@
                                 } only %}
 
                                 {% include 'user/document/_partials/documents.html.twig' with {
+                                    source: document,
                                     documents: documents,
                                 } only %}
                             </div>

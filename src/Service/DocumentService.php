@@ -4,8 +4,11 @@ namespace App\Service;
 
 use App\Entity\Document;
 use App\Entity\Project;
+use App\Repository\DocumentRepository;
 use DateTimeImmutable;
 use Doctrine\Persistence\ManagerRegistry;
+use Knp\Component\Pager\Pagination\PaginationInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -22,8 +25,15 @@ class DocumentService
     private ValidatorInterface $validator;
     private Constraints\File $fileConstraint;
     private TextProcessor $textProcessor;
+    private DocumentRepository $documentRepository;
+    private PaginatorInterface $paginator;
 
-    public function __construct(ManagerRegistry $doctrine, ValidatorInterface $validator, TextProcessor $textProcessor)
+    public function __construct(
+        ManagerRegistry $doctrine,
+        ValidatorInterface $validator,
+        TextProcessor $textProcessor,
+        DocumentRepository $documentRepository,
+        PaginatorInterface $paginator)
     {
         $this->doctrine = $doctrine;
         $this->validator = $validator;
@@ -38,6 +48,8 @@ class DocumentService
             'mimeTypesMessage' => '{{ name }} : type non supporté {{ type }}',
         ]);
         $this->textProcessor = $textProcessor;
+        $this->documentRepository = $documentRepository;
+        $this->paginator = $paginator;
     }
 
     public function getFileContraint(): Constraints\File
@@ -133,7 +145,7 @@ class DocumentService
     {
         $links = ['internal' => [], 'external' => []];
 
-        foreach ($document->getLinks() as $url) {
+        foreach ($document->getExternalLinks() as $url) {
             $host = parse_url($url, PHP_URL_HOST);
 
             if ($host === $request->getHost()) {
@@ -146,4 +158,21 @@ class DocumentService
         return $links;
     }
 
+    public function getDocumentsPaginated(Project $project, Request $request, Document $document = null): PaginationInterface
+    {
+        $queryBuilder = $this->documentRepository->createQueryBuilder('d')
+            ->where('d.project = :project')
+            ->setParameter('project', $project);
+
+        if ($document !== null) {
+            $queryBuilder->andWhere('d != :document')
+                ->setParameter('document', $document);
+        }
+
+        return $this->paginator->paginate(
+            $queryBuilder,
+            $request->query->get('page', 1),
+            25
+        );
+    }
 }

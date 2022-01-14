@@ -45,7 +45,8 @@
                 <td>{{ document.date }}</td>
                 <td>{{ document.publisher }}</td>
                 <td>{{ document.type }}</td>
-                <td><a href="{{  }}">Lier</a></td>
+                <td>{{ source.id }} {{ document.id }}</td>
+                {# <td><a href="{{ path('user_link_documents', {source: source.id, target: document.id}) }}">Lier</a></td> #}
             </tr>
         {% else %}
             <tr>

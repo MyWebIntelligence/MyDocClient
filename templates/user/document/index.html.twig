@@ -29,19 +29,9 @@
 
             {# TABS #}
             <ul class="nav nav-tabs" id="documentRenderMode" role="tablist">
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link active"
-                            id="renderPreview-tab"
-                            data-bs-toggle="tab"
-                            data-bs-target="#renderPreview"
-                            type="button"
-                            role="tab"
-                            aria-controls="renderPreview"
-                            aria-selected="true"><i class="bi-eye me-2"></i>Prévisualiser</button>
-                </li>
                 {% if canEdit %}
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link"
+                    <button class="nav-link active"
                             id="renderEdit-tab"
                             data-bs-toggle="tab"
                             data-bs-target="#renderEdit"
@@ -61,54 +51,22 @@
                             aria-controls="renderAnnotations"
                             aria-selected="true"><i class="bi-tag me-2"></i>Annotations</button>
                 </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link {% if not canEdit %}active{% endif %}"
+                            id="renderPreview-tab"
+                            data-bs-toggle="tab"
+                            data-bs-target="#renderPreview"
+                            type="button"
+                            role="tab"
+                            aria-controls="renderPreview"
+                            aria-selected="true"><i class="bi-eye me-2"></i>Prévisualiser</button>
+                </li>
             </ul>
 
             <div class="tab-content" id="myTabContent">
-                {#  PREVIEW #}
-                <div class="tab-pane fade show active"
-                     id="renderPreview"
-                     role="tabpanel"
-                     aria-labelledby="renderPreview-tab">
-                    <div id="markdownPreview" class="selectable p-3">
-                        {{ document.content(true)|raw }}
-                    </div>
-
-                    {# LINKS #}
-                    {% if links is defined %}
-                    <div class="mt-5 mb-3">
-                        <div class="row">
-                            <div class="col-6">
-                                <h5 class="fw-bold">Liens internes</h5>
-                                <ul class="list-unstyled">
-                                    {% for link in links['internal'] %}
-                                        <li class="text-truncate">
-                                            <a href="{{ link }}" target="_blank" class="og-preview">{{ link }}</a>
-                                        </li>
-                                    {% else %}
-                                        <li class="text-muted">Aucun lien</li>
-                                    {% endfor %}
-                                </ul>
-                            </div>
-                            <div class="col-6">
-                                <h5 class="fw-bold">Liens externes</h5>
-                                <ul class="list-unstyled">
-                                    {% for link in links['external'] %}
-                                        <li class="text-truncate">
-                                            <a href="{{ link }}" target="_blank" class="og-preview">{{ link }}</a>
-                                        </li>
-                                    {% else %}
-                                        <li class="text-muted">Aucun lien</li>
-                                    {% endfor %}
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    {% endif %}
-                </div>
-
                 {% if canEdit %}
                 {# EDIT #}
-                <div class="tab-pane fade show" id="renderEdit" role="tabpanel" aria-labelledby="renderEdit-tab">
+                <div class="tab-pane fade show active" id="renderEdit" role="tabpanel" aria-labelledby="renderEdit-tab">
                     {{ form_row(form.content, {label: false, attr: {class: 'border-top-0 shadow-none selectable'}}) }}
                     <div class="text-end">
                         <button id="init_meta_btn"
@@ -171,6 +129,48 @@
                         <p class="text-muted">Aucune annotation</p>
                         {% endfor %}
                     </div>
+                </div>
+
+                {#  PREVIEW #}
+                <div class="tab-pane fade show {% if not canEdit %}active{% endif %}"
+                     id="renderPreview"
+                     role="tabpanel"
+                     aria-labelledby="renderPreview-tab">
+                    <div id="markdownPreview" class="selectable p-3">
+                        {{ document.content(true)|raw }}
+                    </div>
+
+                    {# LINKS #}
+                    {% if links is defined %}
+                        <div class="mt-5 mb-3">
+                            <div class="row">
+                                <div class="col-6">
+                                    <h5 class="fw-bold">Liens internes</h5>
+                                    <ul class="list-unstyled">
+                                        {% for link in links['internal'] %}
+                                            <li class="text-truncate">
+                                                <a href="{{ link }}" target="_blank" class="og-preview">{{ link }}</a>
+                                            </li>
+                                        {% else %}
+                                            <li class="text-muted">Aucun lien</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                                <div class="col-6">
+                                    <h5 class="fw-bold">Liens externes</h5>
+                                    <ul class="list-unstyled">
+                                        {% for link in links['external'] %}
+                                            <li class="text-truncate">
+                                                <a href="{{ link }}" target="_blank" class="og-preview">{{ link }}</a>
+                                            </li>
+                                        {% else %}
+                                            <li class="text-muted">Aucun lien</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
         </div>

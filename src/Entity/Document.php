@@ -124,11 +124,20 @@ class Document
      */
     private ?DateTimeImmutable $createdAt;
 
-    public function __construct()
-    {
-        $this->setCreatedAt(new DateTimeImmutable());
-        $this->annotations = new ArrayCollection();
-    }
+    /**
+     * @ORM\OneToMany(targetEntity=Annotation::class, mappedBy="document", orphanRemoval=true)
+     */
+    private $annotations;
+
+    /**
+     * @ORM\OneToMany(targetEntity=DocumentLink::class, mappedBy="source", orphanRemoval=true)
+     */
+    private $sourceOf;
+
+    /**
+     * @ORM\OneToMany(targetEntity=DocumentLink::class, mappedBy="target", orphanRemoval=true)
+     */
+    private $targetOf;
 
     private array $metas = [
         'Title' => 'Titre',
@@ -148,10 +157,12 @@ class Document
         'Source' => 'Source',
     ];
 
-    /**
-     * @ORM\OneToMany(targetEntity=Annotation::class, mappedBy="document", orphanRemoval=true)
-     */
-    private $annotations;
+    public function __construct()
+    {
+        $this->setCreatedAt(new DateTimeImmutable());
+        $this->annotations = new ArrayCollection();
+        $this->links = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -463,7 +474,7 @@ class Document
         });
     }
 
-    public function getLinks(): array
+    public function getExternalLinks(): array
     {
         $re = '/(?:(?:https?|ftp|file):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$])/im';
         preg_match_all($re, $this->getContent(true), $matches);
@@ -495,6 +506,66 @@ class Document
             // set the owning side to null (unless already changed)
             if ($annotation->getDocument() === $this) {
                 $annotation->setDocument(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|DocumentLink[]
+     */
+    public function getSourceOf(): Collection
+    {
+        return $this->sourceOf;
+    }
+
+    public function addSourceOf(DocumentLink $link): self
+    {
+        if (!$this->sourceOf->contains($link)) {
+            $this->sourceOf[] = $link;
+            $link->setSource($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSource(DocumentLink $link): self
+    {
+        if ($this->sourceOf->removeElement($link)) {
+            // set the owning side to null (unless already changed)
+            if ($link->getSource() === $this) {
+                $link->setSource(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|DocumentLink[]
+     */
+    public function getTargetOf(): Collection
+    {
+        return $this->targetOf;
+    }
+
+    public function addTargetOf(DocumentLink $link): self
+    {
+        if (!$this->targetOf->contains($link)) {
+            $this->targetOf[] = $link;
+            $link->setTarget($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTarget(DocumentLink $link): self
+    {
+        if ($this->targetOf->removeElement($link)) {
+            // set the owning side to null (unless already changed)
+            if ($link->getTarget() === $this) {
+                $link->setTarget(null);
             }
         }
 
