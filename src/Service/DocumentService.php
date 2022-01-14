@@ -146,14 +146,18 @@ class DocumentService
         $links = ['internal' => [], 'external' => []];
 
         foreach ($document->getExternalLinks() as $url) {
-            $host = parse_url($url, PHP_URL_HOST);
-
-            if ($host === $request->getHost()) {
-                $links['internal'][] = $url;
-            } else {
-                $links['external'][] = $url;
-            }
+            $links['external'][] = $url;
         }
+
+        foreach ($document->getSourceOf() as $link) {
+            $links['internal'][] = $link->getTarget();
+        }
+
+        foreach ($document->getTargetOf() as $link) {
+            $links['internal'][] = $link->getSource();
+        }
+
+        $links['internal'] = array_unique($links['internal']);
 
         return $links;
     }

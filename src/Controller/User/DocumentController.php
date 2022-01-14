@@ -5,6 +5,7 @@ namespace App\Controller\User;
 use App\Controller\Traits\Authorization;
 use App\Entity\Annotation;
 use App\Entity\Document;
+use App\Entity\DocumentLink;
 use App\Entity\Project;
 use App\Entity\User;
 use App\Form\DocumentType;
@@ -192,6 +193,7 @@ class DocumentController extends AbstractController
                 return $this->redirectToRoute('user_view_project', ['id' => $project->getId()]);
             }
 
+            return $this->redirectToRoute('user_import_documents', ['id' => $project->getId()]);
         }
 
         return $this->render('user/project/import.html.twig', [
@@ -282,10 +284,27 @@ class DocumentController extends AbstractController
      *     name="user_link_documents",
      *     requirements={"source":"\d+","target":"\d+"})
      */
-    public function linkDocuments(Request $request, $source, $target)
+    public function linkDocuments(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        DocumentRepository $documentRepository,
+        $source,
+        $target)
     {
-        if ($request->isMethod('POST')) {
+        $sourceDocument = $documentRepository->find($source);
+        $targetDocument = $documentRepository->find($target);
 
+        if ($sourceDocument && $targetDocument) {
+            $link = new DocumentLink();
+            $link->setSource($sourceDocument);
+            $link->setTarget($targetDocument);
+            $entityManager->persist($link);
+            $entityManager->flush();
+            $this->addFlash('success', "Le document a été lié");
+        } else {
+            $this->addFlash('danger', "Le document n'a pas pu être lié");
         }
+
+        return $this->redirectToRoute('user_document', ['id' => $source]);
     }
 }

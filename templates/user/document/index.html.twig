@@ -149,7 +149,7 @@
                                     <ul class="list-unstyled">
                                         {% for link in links['internal'] %}
                                             <li class="text-truncate">
-                                                <a href="{{ link }}" target="_blank" class="og-preview">{{ link }}</a>
+                                                <a href="{{ path('user_document', {id: link.id}) }}" target="_blank" class="og-preview">{{ link.title }}</a>
                                             </li>
                                         {% else %}
                                             <li class="text-muted">Aucun lien</li>
