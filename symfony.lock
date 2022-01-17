@@ -524,6 +524,15 @@
     "symfony/security-http": {
         "version": "5.4.x-dev"
     },
+    "symfony/sendinblue-mailer": {
+        "version": "5.4",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "5.2",
+            "ref": "ae1cf494ce06b9a4578a8445c610402a1676ee8d"
+        }
+    },
     "symfony/serializer": {
         "version": "5.4.x-dev"
     },
