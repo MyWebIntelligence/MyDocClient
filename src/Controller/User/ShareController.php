@@ -70,7 +70,7 @@ class ShareController extends AbstractController
                     $entityManager->flush();
 
                     $email = new TemplatedEmail();
-                    $email->from(new Address('contact@daten.fr', 'My Doc Intelligence'))
+                    $email->from(new Address($this->getParameter('mailer_from'), 'My Doc Intelligence'))
                         ->to($user->getEmail())
                         ->subject('Invitation à collaborer - My Doc Intelligence')
                         ->htmlTemplate('user/share/email.html.twig');
