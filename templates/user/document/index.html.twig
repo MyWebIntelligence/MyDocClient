@@ -188,7 +188,7 @@
         {% include 'user/document/_modals/selection-tools.html.twig' with {document: document, documents: documents, search: search} only %}
         {% include 'user/document/_modals/delete-document.html.twig' with {project: document.project, document: document} only %}
         {% include 'user/project/_modals/new-tag.html.twig' with {project: document.project} only %}
-        {% include 'user/project/_modals/rename-tag.html.twig' with {project: document.project} only %}
+        {% include 'user/project/_modals/edit-tag.html.twig' with {project: document.project} only %}
         {% include 'user/project/_modals/delete-tag.html.twig' with {project: document.project} only %}
     {% endif %}
 

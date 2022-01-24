@@ -44,6 +44,7 @@ class TagController extends AbstractController
 
         $tag = new Tag();
         $tag->setName($request->request->get('name'));
+        $tag->setDescription($request->request->get('description'));
         $tag->setRoot($project);
 
         if ($parent = $tagRepository->find($request->request->get('parentId'))) {
@@ -160,6 +161,7 @@ class TagController extends AbstractController
         if (($tag = $tagRepository->find($request->request->get('id')))
             && ($tag->getRoot() === $project)) {
             $tag->setName($request->request->get('name'));
+            $tag->setDescription($request->request->get('description'));
             $entityManager->persist($tag);
             $entityManager->flush();
 

@@ -12,8 +12,14 @@
                 </div>
                 <div class="modal-body">
                     <input id="newTag_parentId" type="hidden" name="parentId"/>
-                    <label for="newTag_name" class="form-label">Nom du tag</label>
-                    <input id="newTag_name" type="text" name="name" class="form-control" required/>
+                    <div class="mb-3">
+                        <label for="newTag_name" class="form-label">Nom du tag</label>
+                        <input id="newTag_name" type="text" name="name" class="form-control" required/>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newTag_description" class="form-label">Description</label>
+                        <textarea id="newTag_description" name="description" class="form-control"></textarea>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fermer</button>

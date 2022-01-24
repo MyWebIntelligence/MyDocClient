@@ -152,8 +152,6 @@ class ProjectController extends AbstractController
             $defaultOrder
         );
 
-        dump($queryBuilder->getQuery()->getSQL());
-
         $editForm = $this->createForm(ProjectType::class, $project);
         $importForm = $this->createForm(ImportDocumentType::class, null, [
             'action' => $this->generateUrl('user_import_documents', ['id' => $project->getId()])

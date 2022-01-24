@@ -12,8 +12,14 @@
                 </div>
                 <div class="modal-body">
                     <input id="renameTag_id" type="hidden" name="id"/>
-                    <label for="renameTag_newName" class="form-label">Nouveau nom</label>
-                    <input id="renameTag_newName" type="text" name="name" class="form-control" required/>
+                    <div class="mb-3">
+                        <label for="renameTag_newName" class="form-label">Nouveau nom</label>
+                        <input id="renameTag_newName" type="text" name="name" class="form-control" required/>
+                    </div>
+                    <div class="mb-3">
+                        <label for="renameTag_newDescription" class="form-label">Nouvelle description</label>
+                        <textarea id="renameTag_newDescription" type="text" name="description" class="form-control" required></textarea>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fermer</button>

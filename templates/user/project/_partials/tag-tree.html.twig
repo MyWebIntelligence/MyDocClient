@@ -17,19 +17,22 @@
                        data-bs-toggle="modal"
                        data-bs-target="#renameTagModal"
                        data-id="{{ tag.id }}"
-                       data-name="{{ tag.name }}"></i>
+                       data-name="{{ tag.name }}"
+                       data-description="{{ tag.description }}"></i>
                     {# ADD #}
                     <i class="bi-plus-circle mx-1 text-primary"
                        data-bs-toggle="modal"
                        data-bs-target="#newTagModal"
                        data-parent-id="{{ tag.id }}"
-                       data-name="{{ tag.name }}"></i>
+                       data-name="{{ tag.name }}"
+                       data-description="{{ tag.description }}"></i>
                     {# DELETE #}
                     <i class="bi-trash mx-1 text-danger"
                        data-bs-toggle="modal"
                        data-bs-target="#deleteTagModal"
                        data-id="{{ tag.id }}"
-                       data-name="{{ tag.name }}"></i>
+                       data-name="{{ tag.name }}"
+                       data-description="{{ tag.description }}"></i>
                     {# MOVE #}
                     <i class="bi-arrows-move mx-1"></i>
                 </div>
@@ -57,7 +60,8 @@
             data-bs-toggle="modal"
             data-bs-target="#newTagModal"
             data-parent-id=""
-            data-name="">
+            data-name=""
+            data-description="">
         <i class="bi-tag me-1"></i>
         Nouveau tag
     </button>
