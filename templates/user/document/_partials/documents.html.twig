@@ -1,7 +1,9 @@
-<div class="table-responsive">
+{% import 'macros.html.twig' as macros %}
+<div class="table-responsive" id="asyncDocuments">
     <table class="table">
         <thead>
         <tr>
+            <th style="width: 1%"></th>
             <th>
                 {{ knp_pagination_sortable(documents, 'Titre', 'd.title') }}
                 {% if documents.isSorted('d.title') %}
@@ -32,21 +34,11 @@
                     <i class="{{ documents.direction == 'asc' ? 'bi-sort-down-alt' : 'bi-sort-down' }}"></i>
                 {% endif %}
             </th>
-            <th style="width: 1%"></th>
         </tr>
         </thead>
         <tbody>
         {% for document in documents %}
-            <tr>
-                <td>
-                    <a href="{{ path('user_document', {id: document.id}) }}">{{ document.title ?: 'document ' ~ document.id }}</a>
-                </td>
-                <td>{{ document.creator }}</td>
-                <td>{{ document.date }}</td>
-                <td>{{ document.publisher }}</td>
-                <td>{{ document.type }}</td>
-                <td><a href="{{ path('user_link_documents', {source: source.id, target: document.id}) }}">Lier</a></td>
-            </tr>
+            {{ macros.asyncDocumentRow(source, document) }}
         {% else %}
             <tr>
                 <td colspan="6" class="text-center text-muted py-4">

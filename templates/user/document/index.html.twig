@@ -145,8 +145,7 @@
                             {% endfor %}
                             </div>
                         {% else %}
-                            <p class="text-muted">Aucune annotation</p>
-                            </div>
+                            <p class="text-muted text-center my-4">Aucune annotation</p>
                         {% endfor %}
                     </div>
                 </div>
@@ -169,7 +168,7 @@
                                     <ul class="list-unstyled">
                                         {% for link in links['internal'] %}
                                             <li class="text-truncate">
-                                                <a href="{{ path('user_document', {id: link.id}) }}" target="_blank" class="og-preview">{{ link.title }}</a>
+                                                <a href="{{ path('user_document', {id: link.id}) }}">{{ link.title }}</a>
                                             </li>
                                         {% else %}
                                             <li class="text-muted">Aucun lien</li>

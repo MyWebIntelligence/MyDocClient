@@ -17,6 +17,7 @@ use App\Service\DocumentService;
 use App\Service\TextProcessor;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -307,5 +308,31 @@ class DocumentController extends AbstractController
         }
 
         return $this->redirectToRoute('user_document', ['id' => $source]);
+    }
+
+    /**
+     * @Route("/user/async-search/{id}", name="user_documents_async_search")
+     */
+    public function asyncSearch(
+        Document $document,
+        Request $request,
+        DocumentRepository $documentRepository,
+        PaginatorInterface $paginator): Response
+    {
+        $queryBuilder = $documentRepository->getSearchDocumentsQueryBuilder($document->getProject(), $request);
+
+        $documents = $paginator->paginate(
+            $queryBuilder,
+            $request->query->getInt('page', 1),
+            25,
+            $request->query->get('q') ? [] : ['defaultSortFieldName' => 'd.id', 'defaultSortDirection' => 'asc']
+        );
+
+        return new Response(
+            $this->renderView('user/document/_partials/documents.html.twig', [
+                'source' => $document,
+                'documents' => $documents,
+            ])
+        );
     }
 }

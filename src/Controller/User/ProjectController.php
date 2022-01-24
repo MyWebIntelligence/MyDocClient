@@ -126,30 +126,13 @@ class ProjectController extends AbstractController
             return $this->redirectToRoute('home');
         }
 
-        $defaultOrder = [];
-
-        $queryBuilder = $documentRepository->createQueryBuilder('d')
-            ->select()
-            ->where('d.project = :project')
-            ->setParameter('project', $project);
-
-        if ($request->query->get('q')) {
-            $queryBuilder
-                ->andWhere('MATCH_AGAINST(d.title, d.description, d.content) AGAINST (:search boolean) > 0')
-                ->orderBy('MATCH_AGAINST(d.title, d.description, d.content) AGAINST (:search boolean)', 'DESC')
-                ->setParameter('search', $request->query->get('q'));
-        } else {
-            $defaultOrder = [
-                'defaultSortFieldName' => 'd.id',
-                'defaultSortDirection' => 'asc'
-            ];
-        }
+        $queryBuilder = $documentRepository->getSearchDocumentsQueryBuilder($project, $request);
 
         $documents = $paginator->paginate(
             $queryBuilder,
             $request->query->getInt('page', 1),
             25,
-            $defaultOrder
+            $request->query->get('q') ? [] : ['defaultSortFieldName' => 'd.id', 'defaultSortDirection' => 'asc']
         );
 
         $editForm = $this->createForm(ProjectType::class, $project);

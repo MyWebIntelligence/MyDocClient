@@ -3,8 +3,11 @@
 namespace App\Repository;
 
 use App\Entity\Document;
+use App\Entity\Project;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @method Document|null find($id, $lockMode = null, $lockVersion = null)
@@ -17,6 +20,23 @@ class DocumentRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Document::class);
+    }
+
+    public function getSearchDocumentsQueryBuilder(Project $project, Request $request): QueryBuilder
+    {
+        $queryBuilder = $this->createQueryBuilder('d')
+            ->select()
+            ->where('d.project = :project')
+            ->setParameter('project', $project);
+
+        if ($request->query->get('q')) {
+            $queryBuilder
+                ->andWhere('MATCH_AGAINST(d.title, d.description, d.content) AGAINST (:search boolean) > 0')
+                ->orderBy('MATCH_AGAINST(d.title, d.description, d.content) AGAINST (:search boolean)', 'DESC')
+                ->setParameter('search', $request->query->get('q'));
+        }
+
+        return $queryBuilder;
     }
 
     // /**

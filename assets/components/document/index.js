@@ -14,6 +14,9 @@ window.addEventListener('load', () => {
     const annotationSelection = document.getElementById('annotationSelection');
     const preview = document.getElementById('markdownPreview');
     const toolsModal = Modal.getOrCreateInstance(document.getElementById('selectionToolsModal'));
+    const asyncSearchBtn = document.getElementById('asyncSearch');
+    const asyncDocuments = document.getElementById('asyncDocuments');
+    const searchBar = document.getElementById('document_search');
     const links = document.querySelectorAll('.og-preview');
 
     const extractOg = (response) => {
@@ -75,6 +78,14 @@ window.addEventListener('load', () => {
         }
     };
 
+    const searchDocuments = (event) => {
+        event.preventDefault();
+        const searchUrl = event.currentTarget.dataset.url;
+        fetch(`${searchUrl}?q=${searchBar.value}`)
+            .then(response => response.text())
+            .then(data => asyncDocuments.innerHTML = data);
+    };
+
     // Set Markdown preview
     preview.innerHTML = marked.parse(preview.innerHTML);
 
@@ -97,6 +108,10 @@ window.addEventListener('load', () => {
         // Init document meta-data
         documentContent.addEventListener('change', watchUnsaved);
         documentContent.addEventListener('keyup', watchUnsaved);
+    }
+
+    if (asyncSearchBtn) {
+        asyncSearchBtn.addEventListener('click', searchDocuments);
     }
 
     // if (preview) {

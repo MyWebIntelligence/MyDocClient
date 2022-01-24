@@ -44,7 +44,7 @@
         </div>
     {% endif %}
     <div class="col">
-        <form action="" method="get">
+        <form action="{{ path('user_view_project', {id: project.id}) }}" method="get">
             <div class="row g-2">
                 <div class="col">
                     <label for="document_search" class="visually-hidden">

@@ -39,3 +39,21 @@
         </div>
     </div>
 {% endmacro %}
+
+{% macro asyncDocumentRow(source, target) %}
+    {% if source != target %}
+    <tr>
+        <td>
+            <a href="{{ path('user_link_documents', {source: source.id, target: target.id}) }}"
+               class="btn btn-primary btn-sm">Lier</a>
+        </td>
+        <td>
+            <a href="{{ path('user_document', {id: target.id}) }}">{{ target.title ?: 'document ' ~ target.id }}</a>
+        </td>
+        <td>{{ target.creator }}</td>
+        <td>{{ target.date }}</td>
+        <td>{{ target.publisher }}</td>
+        <td>{{ target.type }}</td>
+    </tr>
+    {% endif %}
+{% endmacro %}
