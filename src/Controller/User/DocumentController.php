@@ -64,6 +64,7 @@ class DocumentController extends AbstractController
 
         return $this->render('user/document/index.html.twig', [
             'document' => $document,
+            'annotationsByTag' => $documentService->getAnnotationsTagIndexed($document),
             'documents' => $documentService->getDocumentsPaginated($document->getProject(), $request, $document),
             'form' => $form->createView(),
             'projectRole' => $this->getRole($user, $document->getProject()),

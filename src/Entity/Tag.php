@@ -243,4 +243,17 @@ class Tag
 
         return $this;
     }
+
+    public function getAncestors(): array
+    {
+        $ancestors = [];
+        $tag = $this;
+
+        while ($parent = $tag->getParent()) {
+            $ancestors[] = $parent;
+            $tag = $parent;
+        }
+
+        return array_reverse($ancestors);
+    }
 }

@@ -80,6 +80,19 @@
                             Initialiser méta-données
                         </button>
 
+                        <button id="annotate_btn"
+                                type="button"
+                                class="btn btn-primary"
+                                data-id="{{ document.id }}"
+                                data-bs-toggle="modal"
+                                data-bs-target="#selectionToolsModal"
+                                role="button"
+                                disabled="disabled"
+                                aria-disabled="true">
+                            <i class="bi-pen"></i>
+                            Annoter la sélection
+                        </button>
+
                         <div class="btn-group">
                             <button type="submit" class="btn btn-primary">
                                 <i class="bi-save me-2"></i>Enregistrer
@@ -114,19 +127,26 @@
 
                 <div class="tab-pane fade show" id="renderAnnotations" role="tabpanel" aria-labelledby="renderAnnotations-tab">
                     <div class="py-3">
-                        {% for annotation in document.annotations %}
-                        <div class="border border-light rounded p-3 mb-3">
-                            <div class="d-flex justify-content-between">
-                                <div>
-                                    {{ annotation.content|nl2br }}
+                        {% set prevIndex = null %}
+                        {% for index, tagAnnotations in annotationsByTag %}
+                            <div class="p-2 mb-3">
+                            {% if index != prevIndex %}
+                                <div class="mb-3">
+                                {% set prevIndex = index %}
+                                {% set firstTag = (tagAnnotations|first).tag %}
+                                {% for ancestor in firstTag.ancestors %}
+                                <span class="badge bg-info">{{ ancestor.name }}</span>
+                                {% endfor %}
+                                <span class="badge bg-info">{{ firstTag.name }}</span>
                                 </div>
-                                <div>
-                                    <span class="badge rounded-pill bg-info">{{ annotation.tag.name }}</span>
-                                </div>
+                            {% endif %}
+                            {% for annotation in tagAnnotations %}
+                            <p>{{ annotation.content|nl2br }}</p>
+                            {% endfor %}
                             </div>
-                        </div>
                         {% else %}
-                        <p class="text-muted">Aucune annotation</p>
+                            <p class="text-muted">Aucune annotation</p>
+                            </div>
                         {% endfor %}
                     </div>
                 </div>

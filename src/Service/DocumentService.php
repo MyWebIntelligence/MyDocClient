@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Entity\Document;
 use App\Entity\Project;
+use App\Entity\Tag;
 use App\Repository\DocumentRepository;
 use DateTimeImmutable;
 use Doctrine\Persistence\ManagerRegistry;
@@ -27,13 +28,15 @@ class DocumentService
     private TextProcessor $textProcessor;
     private DocumentRepository $documentRepository;
     private PaginatorInterface $paginator;
+    private TagUtil $tagUtil;
 
     public function __construct(
         ManagerRegistry $doctrine,
         ValidatorInterface $validator,
         TextProcessor $textProcessor,
         DocumentRepository $documentRepository,
-        PaginatorInterface $paginator)
+        PaginatorInterface $paginator,
+        TagUtil $tagUtil)
     {
         $this->doctrine = $doctrine;
         $this->validator = $validator;
@@ -50,6 +53,7 @@ class DocumentService
         $this->textProcessor = $textProcessor;
         $this->documentRepository = $documentRepository;
         $this->paginator = $paginator;
+        $this->tagUtil = $tagUtil;
     }
 
     public function getFileContraint(): Constraints\File
@@ -178,5 +182,31 @@ class DocumentService
             $request->query->get('page', 1),
             25
         );
+    }
+
+    public function getAnnotationsTagIndexed(Document $document): array
+    {
+        $annotations = [];
+
+        foreach ($document->getAnnotations() as $annotation) {
+            /** @var Tag $tag */
+            if ($tag = $annotation->getTag()) {
+                $index = [$tag->getId()];
+
+                foreach ($tag->getAncestors() as $ancestor) {
+                    $index[] = $ancestor->getId();
+                }
+
+                $index = implode('_', $index);
+
+                if (!array_key_exists($index, $annotations)) {
+                    $annotations[$index] = [];
+                }
+
+                $annotations[$index][] = $annotation;
+            }
+        }
+
+        return $annotations;
     }
 }

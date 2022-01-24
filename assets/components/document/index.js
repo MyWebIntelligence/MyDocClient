@@ -10,6 +10,7 @@ window.addEventListener('load', () => {
     const initialContent = documentContent ? documentContent.value : '';
     const changesUnsaved = document.getElementById('changesUnsaved');
     const initMetaBtn = document.getElementById('init_meta_btn');
+    const annotateBtn = document.getElementById('annotate_btn');
     const annotationSelection = document.getElementById('annotationSelection');
     const preview = document.getElementById('markdownPreview');
     const toolsModal = Modal.getOrCreateInstance(document.getElementById('selectionToolsModal'));
@@ -28,7 +29,7 @@ window.addEventListener('load', () => {
                 const type =  property.replace("og:", "");
             }
         })
-    }
+    };
 
     const watchUnsaved = (event) => {
         if (event.target.value !== initialContent) {
@@ -36,7 +37,7 @@ window.addEventListener('load', () => {
         } else {
             changesUnsaved.classList.add('visually-hidden');
         }
-    }
+    };
 
     const calculateOffset = (child, relativeOffset) => {
         let parent = child.parentElement;
@@ -55,30 +56,24 @@ window.addEventListener('load', () => {
         }
 
         return relativeOffset + children.reduce((a, c) => a + c.textContent.length, 0);
-    }
+    };
 
     const selectText = (event) => {
         let textSelection;
 
+        annotationSelection.value = '';
+
         if (event.target.value) {
             textSelection = event.target.value.substring(event.target.selectionStart, event.target.selectionEnd);
-        } else {
-            const text = event.currentTarget.innerText;
-            const selection = window.getSelection();
-            const start = selection.anchorOffset;
-            const end = selection.extentOffset;
-            const anchorNode = selection.anchorNode;
-            const extentNode = selection.extentNode;
-            textSelection = text.substring(calculateOffset(anchorNode, start), calculateOffset(extentNode, end));
-        }
 
-        if (textSelection !== '') {
-            annotationSelection.value = textSelection;
-            toolsModal.show();
-        } else {
-            annotationSelection.value = '';
+            if (textSelection !== '') {
+                annotateBtn.disabled = false;
+                annotationSelection.value = textSelection;
+            } else {
+                annotateBtn.disabled = true;
+            }
         }
-    }
+    };
 
     // Set Markdown preview
     preview.innerHTML = marked.parse(preview.innerHTML);
