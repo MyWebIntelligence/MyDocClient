@@ -13,11 +13,24 @@
             {% endfor %}
 
             {{ form_start(registrationForm) }}
-            {{ form_row(registrationForm.email) }}
-            {{ form_row(registrationForm.plainPassword) }}
-            {{ form_row(registrationForm.agreeTerms) }}
 
-            <button type="submit" class="btn btn-primary">S'enregistrer</button>
+                <div class="row">
+                    <div class="col">
+                        {{ form_row(registrationForm.firstName) }}
+                    </div>
+                    <div class="col">
+                        {{ form_row(registrationForm.lastName) }}
+                    </div>
+                </div>
+
+                {{ form_row(registrationForm.organization) }}
+                {{ form_row(registrationForm.title) }}
+                {{ form_row(registrationForm.email) }}
+                {{ form_row(registrationForm.plainPassword) }}
+                {{ form_row(registrationForm.agreeTerms) }}
+
+                <button type="submit" class="btn btn-primary">S'enregistrer</button>
+
             {{ form_end(registrationForm) }}
         </div>
     </div>

@@ -1,5 +1,11 @@
 @import "custom_bootstrap";
 
+.required:after {
+  content: '*';
+  color: $danger;
+  margin-left: .2rem;
+}
+
 .offcanvas {
   background-color: rgba(255, 255, 255, .9);
   backdrop-filter: blur(2px);
