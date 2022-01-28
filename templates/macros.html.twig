@@ -57,3 +57,11 @@
     </tr>
     {% endif %}
 {% endmacro %}
+
+{% macro username(user) %}
+    {% if user.firstName is defined or user.lastName is defined %}
+    {{ user.firstName }} {{ user.lastName }}
+    {% else %}
+    {{ user.email }}
+    {% endif %}
+{% endmacro %}

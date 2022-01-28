@@ -141,7 +141,10 @@
                                 </div>
                             {% endif %}
                             {% for annotation in tagAnnotations %}
-                            <p>{{ annotation.content|nl2br }}</p>
+                            <div class="d-flex mb-3">
+                                <div class="me-3">{{ annotation.content|nl2br }}</div>
+                                <div class="ms-auto text-muted">{{ macro.username(annotation.createdBy) }}</div>
+                            </div>
                             {% endfor %}
                             </div>
                         {% else %}
