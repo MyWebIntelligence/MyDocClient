@@ -30,3 +30,10 @@
     cursor: pointer;
   }
 }
+
+#annotationSelection {
+  border: 0;
+  border-left: .4rem solid $gray-500;
+  font-style: italic;
+  font-size: 1.2rem;
+}
