@@ -38,7 +38,7 @@
 
             <div class="tab-content" id="myTabContent">
                 {#  PREVIEW #}
-                <div class="tab-pane fade show active"
+                <div class="tab-pane fade show {{ macro.active_tab('renderPreview') }}"
                      id="renderPreview"
                      role="tabpanel"
                      aria-labelledby="renderPreview-tab">
@@ -81,7 +81,7 @@
 
                 {% if canEdit %}
                 {# EDIT #}
-                <div class="tab-pane fade show" id="renderEdit" role="tabpanel" aria-labelledby="renderEdit-tab">
+                <div class="tab-pane fade show {{ macro.active_tab('renderEdit') }}" id="renderEdit" role="tabpanel" aria-labelledby="renderEdit-tab">
                     {{ form_row(form.content, {label: false, attr: {class: 'border-top-0 shadow-none selectable'}}) }}
                     <div class="text-end">
                         <button id="init_meta_btn"
@@ -141,7 +141,7 @@
                 {% endif %}
 
                 {# ANNOTATIONS #}
-                <div class="tab-pane fade show" id="renderAnnotations" role="tabpanel" aria-labelledby="renderAnnotations-tab">
+                <div class="tab-pane fade show {{ macro.active_tab('renderAnnotations') }}" id="renderAnnotations" role="tabpanel" aria-labelledby="renderAnnotations-tab">
                     <div class="py-3">
                         {% set prevIndex = null %}
                         {% for index, tagAnnotations in annotationsByTag %}

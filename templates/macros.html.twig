@@ -64,7 +64,7 @@
     {% set active_tab = app.request.cookies.get('activeDocumentTab', 'renderPreview-tab') %}
     {% set is_active = active_tab == tab_attr_id %}
     <li class="nav-item" role="presentation">
-        <button class="nav-link {% if is_active %}active{% endif %}"
+        <button class="nav-link {{ _self.active_tab(id) }}"
                 id="{{ tab_attr_id }}"
                 data-bs-toggle="tab"
                 data-bs-target="#{{ id }}"
@@ -73,6 +73,12 @@
                 aria-controls="{{ id }}"
                 aria-selected="{{ is_active ? 'true' : 'false' }}"><i class="{{ icon_class}} me-2"></i>{{ label }}</button>
     </li>
+{% endmacro %}
+
+{% macro active_tab(id) %}
+    {% set tab_attr_id = id ~ '-tab' %}
+    {% set active_tab = app.request.cookies.get('activeDocumentTab', 'renderPreview-tab') %}
+    {{ active_tab == tab_attr_id ? 'active' : '' }}
 {% endmacro %}
 
 {% macro username(user) %}
