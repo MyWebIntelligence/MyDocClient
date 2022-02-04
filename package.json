@@ -26,6 +26,7 @@
         "build": "encore production --progress"
     },
     "dependencies": {
+        "js-cookie": "^3.0.1",
         "marked": "^4.0.5",
         "sortablejs": "^1.14.0"
     },

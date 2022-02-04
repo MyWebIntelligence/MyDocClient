@@ -4,6 +4,7 @@ import '../project/rename-tag';
 import '../project/tag-tree';
 import Modal from 'bootstrap/js/dist/modal';
 import {marked} from 'marked';
+import jsCookie from "js-cookie";
 
 window.addEventListener('load', () => {
     const documentContent = document.getElementById('document_content');
@@ -14,6 +15,7 @@ window.addEventListener('load', () => {
     const annotationSelection = document.getElementById('annotationSelection');
     const preview = document.getElementById('markdownPreview');
     const toolsModal = Modal.getOrCreateInstance(document.getElementById('selectionToolsModal'));
+    const tabButtons = document.querySelectorAll('button[data-bs-toggle="tab"]');
     const asyncSearchBtn = document.getElementById('asyncSearch');
     const asyncDocuments = document.getElementById('asyncDocuments');
     const searchBar = document.getElementById('document_search');
@@ -85,6 +87,15 @@ window.addEventListener('load', () => {
             .then(response => response.text())
             .then(data => asyncDocuments.innerHTML = data);
     };
+
+    // Save opened tab for preselection
+    if (tabButtons) {
+        tabButtons.forEach((item) => {
+            item.addEventListener('shown.bs.tab', (event) => {
+                jsCookie.set('activeDocumentTab', event.target.id);
+            });
+        });
+    }
 
     // Set Markdown preview
     preview.innerHTML = marked.parse(preview.innerHTML);

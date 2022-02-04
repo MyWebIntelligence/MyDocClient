@@ -59,6 +59,22 @@
     {% endif %}
 {% endmacro %}
 
+{% macro tabButton(id, label, icon_class) %}
+    {% set tab_attr_id = id ~ '-tab' %}
+    {% set active_tab = app.request.cookies.get('activeDocumentTab', 'renderPreview-tab') %}
+    {% set is_active = active_tab == tab_attr_id %}
+    <li class="nav-item" role="presentation">
+        <button class="nav-link {% if is_active %}active{% endif %}"
+                id="{{ tab_attr_id }}"
+                data-bs-toggle="tab"
+                data-bs-target="#{{ id }}"
+                type="button"
+                role="tab"
+                aria-controls="{{ id }}"
+                aria-selected="{{ is_active ? 'true' : 'false' }}"><i class="{{ icon_class}} me-2"></i>{{ label }}</button>
+    </li>
+{% endmacro %}
+
 {% macro username(user) %}
     {% if user.firstName is defined or user.lastName is defined %}
     {{ user.firstName }} {{ user.lastName }}

@@ -13,6 +13,3 @@ import 'bootstrap-icons/font/bootstrap-icons.css'
 
 // Bootstrap
 import './custom_bootstrap'
-
-// start the Stimulus application
-//import './stimulus'
