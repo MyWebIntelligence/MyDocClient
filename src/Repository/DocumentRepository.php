@@ -71,12 +71,10 @@ class DocumentRepository extends ServiceEntityRepository
 
         $sql = sprintf('
             SELECT sibling FROM (
-                SELECT
-                   %s,
-                   d.id
+                SELECT %s, d.id
                 FROM document AS d
                 WHERE d.project_id = :project
-                    %s
+                %s
             ) AS t
             WHERE t.id = :document', $lead, $termClause);
 

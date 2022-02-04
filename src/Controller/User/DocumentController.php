@@ -35,7 +35,8 @@ class DocumentController extends AbstractController
 {
     use Authorization;
 
-    private const INVALID_YAML_MSG = "Les données ne semblent pas au format YAML, le document n'a pas été enregistré.";
+    public const RESTRICT_ACCESS_MESSAGE = "Vous n'êtes pas autorisé à agir sur ce document.";
+    public const INVALID_YAML_MSG = "Les données ne semblent pas au format YAML, le document n'a pas été enregistré.";
 
     /**
      * @Route(
@@ -56,7 +57,7 @@ class DocumentController extends AbstractController
         $user = $this->getUser();
 
         if (!$this->canRead($user, $document->getProject())) {
-            $this->addFlash("danger", "Vous n'êtes pas autorisé à agir sur ce document.");
+            $this->addFlash("danger", self::RESTRICT_ACCESS_MESSAGE);
             return $this->redirectToRoute('home');
         }
 
@@ -100,7 +101,7 @@ class DocumentController extends AbstractController
         $user = $this->getUser();
 
         if (!$this->canEdit($user, $project)) {
-            $this->addFlash("danger", "Vous n'êtes pas autorisé à agir sur ce projet.");
+            $this->addFlash("danger", ProjectController::RESTRICT_ACCESS_MESSAGE);
             return $this->redirectToRoute('home');
         }
 
@@ -193,7 +194,7 @@ class DocumentController extends AbstractController
         $user = $this->getUser();
 
         if (!$this->canEdit($user, $project)) {
-            $this->addFlash("danger", "Vous n'êtes pas autorisé à agir sur ce projet.");
+            $this->addFlash("danger", ProjectController::RESTRICT_ACCESS_MESSAGE);
             return $this->redirectToRoute('home');
         }
 
@@ -208,7 +209,11 @@ class DocumentController extends AbstractController
                 : sprintf('%s document(s) importés, %s erreur(s)', count($succeeded), count($errors));
             $this->addFlash('info', $message);
 
-            if (empty($errors)) {
+            if (!empty($errors)) {
+                foreach ($errors as $file => $error) {
+                    $this->addFlash('danger', sprintf('%s : %s', $file, $error));
+                }
+            } else {
                 return $this->redirectToRoute('user_view_project', ['id' => $project->getId()]);
             }
 
@@ -237,7 +242,7 @@ class DocumentController extends AbstractController
         $user = $this->getUser();
 
         if (!$this->canEdit($user, $project)) {
-            $this->addFlash("danger", "Vous n'êtes pas autorisé à agir sur ce projet.");
+            $this->addFlash("danger", ProjectController::RESTRICT_ACCESS_MESSAGE);
             return $this->redirectToRoute('home');
         }
 

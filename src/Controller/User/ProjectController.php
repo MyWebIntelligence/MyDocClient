@@ -31,6 +31,8 @@ use Symfony\Component\Routing\Annotation\Route;
 class ProjectController extends AbstractController
 {
 
+    public const RESTRICT_ACCESS_MESSAGE = "Vous n'êtes pas autorisé à agir sur ce projet.";
+
     use Authorization;
 
     /**
@@ -95,6 +97,12 @@ class ProjectController extends AbstractController
                     : sprintf('%s document(s) importés, %s erreur(s)', count($succeeded), count($errors));
                 $this->addFlash('info', $message);
 
+                if (!empty($errors)) {
+                    foreach ($errors as $file => $error) {
+                        $this->addFlash('danger', sprintf('%s : %s', $file, $error));
+                    }
+                }
+
                 return $this->redirectToRoute('user_view_project', ['id' => $project->getId()]);
             }
 
@@ -125,7 +133,7 @@ class ProjectController extends AbstractController
         $user = $this->getUser();
 
         if (!$this->canRead($user, $project)) {
-            $this->addFlash("danger", "Vous n'êtes pas autorisé à agir sur ce projet.");
+            $this->addFlash("danger", self::RESTRICT_ACCESS_MESSAGE);
             return $this->redirectToRoute('home');
         }
 
@@ -172,7 +180,7 @@ class ProjectController extends AbstractController
         $user = $this->getUser();
 
         if (!$this->canEdit($user, $project)) {
-            $this->addFlash("danger", "Vous n'êtes pas autorisé à agir sur ce projet.");
+            $this->addFlash("danger", self::RESTRICT_ACCESS_MESSAGE);
             return $this->redirectToRoute('home');
         }
 
@@ -200,7 +208,7 @@ class ProjectController extends AbstractController
         $user = $this->getUser();
 
         if (!$this->canRead($user, $project)) {
-            $this->addFlash("danger", "Vous n'êtes pas autorisé à agir sur ce projet.");
+            $this->addFlash("danger", self::RESTRICT_ACCESS_MESSAGE);
             return $this->redirectToRoute('home');
         }
 
@@ -255,7 +263,7 @@ class ProjectController extends AbstractController
         $user = $this->getUser();
 
         if (!$this->isProjectOwner($user, $project)) {
-            $this->addFlash("danger", "Vous n'êtes pas autorisé à agir sur ce projet.");
+            $this->addFlash("danger", self::RESTRICT_ACCESS_MESSAGE);
             return $this->redirectToRoute('home');
         }
 

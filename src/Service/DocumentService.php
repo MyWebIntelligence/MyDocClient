@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Controller\User\DocumentController;
 use App\Entity\Document;
 use App\Entity\Project;
 use App\Entity\Tag;
@@ -62,6 +63,9 @@ class DocumentService
         return $this->fileConstraint;
     }
 
+    /**
+     * @throws ParseException
+     */
     public function importDocuments(Project $project, FormInterface $form): array
     {
         $succeeded = [];
@@ -83,8 +87,12 @@ class DocumentService
                 if ($file->getMimeType() === 'application/zip') {
                     $this->importArchive($project, $file, $succeeded, $errors);
                 } else {
-                    $this->import($project, $file, $file->getClientOriginalName());
-                    $succeeded[] = $file->getClientOriginalName();
+                    try {
+                        $this->import($project, $file, $file->getClientOriginalName());
+                        $succeeded[] = $file->getClientOriginalName();
+                    } catch (ParseException $exception) {
+                        $errors[$file->getClientOriginalName()] = DocumentController::INVALID_YAML_MSG;
+                    }
                 }
             }
         }
@@ -94,6 +102,9 @@ class DocumentService
         return [$succeeded, $errors];
     }
 
+    /**
+     * @throws ParseException
+     */
     private function importArchive(Project $project, UploadedFile $archive, array &$succeeded, array &$errors): void
     {
         $zip = new ZipArchive();
@@ -124,6 +135,9 @@ class DocumentService
         }
     }
 
+    /**
+     * @throws ParseException
+     */
     private function import(Project $project, File $file, $name): void
     {
         $document = new Document();
@@ -213,5 +227,4 @@ class DocumentService
 
         return $annotations;
     }
-
 }
