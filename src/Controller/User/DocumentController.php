@@ -16,6 +16,7 @@ use App\Repository\TagRepository;
 use App\Service\DocumentService;
 use App\Service\TextProcessor;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -25,6 +26,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Yaml\Exception\ParseException;
 
 /**
  * @IsGranted("IS_AUTHENTICATED")
@@ -33,16 +35,20 @@ class DocumentController extends AbstractController
 {
     use Authorization;
 
+    private const INVALID_YAML_MSG = "Les données ne semblent pas au format YAML, le document n'a pas été enregistré.";
+
     /**
      * @Route(
      *     "/user/document/{id}",
      *     name="user_document",
      *     requirements={"id": "\d+"})
+     * @throws Exception
      */
     public function index(
         Document $document,
         Request $request,
         DocumentService $documentService,
+        DocumentRepository $documentRepository,
         TextProcessor $textProcessor,
         TagRepository $tagRepository): Response
     {
@@ -58,13 +64,13 @@ class DocumentController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $documentService->save($document);
-            $this->addFlash('success', 'Le document a été sauvé');
-            return $this->redirectToRoute('user_document', ['id' => $document->getId()]);
+            return $this->saveForm($document, $documentService);
         }
 
         return $this->render('user/document/index.html.twig', [
             'document' => $document,
+            'prev' => $documentRepository->getSiblingDocument($document, $request, -1),
+            'next' => $documentRepository->getSiblingDocument($document, $request, 1),
             'annotationsByTag' => $documentService->getAnnotationsTagIndexed($document),
             'documents' => $documentService->getDocumentsPaginated($document->getProject(), $request, $document),
             'form' => $form->createView(),
@@ -106,8 +112,7 @@ class DocumentController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $documentService->save($document);
-            return $this->redirectToRoute('user_document', ['id' => $document->getId()]);
+            return $this->saveForm($document, $documentService);
         }
 
         return $this->render('user/document/index.html.twig', [
@@ -120,6 +125,18 @@ class DocumentController extends AbstractController
             'tagTree' => $tagRepository->getProjectTags($document->getProject(), true),
             'search' => $request->query->get('q'),
         ]);
+    }
+
+    private function saveForm(Document $document, DocumentService $documentService): RedirectResponse
+    {
+        try {
+            $documentService->save($document);
+            $this->addFlash('success', 'Le document a été sauvé');
+        } catch (ParseException $exception) {
+            $this->addFlash('danger', self::INVALID_YAML_MSG);
+        }
+
+        return $this->redirectToRoute('user_document', ['id' => $document->getId()]);
     }
 
     /**

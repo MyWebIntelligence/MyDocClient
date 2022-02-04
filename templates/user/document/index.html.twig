@@ -16,11 +16,19 @@
 {% block body %}
     {{ form_start(form) }}
     <div class="my-2">
-        <a href="{{ path('user_view_project', {id: document.project.id}) }}"
-           class="text-decoration-none">
-            <i class="bi-chevron-left"></i>
-            {{ document.project.name }}
-        </a>
+        <div class="row">
+            <div class="col-6">
+                <a href="{{ path('user_view_project', {id: document.project.id}) }}"
+                   class="text-decoration-none">
+                    <i class="bi-chevron-left"></i>
+                    {{ document.project.name }}
+                </a>
+            </div>
+            <div class="col-6 text-end fs-4">
+                {% if prev %}<a href="{{ path('user_document', {id: prev.id}) }}" title="Document précédent">{% endif %}<i class="bi-arrow-left-circle-fill"></i>{% if prev %}</a>{% endif %}
+                {% if next %}<a href="{{ path('user_document', {id: next.id}) }}" title="Document suivant">{% endif %}<i class="bi-arrow-right-circle-fill"></i>{% if next %}</a>{% endif %}
+            </div>
+        </div>
     </div>
 
     <div class="row">

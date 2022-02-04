@@ -24,3 +24,4 @@ doctrine:
         dql:
             string_functions:
                 MATCH_AGAINST: App\Extension\Doctrine\MatchAgainst
+                LEAD: DoctrineExtensions\Query\Mysql\Lead

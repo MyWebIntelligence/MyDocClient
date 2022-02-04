@@ -15,9 +15,11 @@ use App\Service\DocumentService;
 use App\Service\TextProcessor;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use JsonException;
 use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -109,6 +111,7 @@ class ProjectController extends AbstractController
      *     name="user_view_project",
      *     requirements={"id": "\d+"},
      *     methods={"GET"})
+     * @throws JsonException
      */
     public function view(
         Request $request,
@@ -140,7 +143,7 @@ class ProjectController extends AbstractController
             'action' => $this->generateUrl('user_import_documents', ['id' => $project->getId()])
         ]);
 
-        return $this->render('user/project/view.html.twig', [
+        $response = $this->render('user/project/view.html.twig', [
             'project' => $project,
             'projectRole' => $this->getRole($user, $project),
             'documents' => $documents,
@@ -150,6 +153,11 @@ class ProjectController extends AbstractController
             'importForm' => $importForm->createView(),
             'search' => $request->query->get('q'),
         ]);
+
+        $cookie = Cookie::create('searchParams', json_encode($request->query->all(), JSON_THROW_ON_ERROR));
+        $response->headers->setCookie($cookie);
+
+        return $response;
     }
 
     /**
