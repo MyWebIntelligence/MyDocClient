@@ -12,7 +12,7 @@
             </div>
             <div class="modal-body">
                 {% if document.id %}
-                <form method="post" action="{{ path('user_tag_document', {id: document.id ?? 0}) }}">
+                <form method="post" action="{{ path('user_tag_document', {id: document.id ?? 0}) }}" onsubmit="return event.key !== 'Enter'">
                     <label for="annotationSelection" class="visually-hidden mb-2">Sélection</label>
                     <textarea id="annotationSelection"
                               name="selection"

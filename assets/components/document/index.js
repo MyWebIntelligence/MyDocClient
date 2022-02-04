@@ -15,7 +15,7 @@ window.addEventListener('load', () => {
     const annotationSelection = document.getElementById('annotationSelection');
     const preview = document.getElementById('markdownPreview');
     const toolsModal = Modal.getOrCreateInstance(document.getElementById('selectionToolsModal'));
-    const tabButtons = document.querySelectorAll('button[data-bs-toggle="tab"]');
+    const tabButtons = document.querySelectorAll('#documentRenderMode button[data-bs-toggle="tab"]');
     const asyncSearchBtn = document.getElementById('asyncSearch');
     const asyncDocuments = document.getElementById('asyncDocuments');
     const searchBar = document.getElementById('document_search');
@@ -121,7 +121,12 @@ window.addEventListener('load', () => {
         documentContent.addEventListener('keyup', watchUnsaved);
     }
 
-    if (asyncSearchBtn) {
+    if (asyncSearchBtn && searchBar) {
+        searchBar.addEventListener('keyup', (event) => {
+            if (event.key === 'Enter') {
+                searchDocuments(event);
+            }
+        })
         asyncSearchBtn.addEventListener('click', searchDocuments);
     }
 

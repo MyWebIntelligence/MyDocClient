@@ -8,10 +8,12 @@
                name="q"
                placeholder="Rechercher..."
                class="form-control"
+               data-url="{{ path('user_documents_async_search', {id: document.id}) }}"
                value="{{ search }}"/>
     </div>
     <div class="col-auto">
         <button id="asyncSearch"
+                type="submit"
                 class="btn btn-primary"
                 data-url="{{ path('user_documents_async_search', {id: document.id}) }}">
             <i class="bi-search"></i>
