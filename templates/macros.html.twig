@@ -49,7 +49,9 @@
         </td>
         <td>
             {{ target.title ?: 'document ' ~ target.id }}
-            <a href="{{ path('user_document', {id: target.id}) }}" target="_blank"><i class="bi-box-arrow-up-right"></i></a>
+            <a href="{{ path('user_document', {id: target.id}) }}" target="_blank">
+                <i class="bi-box-arrow-up-right ms-2"></i>
+            </a>
         </td>
         <td>{{ target.creator }}</td>
         <td>{{ target.date }}</td>

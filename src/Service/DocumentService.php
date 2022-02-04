@@ -17,6 +17,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\Constraints;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\Yaml\Exception\ParseException;
 use ZipArchive;
 
 class DocumentService
@@ -56,7 +57,7 @@ class DocumentService
         $this->tagUtil = $tagUtil;
     }
 
-    public function getFileContraint(): Constraints\File
+    public function getFileConstraint(): Constraints\File
     {
         return $this->fileConstraint;
     }
@@ -105,7 +106,7 @@ class DocumentService
             foreach (glob($extractPath . DIRECTORY_SEPARATOR . "*") as $path) {
                 if (is_file($path)) {
                     $file = new File($path);
-                    $violations = $this->validator->validate($file, $this->getFileContraint());
+                    $violations = $this->validator->validate($file, $this->getFileConstraint());
 
                     if ($violations->count() === 0) {
                         $this->import($project, $file, $file->getBasename());
@@ -137,6 +138,9 @@ class DocumentService
         $entityManager->persist($document);
     }
 
+    /**
+     * @throws ParseException
+     */
     public function save(Document $document): void
     {
         $manager = $this->doctrine->getManager();
@@ -209,4 +213,5 @@ class DocumentService
 
         return $annotations;
     }
+
 }

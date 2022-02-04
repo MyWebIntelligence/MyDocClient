@@ -29,7 +29,7 @@ class ImportDocumentType extends AbstractType
                     new Count(['max' => ini_get('max_file_uploads')]),
                     new All([
                         'constraints' => [
-                            $this->documentService->getFileContraint(),
+                            $this->documentService->getFileConstraint(),
                         ],
                     ])
                 ],
