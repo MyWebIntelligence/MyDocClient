@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -408,15 +409,14 @@ class Document
 
     /**
      * Update metadata mapped properties from metas parsed in content
+     * @throws ParseException
      */
     public function updateMetadata(): void
     {
         preg_match(self::META_MATCH_PATTERN, $this->getContent(), $metaContent);
+        $metas = Yaml::parse(trim(current($metaContent), '-'));
 
-        if (!empty($metaContent)
-            && ($metas = Yaml::parse(trim(current($metaContent), '-')))
-            && is_array($metas)
-        ) {
+        if (!empty($metaContent) && is_array($metas)) {
             foreach ($metas as $property => $value) {
                 if (method_exists($this, 'set' . $property)) {
                     $this->{'set' . $property}($value);
