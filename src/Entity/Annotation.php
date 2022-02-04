@@ -36,6 +36,11 @@ class Annotation
     private ?string $content;
 
     /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $comment;
+
+    /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="annotations")
      * @ORM\JoinColumn(nullable=false)
      * @Gedmo\Blameable(on="create")
@@ -79,6 +84,18 @@ class Annotation
     public function setContent(string $content): self
     {
         $this->content = $content;
+
+        return $this;
+    }
+
+    public function getComment(): ?string
+    {
+        return $this->comment;
+    }
+
+    public function setComment(?string $comment): self
+    {
+        $this->comment = $comment;
 
         return $this;
     }

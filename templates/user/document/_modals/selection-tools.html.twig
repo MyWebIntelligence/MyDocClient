@@ -16,7 +16,7 @@
                     <label for="annotationSelection" class="visually-hidden mb-2">Sélection</label>
                     <textarea id="annotationSelection"
                               name="selection"
-                              class="form-control bg-white shadow-none"
+                              class="form-control citation bg-white shadow-none"
                               rows="5"
                               readonly="readonly"></textarea>
 
@@ -49,9 +49,18 @@
                                  id="selectionToolsAnnotations"
                                  role="tabpanel"
                                  aria-labelledby="selectionToolsAnnotationsLabel">
+                                <div class="mb-3">
+                                    <label for="annotationComment" class="mb-2">Commentaire</label>
+                                    <textarea id="annotationComment" class="form-control" name="comment"></textarea>
+                                </div>
+
+                                <div>
+                                    <label for="annotationTag" class="mb-2">Tag associé</label>
+                                </div>
+
                                 <div class="row g-1">
                                     <div class="col">
-                                        <select class="form-select" name="tag">
+                                        <select id="annotationTag" class="form-select" name="tag">
                                             {% for tag in document.project.tags %}
                                                 <option value="{{ tag.id }}">
                                                     {% for i in range(0, tag.lvl*2) %}{{ "&nbsp;" }}{% endfor %}

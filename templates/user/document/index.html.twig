@@ -155,7 +155,7 @@
                         {% for index, tagAnnotations in annotationsByTag %}
                             <div class="p-2 mb-3">
                             {% if index != prevIndex %}
-                                <div class="mb-3">
+                                <div>
                                 {% set prevIndex = index %}
                                 {% set firstTag = (tagAnnotations|first).tag %}
                                 {% for ancestor in firstTag.ancestors %}
@@ -165,9 +165,12 @@
                                 </div>
                             {% endif %}
                             {% for annotation in tagAnnotations %}
-                            <div class="d-flex mb-3">
-                                <div class="me-3">{{ annotation.content|nl2br }}</div>
-                                <div class="ms-auto text-muted">{{ macro.username(annotation.createdBy) }}</div>
+                            <div class="mb-3">
+                                <div class="text-muted text-end"><small>Annoté par {{ macro.username(annotation.createdBy) }}</small></div>
+                                <div class="p-2 border border-light rounded">
+                                    <div class="ps-2 citation {{ annotation.comment ? 'mb-3' : '' }}">{{ annotation.content|nl2br }}</div>
+                                    <p class="m-0">{{ annotation.comment|nl2br }}</p>
+                                </div>
                             </div>
                             {% endfor %}
                             </div>

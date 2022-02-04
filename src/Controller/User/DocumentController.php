@@ -291,6 +291,7 @@ class DocumentController extends AbstractController
         if (($request->request->get('action') === 'tag-document') && ($tag = $tagRepository->find($request->request->get('tag')))) {
             $annotation = new Annotation();
             $annotation->setContent($request->request->get('selection'));
+            $annotation->setComment($request->request->get('comment'));
             $annotation->setDocument($document);
             $annotation->setTag($tag);
             $entityManager->persist($annotation);

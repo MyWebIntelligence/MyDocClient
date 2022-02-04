@@ -42,7 +42,7 @@
 
 {% macro asyncDocumentLinkRow(source, target) %}
     {% if source != target %}
-    <tr>
+    <tr style="vertical-align: middle">
         <td>
             <a href="{{ path('user_link_documents', {source: source.id, target: target.id}) }}"
                class="btn btn-primary btn-sm">Lier</a>
