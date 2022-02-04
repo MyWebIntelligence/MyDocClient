@@ -40,7 +40,7 @@
     </div>
 {% endmacro %}
 
-{% macro asyncDocumentRow(source, target) %}
+{% macro asyncDocumentLinkRow(source, target) %}
     {% if source != target %}
     <tr>
         <td>
@@ -48,7 +48,8 @@
                class="btn btn-primary btn-sm">Lier</a>
         </td>
         <td>
-            <a href="{{ path('user_document', {id: target.id}) }}">{{ target.title ?: 'document ' ~ target.id }}</a>
+            {{ target.title ?: 'document ' ~ target.id }}
+            <a href="{{ path('user_document', {id: target.id}) }}" target="_blank"><i class="bi-box-arrow-up-right"></i></a>
         </td>
         <td>{{ target.creator }}</td>
         <td>{{ target.date }}</td>

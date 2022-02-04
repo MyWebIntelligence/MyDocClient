@@ -38,7 +38,7 @@
         </thead>
         <tbody>
         {% for document in documents %}
-            {{ macros.asyncDocumentRow(source, document) }}
+            {{ macros.asyncDocumentLinkRow(source, document) }}
         {% else %}
             <tr>
                 <td colspan="6" class="text-center text-muted py-4">
