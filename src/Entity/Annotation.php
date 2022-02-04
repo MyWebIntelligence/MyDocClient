@@ -31,7 +31,7 @@ class Annotation
     private ?Tag $tag;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="text")
      */
     private ?string $content;
 
