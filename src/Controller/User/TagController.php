@@ -21,7 +21,7 @@ class TagController extends AbstractController
     use Authorization;
 
     /**
-     * @Route("/user/project/{id}/add-tag",
+     * @Route("/project/{id}/add-tag",
      *     name="user_project_add_tag",
      *     requirements={"id": "\d+"},
      *     methods={"POST"})
@@ -58,7 +58,7 @@ class TagController extends AbstractController
     }
 
     /**
-     * @Route("/user/project/{id}/delete-tag",
+     * @Route("/project/{id}/delete-tag",
      *     name="user_project_delete_tag",
      *     requirements={"id": "\d+"},
      *     methods={"POST"})
@@ -90,7 +90,7 @@ class TagController extends AbstractController
     }
 
     /**
-     * @Route("/user/project/{id}/save-tags",
+     * @Route("/project/{id}/save-tags",
      *     name="user_project_save_tags",
      *     requirements={"id": "\d+"},
      *     methods={"POST"})
@@ -137,7 +137,7 @@ class TagController extends AbstractController
     }
 
     /**
-     * @Route("/user/project/{id}/rename-tag",
+     * @Route("/project/{id}/rename-tag",
      *     name="user_project_rename_tag",
      *     requirements={"id": "\d+"},
      *     methods={"POST"})

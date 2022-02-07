@@ -10,9 +10,9 @@ use App\Entity\Project;
 use App\Entity\User;
 use App\Form\DocumentType;
 use App\Form\ImportDocumentType;
-use App\Repository\AnnotationRepository;
 use App\Repository\DocumentRepository;
 use App\Repository\TagRepository;
+use App\Service\AnnotationService;
 use App\Service\DocumentService;
 use App\Service\TextProcessor;
 use Doctrine\DBAL\Connection;
@@ -40,7 +40,7 @@ class DocumentController extends AbstractController
 
     /**
      * @Route(
-     *     "/user/document/{id}",
+     *     "/document/{id}",
      *     name="user_document",
      *     requirements={"id": "\d+"})
      * @throws Exception
@@ -50,6 +50,7 @@ class DocumentController extends AbstractController
         Request $request,
         DocumentService $documentService,
         DocumentRepository $documentRepository,
+        AnnotationService $annotationService,
         TextProcessor $textProcessor,
         TagRepository $tagRepository): Response
     {
@@ -72,7 +73,8 @@ class DocumentController extends AbstractController
             'document' => $document,
             'prev' => $documentRepository->getSiblingDocument($document, $request, -1),
             'next' => $documentRepository->getSiblingDocument($document, $request, 1),
-            'annotationsByTag' => $documentService->getAnnotationsTagIndexed($document),
+            'annotationsByTag' => $annotationService->getTagIndexed($document->getAnnotations()),
+            'annotationAuthors' => $annotationService->getAuthors($document->getAnnotations()),
             'documents' => $documentService->getDocumentsPaginated($document->getProject(), $request, $document),
             'form' => $form->createView(),
             'projectRole' => $this->getRole($user, $document->getProject()),
@@ -86,7 +88,7 @@ class DocumentController extends AbstractController
 
     /**
      * @Route(
-     *     "/user/project/{id}/new-document",
+     *     "/project/{id}/new-document",
      *     name="user_document_new",
      *     requirements={"id": "\d+"})
      */
@@ -142,7 +144,7 @@ class DocumentController extends AbstractController
 
     /**
      * @Route(
-     *     "/user/document/meta/{id?}",
+     *     "/document/meta/{id?}",
      *     name="user_document_meta",
      *     requirements={"id": "\d+"})
      */
@@ -181,7 +183,7 @@ class DocumentController extends AbstractController
     }
 
     /**
-     * @Route("/user/project/{id}/import",
+     * @Route("/project/{id}/import",
      *     name="user_import_documents",
      *     requirements={"id": "\d+"})
      */
@@ -229,7 +231,7 @@ class DocumentController extends AbstractController
     }
 
     /**
-     * @Route("/user/project/{id}/delete-documents",
+     * @Route("/project/{id}/delete-documents",
      *     name="user_delete_documents",
      *     requirements={"id": "\d+"})
      */
@@ -258,7 +260,7 @@ class DocumentController extends AbstractController
     }
 
     /**
-     * @Route("/user/delete-document/{id}", name="user_delete_document")
+     * @Route("/delete-document/{id}", name="user_delete_document")
      */
     public function deleteDocument(
         Document $document,
@@ -279,12 +281,11 @@ class DocumentController extends AbstractController
     }
 
     /**
-     * @Route("/user/tag-document/{id}", name="user_tag_document")
+     * @Route("/tag-document/{id}", name="user_tag_document")
      */
     public function tagDocument(
         Document $document,
         Request $request,
-        AnnotationRepository $annotationRepository,
         TagRepository $tagRepository,
         EntityManagerInterface $entityManager): RedirectResponse
     {
@@ -305,12 +306,11 @@ class DocumentController extends AbstractController
     }
 
     /**
-     * @Route("/user/link-documents/{source}/{target}",
+     * @Route("/link-documents/{source}/{target}",
      *     name="user_link_documents",
      *     requirements={"source":"\d+","target":"\d+"})
      */
     public function linkDocuments(
-        Request $request,
         EntityManagerInterface $entityManager,
         DocumentRepository $documentRepository,
         $source,
@@ -334,7 +334,7 @@ class DocumentController extends AbstractController
     }
 
     /**
-     * @Route("/user/async-search/{id}", name="user_documents_async_search")
+     * @Route("/async-search/{id}", name="user_documents_async_search")
      */
     public function asyncSearch(
         Document $document,
@@ -358,4 +358,4 @@ class DocumentController extends AbstractController
             ])
         );
     }
-}
+ }

@@ -150,34 +150,12 @@
 
                 {# ANNOTATIONS #}
                 <div class="tab-pane fade show {{ macro.active_tab('renderAnnotations') }}" id="renderAnnotations" role="tabpanel" aria-labelledby="renderAnnotations-tab">
-                    <div class="py-3">
-                        {% set prevIndex = null %}
-                        {% for index, tagAnnotations in annotationsByTag %}
-                            <div class="p-2 mb-3">
-                            {% if index != prevIndex %}
-                                <div>
-                                {% set prevIndex = index %}
-                                {% set firstTag = (tagAnnotations|first).tag %}
-                                {% for ancestor in firstTag.ancestors %}
-                                <span class="badge bg-info">{{ ancestor.name }}</span>
-                                {% endfor %}
-                                <span class="badge bg-info">{{ firstTag.name }}</span>
-                                </div>
-                            {% endif %}
-                            {% for annotation in tagAnnotations %}
-                            <div class="mb-3">
-                                <div class="text-muted text-end"><small>Annoté par {{ macro.username(annotation.createdBy) }}</small></div>
-                                <div class="p-2 border border-light rounded">
-                                    <div class="ps-2 citation {{ annotation.comment ? 'mb-3' : '' }}">{{ annotation.content|nl2br }}</div>
-                                    <p class="m-0">{{ annotation.comment|nl2br }}</p>
-                                </div>
-                            </div>
-                            {% endfor %}
-                            </div>
-                        {% else %}
-                            <p class="text-muted text-center my-4">Aucune annotation</p>
-                        {% endfor %}
-                    </div>
+                    {% include'user/annotation/index.html.twig' with {
+                        project: document.project,
+                        document: document,
+                        annotationsByTag: annotationsByTag,
+                        authors: annotationAuthors,
+                    } only %}
                 </div>
             </div>
         </div>
@@ -187,16 +165,35 @@
             document: document,
             lexicon: lexicon,
             tagTree: tagTree,
-            canEdit: canEdit} only %}
+            canEdit: canEdit
+        } only %}
     </div>
 
     {% if canEdit %}
         {% include 'user/document/_modals/init-meta.html.twig' with {} only %}
-        {% include 'user/document/_modals/selection-tools.html.twig' with {document: document, documents: documents, search: search} only %}
-        {% include 'user/document/_modals/delete-document.html.twig' with {project: document.project, document: document} only %}
-        {% include 'user/project/_modals/new-tag.html.twig' with {project: document.project} only %}
-        {% include 'user/project/_modals/edit-tag.html.twig' with {project: document.project} only %}
-        {% include 'user/project/_modals/delete-tag.html.twig' with {project: document.project} only %}
+
+        {% include 'user/document/_modals/selection-tools.html.twig' with {
+            document: document,
+            documents: documents,
+            search: search
+        } only %}
+
+        {% include 'user/document/_modals/delete-document.html.twig' with {
+            project: document.project,
+            document: document
+        } only %}
+
+        {% include 'user/project/_modals/new-tag.html.twig' with {
+            project: document.project
+        } only %}
+
+        {% include 'user/project/_modals/edit-tag.html.twig' with {
+            project: document.project
+        } only %}
+
+        {% include 'user/project/_modals/delete-tag.html.twig' with {
+            project: document.project
+        } only %}
     {% endif %}
 
 {% endblock %}
@@ -204,4 +201,5 @@
 {% block javascripts %}
     {{ parent() }}
     {{ encore_entry_script_tags('document') }}
+    {{ encore_entry_script_tags('annotation') }}
 {% endblock %}

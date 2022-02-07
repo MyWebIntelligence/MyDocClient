@@ -1,3 +1,5 @@
+{% import 'macros.html.twig' as macro %}
+
 <div class="modal fade"
      id="selectionToolsModal"
      data-bs-backdrop="static"
@@ -60,13 +62,7 @@
 
                                 <div class="row g-1">
                                     <div class="col">
-                                        <select id="annotationTag" class="form-select" name="tag">
-                                            {% for tag in document.project.tags %}
-                                                <option value="{{ tag.id }}">
-                                                    {% for i in range(0, tag.lvl*2) %}{{ "&nbsp;" }}{% endfor %}
-                                                    {{ tag.name }}</option>
-                                            {% endfor %}
-                                        </select>
+                                        {{ macro.tag_select(document.project.tags, 'annotationTag') }}
                                     </div>
                                     <div class="col-auto">
                                         <button type="submit" name="action" value="tag-document" class="btn btn-primary">

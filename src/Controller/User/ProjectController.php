@@ -9,8 +9,10 @@ use App\Entity\User;
 use App\Form\ImportDocumentType;
 use App\Form\LexiconType;
 use App\Form\ProjectType;
+use App\Repository\AnnotationRepository;
 use App\Repository\DocumentRepository;
 use App\Repository\TagRepository;
+use App\Service\AnnotationService;
 use App\Service\DocumentService;
 use App\Service\TextProcessor;
 use Doctrine\ORM\EntityManagerInterface;
@@ -36,7 +38,7 @@ class ProjectController extends AbstractController
     use Authorization;
 
     /**
-     * @Route("/user/projects", name="user_projects")
+     * @Route("/projects", name="user_projects")
      */
     public function index(): Response
     {
@@ -67,7 +69,7 @@ class ProjectController extends AbstractController
     }
 
     /**
-     * @Route("/user/projects/new", name="user_new_project")
+     * @Route("/projects/new", name="user_new_project")
      */
     public function new(
         Request $request,
@@ -115,7 +117,7 @@ class ProjectController extends AbstractController
     }
 
     /**
-     * @Route("/user/project/{id}",
+     * @Route("/project/{id}",
      *     name="user_view_project",
      *     requirements={"id": "\d+"},
      *     methods={"GET"})
@@ -169,7 +171,7 @@ class ProjectController extends AbstractController
     }
 
     /**
-     * @Route("/user/project/{id}",
+     * @Route("/project/{id}",
      *     name="user_edit_project",
      *     requirements={"id": "\d+"},
      *     methods={"POST"})
@@ -198,7 +200,7 @@ class ProjectController extends AbstractController
     }
 
     /**
-     * @Route("/user/project/{id}/word-count",
+     * @Route("/project/{id}/word-count",
      *     name="user_project_lexicon",
      *     requirements={"id": "\d+"})
      */
@@ -253,7 +255,7 @@ class ProjectController extends AbstractController
     }
 
     /**
-     * @Route("/user/project/{id}/delete",
+     * @Route("/project/{id}/delete",
      *     name="user_delete_project",
      *     requirements={"id": "\d+"})
      */
@@ -278,6 +280,26 @@ class ProjectController extends AbstractController
 
         return $this->render('user/project/delete.html.twig', [
             'project' => $project,
+        ]);
+    }
+
+    /**
+     * @Route("/project/{id}/annotations", name="user_project_annotations")
+     */
+    public function annotations(
+        Project $project,
+        AnnotationRepository $annotationRepository,
+        AnnotationService $annotationService): Response
+    {
+        $annotations = $annotationRepository->getProjectAnnotations($project);
+
+        return $this->render('user/project/annotations.html.twig', [
+            'authors' => $annotationService->getAuthors($annotations),
+            'annotationsByTag' => $annotationService->getTagIndexed($annotations),
+            'annotationAuthors' => $annotationService->getAuthors($annotations),
+            'projectView' => true,
+            'project' => $project,
+            'document' => null,
         ]);
     }
 

@@ -36,3 +36,7 @@
   border-left: .4rem solid $gray-500;
   font-style: italic;
 }
+
+table.halign-rows tr {
+  vertical-align: middle;
+}

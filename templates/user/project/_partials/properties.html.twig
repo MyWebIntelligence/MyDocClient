@@ -1,5 +1,12 @@
 <div class="sticky-top pt-3" style="z-index: 900;">
     <div class="accordion accordion-flush" id="propertiesPanel">
+        <div class="d-grid text-center mb-3">
+            <a href="{{ path('user_project_annotations', {id: project.id}) }}"
+               class="btn btn-primary">
+                <i class="bi-tag me-2"></i>Annotations
+            </a>
+        </div>
+
         {#
         <div class="accordion-item">
             <h5 class="accordion-header" id="propertiesPanel_lexicon_header">

@@ -3,8 +3,11 @@
 namespace App\Repository;
 
 use App\Entity\Annotation;
+use App\Entity\Document;
+use App\Entity\Project;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @method Annotation|null find($id, $lockMode = null, $lockVersion = null)
@@ -14,9 +17,77 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class AnnotationRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+
+    private ProjectRepository $projectRepository;
+    private DocumentRepository $documentRepository;
+    private UserRepository $userRepository;
+    private TagRepository $tagRepository;
+
+    public function __construct(
+        ManagerRegistry $registry,
+        ProjectRepository $projectRepository,
+        DocumentRepository $documentRepository,
+        UserRepository $userRepository,
+        TagRepository $tagRepository)
     {
+        $this->projectRepository = $projectRepository;
+        $this->documentRepository = $documentRepository;
+        $this->userRepository = $userRepository;
+        $this->tagRepository = $tagRepository;
+
         parent::__construct($registry, Annotation::class);
+    }
+
+    public function getProjectAnnotations(Project $project)
+    {
+        $queryBuilder = $this->createQueryBuilder('a')
+            ->join(Document::class, 'd', 'WITH', 'd = a.document')
+            ->join(Project::class, 'p', 'WITH', 'p = d.project')
+            ->where('p = :project')
+            ->setParameter('project', $project)
+        ;
+
+        return $queryBuilder->getQuery()->getResult();
+    }
+
+    public function getFiltered(Request $request)
+    {
+        $params = $request->query;
+        $project = $this->projectRepository->find($params->get('project'));
+
+        $queryBuilder = $this->createQueryBuilder('a')
+            ->join(Document::class, 'd', 'WITH', 'd = a.document')
+            ->join(Project::class, 'p', 'WITH', 'p = d.project')
+            ->where('p = :project')
+            ->setParameter('project', $project)
+        ;
+
+        if ($params->get('document')) {
+            $document = $this->documentRepository->find($params->get('document'));
+            if ($document && $document->getProject() === $project) {
+                $queryBuilder->andWhere('d = :document')
+                    ->setParameter('document', $document);
+            }
+        }
+
+        if ($params->get('author')) {
+            $user = $this->userRepository->find($params->get('author'));
+            if ($user) {
+                $queryBuilder->andWhere('a.createdBy = :user')
+                    ->setParameter('user', $user);
+            }
+        }
+
+        if ($params->get('tag')) {
+            $tag = $this->tagRepository->find($params->get('tag'));
+            if ($tag) {
+                $queryBuilder->andWhere('a.tag = :tag')
+                    ->setParameter('tag', $tag);
+            }
+        }
+
+        return $queryBuilder->getQuery()->getResult();
+
     }
 
     // /**

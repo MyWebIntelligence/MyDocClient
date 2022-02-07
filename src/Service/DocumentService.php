@@ -201,30 +201,4 @@ class DocumentService
             25
         );
     }
-
-    public function getAnnotationsTagIndexed(Document $document): array
-    {
-        $annotations = [];
-
-        foreach ($document->getAnnotations() as $annotation) {
-            /** @var Tag $tag */
-            if ($tag = $annotation->getTag()) {
-                $index = [$tag->getId()];
-
-                foreach ($tag->getAncestors() as $ancestor) {
-                    $index[] = $ancestor->getId();
-                }
-
-                $index = implode('_', $index);
-
-                if (!array_key_exists($index, $annotations)) {
-                    $annotations[$index] = [];
-                }
-
-                $annotations[$index][] = $annotation;
-            }
-        }
-
-        return $annotations;
-    }
 }

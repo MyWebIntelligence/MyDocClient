@@ -1,0 +1,40 @@
+{% import 'macros.html.twig' as macro %}
+{% set prevIndex = null %}
+
+{% for index, tagAnnotations in annotationsByTag %}
+    <div class="py-2 mb-3">
+        {% if index != prevIndex %}
+            <div>
+                {% set prevIndex = index %}
+                {% set firstTag = (tagAnnotations|first).tag %}
+                {% for ancestor in firstTag.ancestors %}
+                    <span class="h5"><span class="badge bg-info">{{ ancestor.name }}</span></span>
+                {% endfor %}
+                <span class="h5"><span class="badge bg-info">{{ firstTag.name }}</span></span>
+            </div>
+        {% endif %}
+
+        {% for annotation in tagAnnotations %}
+            <div class="mb-3">
+                <div class="text-muted text-end">
+                    <small>
+                        {{ macro.username(annotation.createdBy) }}
+                        <span class="text-light">dans</span>
+                        <i>{{ annotation.document.title }}</i>
+                        <a href="{{ path('user_document', {id: annotation.document.id}) }}"
+                           class="ms-1"
+                           target="_blank">
+                            <i class="bi-box-arrow-up-right"></i>
+                        </a>
+                    </small>
+                </div>
+                <div class="p-2 border border-light rounded">
+                    <div class="ps-2 citation {{ annotation.comment ? 'mb-3' : '' }}">{{ annotation.content|nl2br }}</div>
+                    <p class="m-0">{{ annotation.comment|nl2br }}</p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <p class="text-muted text-center my-4">Aucune annotation</p>
+{% endfor %}

@@ -1,0 +1,26 @@
+{% import 'macros.html.twig' as macro %}
+<div class="p-2">
+    <form action="{{ path('async_filter_annotations') }}" class="mb-3">
+        <div class="row row-cols-lg-4 align-items-end g-2">
+            <input type="hidden" name="project" value="{{ project.id }}">
+            {% if document %}
+            <input type="hidden" name="document" value="{{ document.id }}">
+            {% endif %}
+            <div class="col">
+                <label class="form-label" for="filterByTag">Tag</label>
+                {{ macro.tag_select(project.tags, 'filterByTag', {with_empty: true, params: app.request.query}) }}
+            </div>
+            <div class="col">
+                <label class="form-label" for="filterByAuthor">Auteur</label>
+                {{ macro.author_select(authors, 'filterByAuthor', {with_empty: true, params: app.request.query}) }}
+            </div>
+            <div class="col-auto">
+                <button id="annotationFilterBtn" type="button" class="btn btn-primary">Filtrer</button>
+            </div>
+        </div>
+    </form>
+
+    <div id="annotationContainer">
+        {% include('user/annotation/annotations.html.twig') with {annotationsByTag} only %}
+    </div>
+</div>

@@ -13,7 +13,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/user/profile")
+ * @Route("/profile")
  * @IsGranted("IS_AUTHENTICATED")
  */
 class ProfileController extends AbstractController

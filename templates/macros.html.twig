@@ -42,7 +42,7 @@
 
 {% macro asyncDocumentLinkRow(source, target) %}
     {% if source != target %}
-    <tr style="vertical-align: middle">
+    <tr>
         <td>
             <a href="{{ path('user_link_documents', {source: source.id, target: target.id}) }}"
                class="btn btn-primary btn-sm">Lier</a>
@@ -89,4 +89,30 @@
     {% else %}
     {{ user.email }}
     {% endif %}
+{% endmacro %}
+
+{% macro tag_select(tags, select_id, options) %}
+    <select id="{{ select_id }}" class="form-select" name="tag">
+        {% if options != null and options.with_empty == true %}
+            <option value=""></option>
+        {% endif %}
+        {% for tag in tags %}
+            <option value="{{ tag.id }}" {{ options != null and options.params.get('tag') == tag.id ? 'selected' : '' }}>
+                {% for i in range(0, tag.lvl*2) %}{{ "&nbsp;" }}{% endfor %}
+                {{ tag.name }}</option>
+        {% endfor %}
+    </select>
+{% endmacro %}
+
+{% macro author_select(authors, selectId, options) %}
+    <select id="" class="form-select" name="author">
+        {% if options != null and options.with_empty == true %}
+        <option value=""></option>
+        {% endif %}
+        {% for author in authors %}
+            <option value="{{ author.id }}" {{ options != null and options.params.get('author') == author.id ? 'selected' : '' }}>
+                {{ _self.username(author) }}
+            </option>
+        {% endfor %}
+    </select>
 {% endmacro %}

@@ -29,7 +29,7 @@ class ShareController extends AbstractController
     use Authorization;
 
     /**
-     * @Route("/user/project/{id}/share",
+     * @Route("/project/{id}/share",
      *     name="user_project_invite",
      *     methods={"POST"},
      *     requirements={"id": "\d+"})
@@ -95,7 +95,7 @@ class ShareController extends AbstractController
 
 
     /**
-     * @Route("/user/project/{id}/share/update",
+     * @Route("/project/{id}/share/update",
      *     name="user_project_invite_update",
      *     methods={"POST"},
      *     requirements={"id": "\d+"})
@@ -129,7 +129,7 @@ class ShareController extends AbstractController
     }
 
     /**
-     * @Route("/user/project/{id}/share/delete",
+     * @Route("/project/{id}/share/delete",
      *     name="user_project_invite_delete",
      *     methods={"POST"},
      *     requirements={"id": "\d+"})

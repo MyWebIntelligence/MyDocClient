@@ -29,6 +29,7 @@ Encore
     .addEntry('app', './assets/app.js')
     .addEntry('project', './assets/components/project/index.js')
     .addEntry('document', './assets/components/document/index.js')
+    .addEntry('annotation', './assets/components/annotation/index.js')
 
     // enables the Symfony UX Stimulus bridge (used in assets/stimulus.js)
     //.enableStimulusBridge('./assets/controllers.json')

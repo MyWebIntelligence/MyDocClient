@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+{% import 'macros.html.twig' as macro %}
+{% block title %}{{ macro.title('Annotations du projet ' ~ project.name) }}
+
+{% endblock %}
+{% block body %}
+    <div class="my-2">
+        <div class="row">
+            <div class="col-6">
+                <a href="{{ path('user_view_project', {id: project.id}) }}"
+                   class="text-decoration-none">
+                    <i class="bi-chevron-left"></i>
+                    {{ project.name }}
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <h1>Annotations</h1>
+
+    {% include('user/annotation/index.html.twig') with {
+        project: project,
+        document: null,
+        annotationsByTag: annotationsByTag,
+        authors: annotationAuthors,
+    } only %}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('annotation') }}
+{% endblock %}
