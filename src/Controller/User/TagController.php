@@ -2,7 +2,6 @@
 
 namespace App\Controller\User;
 
-use App\Controller\Traits\Authorization;
 use App\Entity\Project;
 use App\Entity\Tag;
 use App\Entity\User;
@@ -17,8 +16,6 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class TagController extends AbstractController
 {
-
-    use Authorization;
 
     /**
      * @Route("/project/{id}/add-tag",
@@ -35,7 +32,7 @@ class TagController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
 
-        if (!$this->canEdit($user, $project)) {
+        if (!$user->canEdit($project)) {
             return $this->json([
                 'res' => false,
                 'message' => "Vous n'êtes pas autorisé à agir sur ce projet",
@@ -72,7 +69,7 @@ class TagController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
 
-        if (!$this->canEdit($user, $project)) {
+        if (!$user->canEdit($project)) {
             return $this->json([
                 'res' => false,
                 'message' => "Vous n'êtes pas autorisé à agir sur ce projet",
@@ -105,7 +102,7 @@ class TagController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
 
-        if (!$this->canEdit($user, $project)) {
+        if (!$user->canEdit($project)) {
             return $this->json([
                 'res' => false,
                 'message' => "Vous n'êtes pas autorisé à agir sur ce projet",
@@ -151,7 +148,7 @@ class TagController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
 
-        if (!$this->canEdit($user, $project)) {
+        if (!$user->canEdit($project)) {
             return $this->json([
                 'res' => false,
                 'message' => "Vous n'êtes pas autorisé à agir sur ce projet",

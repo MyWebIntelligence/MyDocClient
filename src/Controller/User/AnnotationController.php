@@ -2,7 +2,6 @@
 
 namespace App\Controller\User;
 
-use App\Controller\Traits\Authorization;
 use App\Entity\User;
 use App\Repository\AnnotationRepository;
 use App\Repository\ProjectRepository;
@@ -14,8 +13,6 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class AnnotationController extends AbstractController
 {
-
-    use Authorization;
 
     /**
      * @Route("/annotations/filter", name="async_filter_annotations")
@@ -30,7 +27,7 @@ class AnnotationController extends AbstractController
         $user = $this->getUser();
         $project = $projectRepository->find($request->query->get('project'));
 
-        if ($project && $this->canRead($user, $project)) {
+        if ($project && $user->canRead($project)) {
             $filteredAnnotations = $annotationRepository->getFiltered($request);
 
             $html = $this->renderView('user/annotation/annotations.html.twig', [

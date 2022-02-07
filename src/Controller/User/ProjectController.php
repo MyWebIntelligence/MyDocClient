@@ -2,7 +2,6 @@
 
 namespace App\Controller\User;
 
-use App\Controller\Traits\Authorization;
 use App\Entity\Permission;
 use App\Entity\Project;
 use App\Entity\User;
@@ -35,8 +34,6 @@ class ProjectController extends AbstractController
 
     public const RESTRICT_ACCESS_MESSAGE = "Vous n'êtes pas autorisé à agir sur ce projet.";
 
-    use Authorization;
-
     /**
      * @Route("/projects", name="user_projects")
      */
@@ -53,9 +50,9 @@ class ProjectController extends AbstractController
         $readableProject = [];
 
         foreach ($user->getPermissions() as $permission) {
-            if ($this->isGrantedProject($user, $permission->getProject(), Permission::ROLE_EDITOR)) {
+            if ($user->isGrantedProject($permission->getProject(), Permission::ROLE_EDITOR)) {
                 $editableProject[] = $permission->getProject();
-            } elseif ($this->isGrantedProject($user, $permission->getProject(), Permission::ROLE_READER)) {
+            } elseif ($user->isGrantedProject($permission->getProject(), Permission::ROLE_READER)) {
                 $readableProject[] = $permission->getProject();
             }
         }
@@ -134,7 +131,7 @@ class ProjectController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
 
-        if (!$this->canRead($user, $project)) {
+        if (!$user->canRead($project)) {
             $this->addFlash("danger", self::RESTRICT_ACCESS_MESSAGE);
             return $this->redirectToRoute('home');
         }
@@ -155,10 +152,10 @@ class ProjectController extends AbstractController
 
         $response = $this->render('user/project/view.html.twig', [
             'project' => $project,
-            'projectRole' => $this->getRole($user, $project),
+            'projectRole' => $user->getRole($project),
             'documents' => $documents,
             'tagTree' => $tagRepository->getProjectTags($project, true),
-            'canEdit' => $this->canEdit($user, $project),
+            'canEdit' => $user->canEdit($project),
             'editForm' => $editForm->createView(),
             'importForm' => $importForm->createView(),
             'search' => $request->query->get('q'),
@@ -181,7 +178,7 @@ class ProjectController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
 
-        if (!$this->canEdit($user, $project)) {
+        if (!$user->canEdit($project)) {
             $this->addFlash("danger", self::RESTRICT_ACCESS_MESSAGE);
             return $this->redirectToRoute('home');
         }
@@ -209,7 +206,7 @@ class ProjectController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
 
-        if (!$this->canRead($user, $project)) {
+        if (!$user->canRead($project)) {
             $this->addFlash("danger", self::RESTRICT_ACCESS_MESSAGE);
             return $this->redirectToRoute('home');
         }
@@ -264,7 +261,7 @@ class ProjectController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
 
-        if (!$this->isProjectOwner($user, $project)) {
+        if (!$user->isOwner($project)) {
             $this->addFlash("danger", self::RESTRICT_ACCESS_MESSAGE);
             return $this->redirectToRoute('home');
         }

@@ -2,7 +2,6 @@
 
 namespace App\Controller\User;
 
-use App\Controller\Traits\Authorization;
 use App\Entity\Permission;
 use App\Entity\Project;
 use App\Entity\User;
@@ -25,8 +24,6 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class ShareController extends AbstractController
 {
-
-    use Authorization;
 
     /**
      * @Route("/project/{id}/share",

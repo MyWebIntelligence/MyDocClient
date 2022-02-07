@@ -359,4 +359,50 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+    public function isOwner(Project $project): bool
+    {
+        return $this === $project->getOwner();
+    }
+
+    public function canEdit(Project $project): bool
+    {
+        return $this->isOwner($project)
+            || $this->isGrantedProject($project, Permission::ROLE_EDITOR);
+    }
+
+    public function canRead(Project $project): bool
+    {
+        return $this->isOwner($project)
+            || $this->isGrantedProject($project, Permission::ROLE_EDITOR)
+            || $this->isGrantedProject($project, Permission::ROLE_READER);
+    }
+
+    public function isGrantedProject(Project $project, string $role): bool
+    {
+        foreach ($this->getPermissions() as $permission) {
+            if ($project === $permission->getProject() && $permission->getRole() === $role) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function getRole(Project $project): string
+    {
+        if ($this->isOwner($project)) {
+            return 'Propriétaire';
+        }
+
+        if ($this->isGrantedProject($project, Permission::ROLE_EDITOR)) {
+            return 'Éditeur';
+        }
+
+        if ($this->isGrantedProject($project, Permission::ROLE_READER)) {
+            return 'Lecteur';
+        }
+
+        return 'Aucun droit';
+    }
 }

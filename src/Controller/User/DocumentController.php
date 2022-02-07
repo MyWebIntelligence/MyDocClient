@@ -2,7 +2,6 @@
 
 namespace App\Controller\User;
 
-use App\Controller\Traits\Authorization;
 use App\Entity\Annotation;
 use App\Entity\Document;
 use App\Entity\DocumentLink;
@@ -33,7 +32,6 @@ use Symfony\Component\Yaml\Exception\ParseException;
  */
 class DocumentController extends AbstractController
 {
-    use Authorization;
 
     public const RESTRICT_ACCESS_MESSAGE = "Vous n'êtes pas autorisé à agir sur ce document.";
     public const INVALID_YAML_MSG = "Les données ne semblent pas au format YAML, le document n'a pas été enregistré.";
@@ -57,7 +55,7 @@ class DocumentController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
 
-        if (!$this->canRead($user, $document->getProject())) {
+        if (!$user->canRead($document->getProject())) {
             $this->addFlash("danger", self::RESTRICT_ACCESS_MESSAGE);
             return $this->redirectToRoute('home');
         }
@@ -77,8 +75,8 @@ class DocumentController extends AbstractController
             'annotationAuthors' => $annotationService->getAuthors($document->getAnnotations()),
             'documents' => $documentService->getDocumentsPaginated($document->getProject(), $request, $document),
             'form' => $form->createView(),
-            'projectRole' => $this->getRole($user, $document->getProject()),
-            'canEdit' => $this->canEdit($user, $document->getProject()),
+            'projectRole' => $user->getRole($document->getProject()),
+            'canEdit' => $user->canEdit($document->getProject()),
             'lexicon' => $textProcessor->countWords($document->getWords()),
             'links' => $documentService->getLinks($document, $request),
             'tagTree' => $tagRepository->getProjectTags($document->getProject(), true),
@@ -102,7 +100,7 @@ class DocumentController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
 
-        if (!$this->canEdit($user, $project)) {
+        if (!$user->canEdit($project)) {
             $this->addFlash("danger", ProjectController::RESTRICT_ACCESS_MESSAGE);
             return $this->redirectToRoute('home');
         }
@@ -122,8 +120,8 @@ class DocumentController extends AbstractController
             'document' => $document,
             'documents' => $documentService->getDocumentsPaginated($document->getProject(), $request),
             'form' => $form->createView(),
-            'projectRole' => $this->getRole($user, $document->getProject()),
-            'canEdit' => $this->canEdit($user, $project),
+            'projectRole' => $user->getRole($document->getProject()),
+            'canEdit' => $user->canEdit($project),
             'lexicon' => $textProcessor->countWords($document->getWords()),
             'tagTree' => $tagRepository->getProjectTags($document->getProject(), true),
             'search' => $request->query->get('q'),
@@ -159,7 +157,7 @@ class DocumentController extends AbstractController
             // New document, metas come from nothing
             $document = new Document();
             $document->setOwner($user);
-        } elseif (!$this->canEdit($user, $document->getProject())) {
+        } elseif (!$user->canEdit($document->getProject())) {
             return $this->json(false, 403);
         }
 
@@ -195,7 +193,7 @@ class DocumentController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
 
-        if (!$this->canEdit($user, $project)) {
+        if (!$user->canEdit($project)) {
             $this->addFlash("danger", ProjectController::RESTRICT_ACCESS_MESSAGE);
             return $this->redirectToRoute('home');
         }
@@ -243,7 +241,7 @@ class DocumentController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
 
-        if (!$this->canEdit($user, $project)) {
+        if (!$user->canEdit($project)) {
             $this->addFlash("danger", ProjectController::RESTRICT_ACCESS_MESSAGE);
             return $this->redirectToRoute('home');
         }
@@ -270,7 +268,7 @@ class DocumentController extends AbstractController
         $user = $this->getUser();
         $project = $document->getProject();
 
-        if ($project && $this->canEdit($user, $project)) {
+        if ($project && $user->canEdit($project)) {
             $entityManager->remove($document);
             $entityManager->flush();
             $this->addFlash('info', sprintf("Le document %s a été supprimé", $document->getTitle()));
