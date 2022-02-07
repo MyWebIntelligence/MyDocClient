@@ -30,21 +30,14 @@ class AnnotationController extends AbstractController
         $user = $this->getUser();
         $project = $projectRepository->find($request->query->get('project'));
 
-        if ($project) {
-            $annotations = $annotationRepository->getProjectAnnotations($project);
+        if ($project && $this->canRead($user, $project)) {
+            $filteredAnnotations = $annotationRepository->getFiltered($request);
 
-            if ($this->canRead($user, $project)) {
-                $filteredAnnotations = $annotationRepository->getFiltered($request);
+            $html = $this->renderView('user/annotation/annotations.html.twig', [
+                'annotationsByTag' => $annotationService->getTagIndexed($filteredAnnotations),
+            ]);
 
-                $html = $this->renderView('user/annotation/annotations.html.twig', [
-                    #'project' => $project,
-                    #'document' => null,
-                    'annotationsByTag' => $annotationService->getTagIndexed($filteredAnnotations),
-                    #'authors' => $annotationService->getAuthors($annotations),
-                ]);
-
-                return new Response($html);
-            }
+            return new Response($html);
         }
 
         return new Response('Contenu inaccessible', Response::HTTP_UNAUTHORIZED);

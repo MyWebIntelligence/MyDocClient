@@ -297,7 +297,6 @@ class ProjectController extends AbstractController
             'authors' => $annotationService->getAuthors($annotations),
             'annotationsByTag' => $annotationService->getTagIndexed($annotations),
             'annotationAuthors' => $annotationService->getAuthors($annotations),
-            'projectView' => true,
             'project' => $project,
             'document' => null,
         ]);
