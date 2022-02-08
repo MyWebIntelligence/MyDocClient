@@ -15,7 +15,7 @@
         {% endif %}
 
         {% for annotation in tagAnnotations %}
-            <div class="mb-3">
+            <div class="mb-3" id="annotation_{{ annotation.id }}">
                 <div class="text-muted text-end">
                     <small>
                         {{ macro.username(annotation.createdBy) }}
@@ -23,9 +23,15 @@
                         <i>{{ annotation.document.title }}</i>
                         <a href="{{ path('user_document', {id: annotation.document.id}) }}"
                            class="ms-1"
-                           target="_blank">
-                            <i class="bi-box-arrow-up-right"></i>
-                        </a>
+                           target="_blank"><i class="bi-box-arrow-up-right"></i></a>
+
+                        {% if app.user == annotation.createdBy or app.user.owner(annotation.document.project) %}
+                        <a href="{{ path('delete_annotation', {id: annotation.id}) }}"
+                           data-block-id="annotation_{{ annotation.id }}"
+                           class="delete-annotation text-danger ms-2"
+                           data-bs-toggle="modal"
+                           data-bs-target="#confirmDeleteModal"><i class="bi-trash"></i></a>
+                        {% endif %}
                     </small>
                 </div>
                 <div class="p-2 border border-light rounded">
@@ -34,6 +40,28 @@
                 </div>
             </div>
         {% endfor %}
+    </div>
+
+    <div class="modal fade"
+         id="confirmDeleteModal"
+         tabindex="-1"
+         aria-labelledby="confirmDeleteModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmDeleteModalLabel">Supprimer une annotation</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                </div>
+                <div class="modal-body">
+                    Voulez-vous supprimer l'annotation ?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteButton">Supprimer</button>
+                </div>
+            </div>
+        </div>
     </div>
 {% else %}
     <p class="text-muted text-center my-4">Aucune annotation</p>

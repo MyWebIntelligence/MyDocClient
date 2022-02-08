@@ -2,11 +2,14 @@
 
 namespace App\Controller\User;
 
+use App\Entity\Annotation;
 use App\Entity\User;
 use App\Repository\AnnotationRepository;
 use App\Repository\ProjectRepository;
 use App\Service\AnnotationService;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -40,4 +43,25 @@ class AnnotationController extends AbstractController
         return new Response('Contenu inaccessible', Response::HTTP_UNAUTHORIZED);
     }
 
+    /**
+     * @Route("/annotation/delete/{id}", name="delete_annotation")
+     */
+    public function delete(Annotation $annotation, EntityManagerInterface $entityManager): JsonResponse
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $document = $annotation->getDocument();
+
+        if ($document && $project = $document->getProject()) {
+            if ($user->isOwner($project) || $user === $annotation->getCreatedBy()) {
+                $entityManager->remove($annotation);
+                $entityManager->flush();
+
+                return new JsonResponse(true);
+            }
+        }
+
+
+        return new JsonResponse(false);
+    }
 }
