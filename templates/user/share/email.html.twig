@@ -4,9 +4,18 @@
 
 <p style="font-family: sans-serif">Vous avez été invité par {{ host.email }} à collaborer sur son projet {{ project.name }}.</p>
 
-<a style="font-family: sans-serif" href="{{ url('user_view_project', {id: project.id}) }}">{{ url('user_view_project', {id: project.id}) }}</a>
+{% if password %}
+    <h3 style="font-family: sans-serif">Connectez-vous</h3>
 
-<p style="font-family: sans-serif">Si vous n'aviez pas de compte sur My Doc Intelligence, il a été créé pour vous,
-    procédez à la réinitialisation de mot de passe pour accéder au projet.</p>
+    <p style="font-family: sans-serif">Votre compte a été créé pour vous, vous pouvez vous connecter avec le mot de passe suivant :</p>
+
+    <p style="font-family: sans-serif">{{ password }}</p>
+
+    <p style="font-family: sans-serif">Vous pourrez modifier ce mot de passe une fois connecté, sur la page de votre profil.</p>
+{% endif %}
+
+<h3 style="font-family: sans-serif">Accédez au projet</h3>
+
+<a style="font-family: sans-serif" href="{{ url('user_view_project', {id: project.id}) }}">{{ url('user_view_project', {id: project.id}) }}</a>
 
 <p style="font-family: sans-serif">À bientôt sur My Doc Intelligence</p>

@@ -7,6 +7,7 @@ use App\Entity\Project;
 use App\Entity\User;
 use App\Repository\PermissionRepository;
 use App\Repository\UserRepository;
+use App\Service\PasswordGenerator;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
@@ -30,6 +31,7 @@ class ShareController extends AbstractController
      *     name="user_project_invite",
      *     methods={"POST"},
      *     requirements={"id": "\d+"})
+     * @throws \Exception
      */
     public function share(
         Project                     $project,
@@ -37,18 +39,21 @@ class ShareController extends AbstractController
         UserPasswordHasherInterface $hasher,
         EntityManagerInterface      $entityManager,
         UserRepository              $userRepository,
+        PasswordGenerator           $passwordGenerator,
         PermissionRepository        $permissionRepository,
         MailerInterface             $mailer): Response
     {
         if ($project->getOwner() === $this->getUser()) {
             if ($email = $request->request->get('email')) {
+                $password = null;
+
                 // If user doesn't exist, create it
                 if (!$user = $userRepository->findOneBy(['email' => $email])) {
                     $user = new User();
                     $user->setEmail($email);
 
-                    $tempPassword = $hasher->hashPassword($user, uniqid('temp', true));
-                    $user->setPassword($tempPassword);
+                    $password = $passwordGenerator::generate();
+                    $user->setPassword($hasher->hashPassword($user, $password));
 
                     $user->setIsVerified(false);
                     $user->setRoles([]);
@@ -74,6 +79,7 @@ class ShareController extends AbstractController
                     $context = $email->getContext();
                     $context['host'] = $this->getUser();
                     $context['project'] = $project;
+                    $context['password'] = $password;
                     $email->context($context);
                     $mailer->send($email);
 
