@@ -309,6 +309,7 @@ class DocumentController extends AbstractController
      *     requirements={"source":"\d+","target":"\d+"})
      */
     public function linkDocuments(
+        Request $request,
         EntityManagerInterface $entityManager,
         DocumentRepository $documentRepository,
         $source,
@@ -321,6 +322,7 @@ class DocumentController extends AbstractController
             $link = new DocumentLink();
             $link->setSource($sourceDocument);
             $link->setTarget($targetDocument);
+            $link->setContent($request->request->get('selection'));
             $entityManager->persist($link);
             $entityManager->flush();
             $this->addFlash('success', "Le document a été lié");

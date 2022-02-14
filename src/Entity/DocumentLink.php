@@ -21,13 +21,18 @@ class DocumentLink
      * @ORM\ManyToOne(targetEntity=Document::class, inversedBy="sourceOf")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $source;
+    private ?Document $source;
 
     /**
      * @ORM\ManyToOne(targetEntity=Document::class, inversedBy="targetOf")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $target;
+    private ?Document $target;
+
+    /**
+     * @ORM\Column(type="text")
+     */
+    private ?string $content;
 
     public function getId(): ?int
     {
@@ -54,6 +59,18 @@ class DocumentLink
     public function setTarget(?Document $target): self
     {
         $this->target = $target;
+
+        return $this;
+    }
+
+    public function getContent(): ?string
+    {
+        return $this->content;
+    }
+
+    public function setContent(string $content): self
+    {
+        $this->content = $content;
 
         return $this;
     }

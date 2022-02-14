@@ -25,8 +25,17 @@
                 </a>
             </div>
             <div class="col-6 text-end fs-4">
-                {% if prev %}<a href="{{ path('user_document', {id: prev.id}) }}" title="Document précédent">{% endif %}<i class="bi-arrow-left-circle-fill"></i>{% if prev %}</a>{% endif %}
-                {% if next %}<a href="{{ path('user_document', {id: next.id}) }}" title="Document suivant">{% endif %}<i class="bi-arrow-right-circle-fill"></i>{% if next %}</a>{% endif %}
+                {% apply spaceless %}
+                {% if prev %}<a href="{{ path('user_document', {id: prev.id}) }}" title="Document précédent">{% endif %}
+                    <i class="bi-arrow-left-circle-fill {{ not prev ? 'text-light' : '' }}"></i>
+                {% if prev %}</a>{% endif %}
+                {% endapply %}
+
+                {% apply spaceless %}
+                {% if next %}<a href="{{ path('user_document', {id: next.id}) }}" title="Document suivant">{% endif %}
+                <i class="bi-arrow-right-circle-fill {{ not next ? 'text-light' : '' }}"></i>
+                {% if next %}</a>{% endif %}
+                {% endapply %}
             </div>
         </div>
     </div>
