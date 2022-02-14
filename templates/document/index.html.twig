@@ -159,7 +159,7 @@
 
                 {# ANNOTATIONS #}
                 <div class="tab-pane fade show {{ macro.active_tab('renderAnnotations') }}" id="renderAnnotations" role="tabpanel" aria-labelledby="renderAnnotations-tab">
-                    {% include'user/annotation/index.html.twig' with {
+                    {% include'annotation/index.html.twig' with {
                         project: document.project,
                         document: document,
                         annotationsByTag: annotationsByTag,
@@ -170,7 +170,7 @@
         </div>
 
         {# PROPERTIES #}
-        {% include 'user/document/_partials/properties.html.twig' with {
+        {% include 'document/_partials/properties.html.twig' with {
             document: document,
             lexicon: lexicon,
             tagTree: tagTree,
@@ -179,28 +179,28 @@
     </div>
 
     {% if canEdit %}
-        {% include 'user/document/_modals/init-meta.html.twig' with {} only %}
+        {% include 'document/_modals/init-meta.html.twig' with {} only %}
 
-        {% include 'user/document/_modals/selection-tools.html.twig' with {
+        {% include 'document/_modals/selection-tools.html.twig' with {
             document: document,
             documents: documents,
             search: search
         } only %}
 
-        {% include 'user/document/_modals/delete-document.html.twig' with {
+        {% include 'document/_modals/delete-document.html.twig' with {
             project: document.project,
             document: document
         } only %}
 
-        {% include 'user/project/_modals/new-tag.html.twig' with {
+        {% include 'project/_modals/new-tag.html.twig' with {
             project: document.project
         } only %}
 
-        {% include 'user/project/_modals/edit-tag.html.twig' with {
+        {% include 'project/_modals/edit-tag.html.twig' with {
             project: document.project
         } only %}
 
-        {% include 'user/project/_modals/delete-tag.html.twig' with {
+        {% include 'project/_modals/delete-tag.html.twig' with {
             project: document.project
         } only %}
     {% endif %}

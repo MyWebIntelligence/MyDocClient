@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\User;
+namespace App\Controller;
 
 use App\Entity\Permission;
 use App\Entity\Project;
@@ -57,7 +57,7 @@ class ProjectController extends AbstractController
             }
         }
 
-        return $this->render('user/project/index.html.twig', [
+        return $this->render('project/index.html.twig', [
             'projects' => $user->getProjects(),
             'editableProjects' => $editableProject,
             'readableProjects' => $readableProject,
@@ -108,7 +108,7 @@ class ProjectController extends AbstractController
             $this->addFlash('danger', "Le projet n'a pas pu être sauvegardé.");
         }
 
-        return $this->render('user/project/new.html.twig', [
+        return $this->render('project/new.html.twig', [
             'form' => $form->createView(),
         ]);
     }
@@ -150,7 +150,7 @@ class ProjectController extends AbstractController
             'action' => $this->generateUrl('user_import_documents', ['id' => $project->getId()])
         ]);
 
-        $response = $this->render('user/project/view.html.twig', [
+        $response = $this->render('project/view.html.twig', [
             'project' => $project,
             'projectRole' => $user->getRole($project),
             'documents' => $documents,
@@ -242,7 +242,7 @@ class ProjectController extends AbstractController
             arsort($words, SORT_NUMERIC);
         }
 
-        return $this->render('user/project/lexicon.html.twig', [
+        return $this->render('project/lexicon.html.twig', [
             'project' => $project,
             'form' => $form->createView(),
             'lexicon' => array_slice($words, 0, $data['limit']),
@@ -275,7 +275,7 @@ class ProjectController extends AbstractController
             return $this->redirectToRoute('user_projects');
         }
 
-        return $this->render('user/project/delete.html.twig', [
+        return $this->render('project/delete.html.twig', [
             'project' => $project,
         ]);
     }
@@ -290,7 +290,7 @@ class ProjectController extends AbstractController
     {
         $annotations = $annotationRepository->getProjectAnnotations($project);
 
-        return $this->render('user/project/annotations.html.twig', [
+        return $this->render('project/annotations.html.twig', [
             'authors' => $annotationService->getAuthors($annotations),
             'annotationsByTag' => $annotationService->getTagIndexed($annotations),
             'annotationAuthors' => $annotationService->getAuthors($annotations),

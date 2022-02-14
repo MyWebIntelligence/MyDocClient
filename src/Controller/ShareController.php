@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\User;
+namespace App\Controller;
 
 use App\Entity\Permission;
 use App\Entity\Project;
@@ -75,7 +75,7 @@ class ShareController extends AbstractController
                     $email->from(new Address($this->getParameter('mailer_from'), 'My Doc Intelligence'))
                         ->to($user->getEmail())
                         ->subject('Invitation à collaborer - My Doc Intelligence')
-                        ->htmlTemplate('user/share/email.html.twig');
+                        ->htmlTemplate('share/email.html.twig');
                     $context = $email->getContext();
                     $context['host'] = $this->getUser();
                     $context['project'] = $project;

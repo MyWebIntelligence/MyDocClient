@@ -2,10 +2,9 @@
 
 namespace App\Service;
 
-use App\Controller\User\DocumentController;
+use App\Controller\DocumentController;
 use App\Entity\Document;
 use App\Entity\Project;
-use App\Entity\Tag;
 use App\Repository\DocumentRepository;
 use DateTimeImmutable;
 use Doctrine\Persistence\ManagerRegistry;
@@ -15,8 +14,8 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\Constraints;
+use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Yaml\Exception\ParseException;
 use ZipArchive;

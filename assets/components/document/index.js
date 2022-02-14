@@ -114,7 +114,7 @@ window.addEventListener('load', () => {
 
     if (documentContent) {
         const fetchMeta = () => {
-            fetch(`/user/document/meta/${initMetaBtn.dataset.id}`)
+            fetch(`/document/meta/${initMetaBtn.dataset.id}`)
                 .then(response => response.json())
                 .then(data => {
                     documentContent.value = data.formatted;

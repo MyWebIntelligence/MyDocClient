@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\User;
+namespace App\Controller;
 
 use App\Entity\Annotation;
 use App\Entity\Document;
@@ -67,7 +67,7 @@ class DocumentController extends AbstractController
             return $this->saveForm($document, $documentService);
         }
 
-        return $this->render('user/document/index.html.twig', [
+        return $this->render('document/index.html.twig', [
             'document' => $document,
             'prev' => $documentRepository->getSiblingDocument($document, $request, -1),
             'next' => $documentRepository->getSiblingDocument($document, $request, 1),
@@ -116,7 +116,7 @@ class DocumentController extends AbstractController
             return $this->saveForm($document, $documentService);
         }
 
-        return $this->render('user/document/index.html.twig', [
+        return $this->render('document/index.html.twig', [
             'document' => $document,
             'documents' => $documentService->getDocumentsPaginated($document->getProject(), $request),
             'form' => $form->createView(),
@@ -220,7 +220,7 @@ class DocumentController extends AbstractController
             return $this->redirectToRoute('user_import_documents', ['id' => $project->getId()]);
         }
 
-        return $this->render('user/project/import.html.twig', [
+        return $this->render('project/import.html.twig', [
             'project' => $project,
             'form' => $importForm->createView(),
             'succeeded' => $succeeded ?? [],
@@ -352,7 +352,7 @@ class DocumentController extends AbstractController
         );
 
         return new Response(
-            $this->renderView('user/document/_partials/documents.html.twig', [
+            $this->renderView('document/_partials/documents.html.twig', [
                 'source' => $document,
                 'documents' => $documents,
             ])

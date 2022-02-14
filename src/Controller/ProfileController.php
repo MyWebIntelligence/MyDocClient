@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\User;
+namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\UserType;
@@ -54,7 +54,7 @@ class ProfileController extends AbstractController
                 }
             }
 
-            return $this->render('user/profile/index.html.twig', [
+            return $this->render('profile/index.html.twig', [
                 'form' => $form->createView(),
             ]);
         }

@@ -17,7 +17,7 @@ class IndexController extends AbstractController
     public function index(Security $security): Response
     {
         /** @var User $user */
-        if ($security->isGranted('IS_AUTHENTICATED_FULLY') && $user = $security->getUser()) {
+        if ($security->isGranted('IS_AUTHENTICATED') && $user = $this->getUser()) {
             return $this->redirectToRoute('user_projects');
         }
 

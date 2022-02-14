@@ -37,8 +37,6 @@ class DocumentRepository extends ServiceEntityRepository
                 ->setParameter('search', $request->query->get('q'));
         }
 
-        dump($queryBuilder->getQuery()->getSQL());
-
         return $queryBuilder;
     }
 

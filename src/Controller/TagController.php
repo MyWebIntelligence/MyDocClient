@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\User;
+namespace App\Controller;
 
 use App\Entity\Project;
 use App\Entity\Tag;

@@ -44,20 +44,20 @@
             </div>
 
             {# TOOLBAR #}
-            {% include 'user/project/_partials/toolbar.html.twig' with {
+            {% include 'project/_partials/toolbar.html.twig' with {
                 project: project,
                 search: search,
                 canEdit: canEdit
             } only %}
 
             {# DOCUMENTS #}
-            {% include 'user/project/_partials/documents.html.twig' with {
+            {% include 'project/_partials/documents.html.twig' with {
                 documents: documents
             } only %}
         </div>
 
         <div class="col-12 col-md-3 mt-3 mt-md-0">
-            {% include 'user/project/_partials/properties.html.twig' with {
+            {% include 'project/_partials/properties.html.twig' with {
                 project: project,
                 canEdit: canEdit,
                 tagTree: tagTree
@@ -67,20 +67,20 @@
 
     {# OWNER MODALS #}
     {% if project.owner == app.user %}
-        {% include 'user/project/_modals/edit-project.html.twig' with {project: project, editForm: editForm} only %}
-        {% include 'user/project/_modals/share-project.html.twig' with {project: project} only %}
+        {% include 'project/_modals/edit-project.html.twig' with {project: project, editForm: editForm} only %}
+        {% include 'project/_modals/share-project.html.twig' with {project: project} only %}
     {% endif %}
 
     {# EDITOR MODALS #}
     {% if canEdit %}
-        {% include 'user/project/_modals/import-documents.html.twig' with {importForm: importForm} only %}
-        {% include 'user/project/_modals/delete-documents.html.twig' with {project: project,documents: documents} only %}
-        {% include 'user/project/_modals/new-tag.html.twig' with {project: project} only %}
-        {% include 'user/project/_modals/edit-tag.html.twig' with {project: project} only %}
-        {% include 'user/project/_modals/delete-tag.html.twig' with {project: project} only %}
+        {% include 'project/_modals/import-documents.html.twig' with {importForm: importForm} only %}
+        {% include 'project/_modals/delete-documents.html.twig' with {project: project,documents: documents} only %}
+        {% include 'project/_modals/new-tag.html.twig' with {project: project} only %}
+        {% include 'project/_modals/edit-tag.html.twig' with {project: project} only %}
+        {% include 'project/_modals/delete-tag.html.twig' with {project: project} only %}
     {% endif %}
 
-    {% include 'user/project/_modals/search-help.html.twig' with {} only %}
+    {% include 'project/_modals/search-help.html.twig' with {} only %}
 {% endblock %}
 
 {% block javascripts %}

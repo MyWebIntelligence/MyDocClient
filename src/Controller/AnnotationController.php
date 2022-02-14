@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\User;
+namespace App\Controller;
 
 use App\Entity\Annotation;
 use App\Entity\User;
@@ -33,7 +33,7 @@ class AnnotationController extends AbstractController
         if ($project && $user->canRead($project)) {
             $filteredAnnotations = $annotationRepository->getFiltered($request);
 
-            $html = $this->renderView('user/annotation/annotations.html.twig', [
+            $html = $this->renderView('annotation/annotations.html.twig', [
                 'annotationsByTag' => $annotationService->getTagIndexed($filteredAnnotations),
             ]);
 

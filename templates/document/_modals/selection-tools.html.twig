@@ -87,12 +87,12 @@
                                       readonly="readonly"></textarea>
                             </div>
 
-                            {% include 'user/document/_partials/document-search-form.html.twig' with {
+                            {% include 'document/_partials/document-search-form.html.twig' with {
                                 document: document,
                                 search: search,
                             } only %}
 
-                            {% include 'user/document/_partials/documents.html.twig' with {
+                            {% include 'document/_partials/documents.html.twig' with {
                                 source: document,
                                 documents: documents,
                             } only %}
