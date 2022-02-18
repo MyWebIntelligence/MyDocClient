@@ -1,20 +1,11 @@
 {% extends 'base.html.twig' %}
+{% import 'macros.html.twig' as macro %}
 
-{% block title %}Hello DownloadController!{% endblock %}
+{% block title %}{{ macro.title("Téléchargements " ~ project.name) }}{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+    <h1 class="mb-3">Téléchargements</h1>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+    <h3 class="mb-3">GEXF</h3>
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ 'C:/Users/Jean/Documents/Code/Amar/My Doc/my-doc-client/src/Controller/DownloadController.php'|file_link(0) }}">src/Controller/DownloadController.php</a></code></li>
-        <li>Your template at <code><a href="{{ 'C:/Users/Jean/Documents/Code/Amar/My Doc/my-doc-client/templates/download/index.html.twig'|file_link(0) }}">templates/download/index.html.twig</a></code></li>
-    </ul>
-</div>
 {% endblock %}
