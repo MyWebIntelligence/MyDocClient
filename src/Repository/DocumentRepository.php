@@ -23,18 +23,18 @@ class DocumentRepository extends ServiceEntityRepository
         parent::__construct($registry, Document::class);
     }
 
-    public function getSearchDocumentsQueryBuilder(Project $project, Request $request): QueryBuilder
+    public function getSearchDocumentsQueryBuilder(Project $project, string $keyword = null): QueryBuilder
     {
         $queryBuilder = $this->createQueryBuilder('d')
             ->select()
             ->where('d.project = :project')
             ->setParameter('project', $project);
 
-        if ($request->query->get('q')) {
+        if ($keyword) {
             $queryBuilder
                 ->andWhere('MATCH_AGAINST(d.title, d.description, d.content) AGAINST (:search boolean) > 0')
                 ->orderBy('MATCH_AGAINST(d.title, d.description, d.content) AGAINST (:search boolean)', 'DESC')
-                ->setParameter('search', $request->query->get('q'));
+                ->setParameter('search', $keyword);
         }
 
         return $queryBuilder;

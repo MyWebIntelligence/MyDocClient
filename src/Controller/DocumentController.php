@@ -342,7 +342,10 @@ class DocumentController extends AbstractController
         DocumentRepository $documentRepository,
         PaginatorInterface $paginator): Response
     {
-        $queryBuilder = $documentRepository->getSearchDocumentsQueryBuilder($document->getProject(), $request);
+        $queryBuilder = $documentRepository->getSearchDocumentsQueryBuilder(
+            $document->getProject(),
+            $request->query->get('q')
+        );
 
         $documents = $paginator->paginate(
             $queryBuilder,

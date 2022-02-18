@@ -10,37 +10,21 @@
         </div>
         #}
         <div class="col-auto">
+            <button class="btn btn-outline-danger"
+               id="deleteSelected"
+               data-bs-toggle="modal"
+               data-bs-target="#confirmDeleteModal"
+               disabled>
+                <i class="bi-trash"></i>
+            </button>
+        </div>
+        <div class="col-auto">
             <button type="button"
                     class="btn btn-primary"
                     data-bs-toggle="modal"
                     data-bs-target="#importDocumentModal">
                 <i class="bi-folder-plus me-2"></i>Importer
             </button>
-        </div>
-        <div class="col-auto">
-            <div class="btn-group">
-                <button type="button"
-                        id="selection_menu"
-                        class="btn btn-primary dropdown-toggle"
-                        data-bs-toggle="dropdown"
-                        aria-expanded="false"
-                        disabled>
-                    <i class="bi-files me-2"></i>Pour la sélection
-                </button>
-                <ul class="dropdown-menu dropdown-menu-end">
-                    <li>
-                        <a class="dropdown-item" type="button">
-                            <i class="bi-download me-2"></i>Télécharger archive MD
-                        </a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item text-danger" type="button"
-                           data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">
-                            <i class="bi-trash me-2"></i>Supprimer les documents
-                        </a>
-                    </li>
-                </ul>
-            </div>
         </div>
     {% endif %}
     <div class="col">
@@ -69,4 +53,14 @@
             </div>
         </form>
     </div>
+    {% if canEdit %}
+    <div class="col-auto">
+        <button type="button"
+                class="btn btn-primary"
+                data-bs-toggle="modal"
+                data-bs-target="#exportDocumentModal">
+            <i class="bi-download me-2"></i>Exporter
+        </button>
+    </div>
+    {% endif %}
 </div>

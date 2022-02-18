@@ -128,19 +128,19 @@ class Document
     /**
      * @ORM\OneToMany(targetEntity=Annotation::class, mappedBy="document", orphanRemoval=true)
      */
-    private $annotations;
+    private Collection $annotations;
 
     /**
      * @ORM\OneToMany(targetEntity=DocumentLink::class, mappedBy="source", orphanRemoval=true)
      */
-    private $sourceOf;
+    private Collection $sourceOf;
 
     /**
      * @ORM\OneToMany(targetEntity=DocumentLink::class, mappedBy="target", orphanRemoval=true)
      */
-    private $targetOf;
+    private Collection $targetOf;
 
-    private array $metas = [
+    public static array $metas = [
         'Title' => 'Titre',
         'Creator' => 'Auteur',
         'Contributor' => 'Contributeur',
@@ -402,9 +402,9 @@ class Document
         return $this;
     }
 
-    public function getMetadataDict(): array
+    public static function getMetadataDict(): array
     {
-        return $this->metas;
+        return self::$metas;
     }
 
     /**

@@ -7,7 +7,7 @@ import './tag-tree'
 window.addEventListener('load', () => {
     const cbCheckAll = document.getElementById('cb_document_all')
     const cbChecks = document.querySelectorAll('.cb_document')
-    const selectionMenu = document.getElementById('selection_menu')
+    const selectionMenu = document.getElementById('deleteSelected')
     const deleteDocuments = document.getElementById('delete_documents')
 
     function getSelectedDelete(item) {

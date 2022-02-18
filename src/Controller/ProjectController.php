@@ -124,7 +124,6 @@ class ProjectController extends AbstractController
         Request $request,
         Project $project,
         DocumentRepository $documentRepository,
-        EntityManagerInterface $entityManager,
         TagRepository $tagRepository,
         PaginatorInterface $paginator): Response
     {
@@ -136,7 +135,10 @@ class ProjectController extends AbstractController
             return $this->redirectToRoute('home');
         }
 
-        $queryBuilder = $documentRepository->getSearchDocumentsQueryBuilder($project, $request);
+        $queryBuilder = $documentRepository->getSearchDocumentsQueryBuilder(
+            $project,
+            $request->query->get('q')
+        );
 
         $documents = $paginator->paginate(
             $queryBuilder,

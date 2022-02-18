@@ -10,7 +10,7 @@
             <div class="d-flex align-items-center mb-3">
                 <h1 class="m-0">{{ project.name }}</h1>
                 <div class="ms-auto">
-                    {% if project.owner == app.user %}
+                    {% if app.user.isOwner(project) %}
                     <a href="#"
                        class="btn"
                        role="button"
@@ -18,7 +18,17 @@
                        data-bs-target="#shareProjectModal">
                         <i class="h5 bi-share"></i>
                     </a>
+                    {% endif %}
 
+                    {% if app.user.canEdit(project) %}
+                    <a href="{{ path('download', {id: project.id}) }}"
+                       class="btn"
+                       role="button">
+                        <i class="h5 bi-download"></i>
+                    </a>
+                    {% endif %}
+
+                    {% if app.user.isOwner(project) %}
                     <a href="#"
                        class="btn"
                        role="button"
@@ -66,15 +76,16 @@
     </div>
 
     {# OWNER MODALS #}
-    {% if project.owner == app.user %}
+    {% if app.user.isOwner(project) %}
         {% include 'project/_modals/edit-project.html.twig' with {project: project, editForm: editForm} only %}
         {% include 'project/_modals/share-project.html.twig' with {project: project} only %}
     {% endif %}
 
     {# EDITOR MODALS #}
-    {% if canEdit %}
+    {% if app.user.canEdit(project) %}
+        {% include 'project/_modals/export-documents.html.twig' with {project: project} only %}
         {% include 'project/_modals/import-documents.html.twig' with {importForm: importForm} only %}
-        {% include 'project/_modals/delete-documents.html.twig' with {project: project,documents: documents} only %}
+        {% include 'project/_modals/delete-documents.html.twig' with {project: project, documents: documents} only %}
         {% include 'project/_modals/new-tag.html.twig' with {project: project} only %}
         {% include 'project/_modals/edit-tag.html.twig' with {project: project} only %}
         {% include 'project/_modals/delete-tag.html.twig' with {project: project} only %}
