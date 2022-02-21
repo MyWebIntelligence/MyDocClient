@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Document;
 use App\Entity\Project;
 use App\Repository\DocumentRepository;
+use App\Service\Gexf;
 use JsonException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -75,11 +76,21 @@ class DownloadController extends AbstractController
      * @Route("/telecharger-gexf/{id}", name="download_gexf")
      * @throws JsonException
      */
-    public function gexf(Project $project, Request $request, DocumentRepository $documentRepository): Response
+    public function gexf(
+        Project $project,
+        Request $request,
+        DocumentRepository $documentRepository): Response
     {
         $documents = $this->getDocuments($project, $request, $documentRepository);
+        $gexf = new Gexf($project, $documents);
+        $exportFilePath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . sprintf("mydoc-export-%s.gexf", date("YmdHis"));
+        file_put_contents($exportFilePath, $gexf->toXml());
 
-        return new Response();
+        $response = new BinaryFileResponse($exportFilePath);
+        $response->headers->set('Content-Type', 'application/xml');
+        $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, basename($exportFilePath));
+
+        return $response;
     }
 
     /**

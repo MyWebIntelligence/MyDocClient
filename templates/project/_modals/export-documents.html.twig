@@ -12,7 +12,7 @@
             <div class="modal-body">
                 <div class="alert alert-info">
                     <i class="bi-info-circle-fill me-1"></i>
-                    Seuls les documents correspondant au filtre de recherche seront inclus dans les téléchargements.
+                    Seuls les documents correspondant au filtre de recherche seront inclus dans les exports.
                 </div>
 
                 <div class="row">
@@ -23,11 +23,13 @@
                                     <h5 class="card-title">GEXF</h5>
                                 </div>
                                 <div class="card-body">
+                                    {#
                                     <div class="form-check mb-3">
                                         <input id="include_external_links" name="include_external_links" type="checkbox" class="form-check-input">
                                         <label for="include_external_links" class="form-check-label">Inclure les liens externes</label>
                                     </div>
                                     <button type="submit" class="btn btn-primary">Télécharger</button>
+                                    #}
                                 </div>
                             </form>
                         </div>
