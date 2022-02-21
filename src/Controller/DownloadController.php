@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use ZipArchive;
 
 class DownloadController extends AbstractController
 {
@@ -54,6 +55,9 @@ class DownloadController extends AbstractController
         return $response;
     }
 
+    /**
+     * @throws JsonException
+     */
     private function getDocuments(Project $project, Request $request, DocumentRepository $documentRepository)
     {
         $searchData = ['q' => ''];
@@ -69,6 +73,7 @@ class DownloadController extends AbstractController
 
     /**
      * @Route("/telecharger-gexf/{id}", name="download_gexf")
+     * @throws JsonException
      */
     public function gexf(Project $project, Request $request, DocumentRepository $documentRepository): Response
     {
@@ -83,14 +88,20 @@ class DownloadController extends AbstractController
      */
     public function csv(Project $project, Request $request, DocumentRepository $documentRepository): Response
     {
+        $exportBaseName = sprintf("mydoc-export-csv-%s", date("YmdHis"));
+        $archiveFilePath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $exportBaseName . '.zip';
+        $archive = new ZipArchive();
+        $archive->open($archiveFilePath, ZipArchive::CREATE | ZIPARCHIVE::OVERWRITE);
+
         $documents = $this->getDocuments($project, $request, $documentRepository);
         $headers = array_values(Document::getMetadataDict());
         $headers[] = 'Tags';
-        $filename = sprintf("mydoc-export-csv-%s.csv", date("YmdHis"));
-        $filepath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $filename;
-        $file = fopen($filepath, 'wb+');
 
-        fputcsv($file, $headers, ";");
+        $csvFilename = sprintf("%s.csv", $exportBaseName);
+        $csvFilepath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $csvFilename;
+        $csvFile = fopen($csvFilepath, 'wb+');
+
+        fputcsv($csvFile, $headers, ";");
 
         /** @var Document $document */
         foreach ($documents as $document) {
@@ -123,12 +134,28 @@ class DownloadController extends AbstractController
                 implode(', ', $tags),
             ];
 
-            fputcsv($file, $data, ";");
+            fputcsv($csvFile, $data, ";");
+
+            if ($request->query->get('include_files')) {
+                $archive->addFromString(
+                    sprintf(
+                        '%s.md',
+                        $this->slugger->slug($document->getTitle() ?: $document->getId())
+                    ),
+                    $document->getContent()
+                );
+            }
         }
 
-        $response = new BinaryFileResponse($filepath);
+        fclose($csvFile);
+        $archive->addFile($csvFilepath, $csvFilename);
+        $archive->close();
+
+        unlink($csvFilepath);
+
+        $response = new BinaryFileResponse($archiveFilePath);
         $response->headers->set('Content-Type', 'text/csv');
-        $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $filename);
+        $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, basename($archiveFilePath));
 
         return $response;
     }

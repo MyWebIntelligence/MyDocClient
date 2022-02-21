@@ -3,8 +3,7 @@
      tabindex="-1"
      aria-labelledby="exportDocumentModalLabel"
      aria-hidden="true">
-    <form action="{{ path('download', {id: project.id}) }}">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title fw-bold" id="exportDocumentModalLabel">Export de documents</h5>
@@ -12,36 +11,50 @@
             </div>
             <div class="modal-body">
                 <div class="alert alert-info">
+                    <i class="bi-info-circle-fill me-1"></i>
                     Seuls les documents correspondant au filtre de recherche seront inclus dans les téléchargements.
                 </div>
 
                 <div class="row">
                     <div class="col">
-                        <h5>GEXF</h5>
-
-                        <form action="{{ path('download_gexf', {id: project.id}) }}">
-                            <div class="form-check mb-3">
-                                <input id="include_external_links" type="checkbox" class="form-check-input">
-                                <label for="include_external_links" class="form-check-label">Inclure les liens externes</label>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Télécharger</button>
-                        </form>
+                        <div class="card">
+                            <form action="{{ path('download_gexf', {id: project.id}) }}" method="get">
+                                <div class="card-header">
+                                    <h5 class="card-title">GEXF</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-check mb-3">
+                                        <input id="include_external_links" name="include_external_links" type="checkbox" class="form-check-input">
+                                        <label for="include_external_links" class="form-check-label">Inclure les liens externes</label>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Télécharger</button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
 
                     <div class="col">
-                        <h5>CSV</h5>
-
-                        <form action="{{ path('download_csv', {id: project.id}) }}">
-                            <button class="btn btn-primary">Télécharger</button>
-                        </form>
+                        <div class="card">
+                            <form action="{{ path('download_csv', {id: project.id}) }}" method="get">
+                                <div class="card-header">
+                                    <h5 class="card-title">CSV</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-check mb-3">
+                                        <input id="include_files" name="include_files" type="checkbox" class="form-check-input">
+                                        <label for="include_files" class="form-check-label">Inclure les documents Markdown</label>
+                                    </div>
+                                    <button class="btn btn-primary">Télécharger</button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
+
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fermer</button>
-                <button type="submit" class="btn btn-primary">Exporter</button>
             </div>
         </div>
     </div>
-    </form>
 </div>
