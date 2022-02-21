@@ -295,7 +295,6 @@ class ProjectController extends AbstractController
         return $this->render('project/annotations.html.twig', [
             'authors' => $annotationService->getAuthors($annotations),
             'annotationsByTag' => $annotationService->getTagIndexed($annotations),
-            'annotationAuthors' => $annotationService->getAuthors($annotations),
             'project' => $project,
             'document' => null,
         ]);

@@ -17,9 +17,6 @@ class Gexf
      */
     private array $nodes = [];
 
-    /**
-     * @var array
-     */
     private array $edges = [];
 
     /**

@@ -250,10 +250,10 @@ class Tag
         $tag = $this;
 
         while ($parent = $tag->getParent()) {
-            $ancestors[] = $parent;
+            array_unshift($ancestors, $parent);
             $tag = $parent;
         }
 
-        return array_reverse($ancestors);
+        return $ancestors;
     }
 }

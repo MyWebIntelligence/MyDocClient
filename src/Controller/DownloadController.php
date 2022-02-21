@@ -2,17 +2,19 @@
 
 namespace App\Controller;
 
+use App\Entity\Annotation;
 use App\Entity\Document;
 use App\Entity\Project;
+use App\Entity\User;
+use App\Repository\AnnotationRepository;
 use App\Repository\DocumentRepository;
+use App\Service\ExportService;
 use App\Service\Gexf;
 use JsonException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use ZipArchive;
@@ -21,10 +23,12 @@ class DownloadController extends AbstractController
 {
 
     private SluggerInterface $slugger;
+    private ExportService $exportService;
 
-    public function __construct(SluggerInterface $slugger)
+    public function __construct(SluggerInterface $slugger, ExportService $exportService)
     {
         $this->slugger = $slugger;
+        $this->exportService = $exportService;
     }
 
     /**
@@ -42,7 +46,16 @@ class DownloadController extends AbstractController
      */
     public function document(Document $document): Response
     {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        if (!$user->canRead($document->getProject())) {
+            $this->addFlash('danger', DocumentController::RESTRICT_ACCESS_MESSAGE);
+            return $this->redirectToRoute('user_projects');
+        }
+
         $response = new Response($document->getContent());
+
         $disposition = HeaderUtils::makeDisposition(
             HeaderUtils::DISPOSITION_ATTACHMENT,
             sprintf('%s-%s.md',
@@ -54,6 +67,68 @@ class DownloadController extends AbstractController
         $response->headers->set('Content-Disposition', $disposition);
 
         return $response;
+    }
+
+    /**
+     * @Route("/telecharger-annotations/{id}", name="download_annotations")
+     */
+    public function annotations(Project $project, AnnotationRepository $annotationRepository)
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        if (!$user->canRead($project)) {
+            $this->addFlash('danger', ProjectController::RESTRICT_ACCESS_MESSAGE);
+            return $this->redirectToRoute('user_projects');
+        }
+
+        $annotations = $annotationRepository->getProjectAnnotations($project);
+        $exportFileName = $this->exportService->timestamp('mydoc-annotations-%s.csv');
+        $exportFilePath = $this->exportService->temp($exportFileName);
+        $file = fopen($exportFilePath,'wb+');
+
+        fputcsv($file, [
+            'citation',
+            'commentaire',
+            'id document',
+            'titre',
+            'id utilisateur',
+            'utilisateur',
+            'tags',
+        ], ';');
+
+        /** @var Annotation $annotation */
+        foreach ($annotations as $annotation) {
+            $document = $annotation->getDocument();
+            $tag = $annotation->getTag();
+            $user = $annotation->getCreatedBy();
+
+            if ($document && $tag && $user) {
+                $username = ($user->getFirstName() || $user->getLastName())
+                    ? $user->getFirstName() . " " . $user->getLastName()
+                    : $user->getEmail();
+
+                $tags = [$tag->getName()];
+
+                foreach ($tag->getAncestors() as $ancestor) {
+                    array_unshift($tags, $ancestor->getName());
+                }
+
+                fputcsv($file, [
+                    $annotation->getContent(),
+                    $annotation->getComment(),
+                    $document->getId(),
+                    $document->getTitle(),
+                    $user->getId(),
+                    $username,
+                    implode(',', $tags),
+                ], ';');
+            }
+        }
+
+        fclose($file);
+
+        return $this->exportService->serveFile($exportFilePath, 'text/csv');
     }
 
     /**
@@ -81,16 +156,21 @@ class DownloadController extends AbstractController
         Request $request,
         DocumentRepository $documentRepository): Response
     {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        if (!$user->canRead($project)) {
+            $this->addFlash('danger', ProjectController::RESTRICT_ACCESS_MESSAGE);
+            return $this->redirectToRoute('user_projects');
+        }
+
         $documents = $this->getDocuments($project, $request, $documentRepository);
         $gexf = new Gexf($project, $documents);
-        $exportFilePath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . sprintf("mydoc-export-%s.gexf", date("YmdHis"));
+        $exportFileName = $this->exportService->timestamp('mydoc-%s.gexf');
+        $exportFilePath = $this->exportService->temp($exportFileName);
         file_put_contents($exportFilePath, $gexf->toXml());
 
-        $response = new BinaryFileResponse($exportFilePath);
-        $response->headers->set('Content-Type', 'application/xml');
-        $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, basename($exportFilePath));
-
-        return $response;
+        return $this->exportService->serveFile($exportFilePath, 'application/xml');
     }
 
     /**
@@ -99,8 +179,16 @@ class DownloadController extends AbstractController
      */
     public function csv(Project $project, Request $request, DocumentRepository $documentRepository): Response
     {
-        $exportBaseName = sprintf("mydoc-export-csv-%s", date("YmdHis"));
-        $archiveFilePath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $exportBaseName . '.zip';
+        /** @var User $user */
+        $user = $this->getUser();
+
+        if (!$user->canRead($project)) {
+            $this->addFlash('danger', ProjectController::RESTRICT_ACCESS_MESSAGE);
+            return $this->redirectToRoute('user_projects');
+        }
+
+        $exportBaseName = $this->exportService->timestamp('mydoc-csv-%s');
+        $archiveFilePath = $this->exportService->temp($exportBaseName . '.zip');
         $archive = new ZipArchive();
         $archive->open($archiveFilePath, ZipArchive::CREATE | ZIPARCHIVE::OVERWRITE);
 
@@ -109,7 +197,7 @@ class DownloadController extends AbstractController
         $headers[] = 'Tags';
 
         $csvFilename = sprintf("%s.csv", $exportBaseName);
-        $csvFilepath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $csvFilename;
+        $csvFilepath = $this->exportService->temp($csvFilename);
         $csvFile = fopen($csvFilepath, 'wb+');
 
         fputcsv($csvFile, $headers, ";");
@@ -149,10 +237,7 @@ class DownloadController extends AbstractController
 
             if ($request->query->get('include_files')) {
                 $archive->addFromString(
-                    sprintf(
-                        '%s.md',
-                        $this->slugger->slug($document->getTitle() ?: $document->getId())
-                    ),
+                    sprintf('%s.md', $this->slugger->slug($document->getTitle() ?: $document->getId())),
                     $document->getContent()
                 );
             }
@@ -161,13 +246,8 @@ class DownloadController extends AbstractController
         fclose($csvFile);
         $archive->addFile($csvFilepath, $csvFilename);
         $archive->close();
-
         unlink($csvFilepath);
 
-        $response = new BinaryFileResponse($archiveFilePath);
-        $response->headers->set('Content-Type', 'text/csv');
-        $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, basename($archiveFilePath));
-
-        return $response;
+        return $this->exportService->serveFile($archiveFilePath, 'application/zip');
     }
 }
