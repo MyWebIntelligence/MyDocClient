@@ -37,3 +37,115 @@ de langue ISO 639, etc. De plus amples informations sont disponibles sur le site
 | **Relation** | A related resource. ||
 | **Coverage** | The spatial or temporal topic of the resource, the spatial applicability of the resource, or the jurisdiction under which the resource is relevant. | Thesaurus of Geographic Names (TGN) |
 | **Rights** | Information about rights held in and over the resource. ||
+
+## Installation
+
+Description de l'installation sur un serveur web Apache 2 + PHP-FPM + MariaDB
+
+### Pré-requis
+
+- Apache 2
+- PHP >= 7.4
+- MariaDB (recommandé) ou MySQL
+- Git
+- Composer (gestionnaire des paquets PHP)
+- Yarn (gestionnaire des paquets JS)
+- Compte SendinBlue pour l'envoi des mails (créer une clé API, voir configuration de l'application)
+
+### Apache 2
+
+Exemple de configuration Apache 2. Cette configuration simple n'est pas sécurisée par le mode SSL, certaines fonctionnalités
+nécessitant une connexion sécurisée peuvent être indisponibles comme la reconnexion automatique de session.
+
+Il est donc conseillé de disposer d'un domaine sécurisé par SSL et d'adapter la configuration en conséquence.
+
+```
+<VirtualHost *:80>
+    DocumentRoot /var/www/MyDocClient/public
+    DirectoryIndex /index.php
+    
+    <Directory /var/www/MyDocClient/public>
+        Options -Indexes +FollowSymLinks -MultiViews
+        AllowOverride None
+        Require all granted
+        
+        FallbackResource /index.php
+    </Directory>
+    
+    <FilesMatch \.php$>
+    # 2.4.10+ can proxy to unix socket
+    SetHandler "proxy:unix:/var/run/php/php7.4-fpm.sock|fcgi://localhost"
+    </FilesMatch>
+    
+    ErrorLog ${APACHE_LOG_DIR}/mydoc.error.log
+    CustomLog ${APACHE_LOG_DIR}/mydoc.access.log combined
+</VirtualHost>
+```
+
+### Installation des sources et dépendances
+
+Dans le répertoire web (en général `/var/www/` sous Linux), récupérer les sources sur Github :
+
+```
+/var/www$ git clone https://github.com/MyWebIntelligence/MyDocClient.git
+```
+
+Rentrer dans le répertoire récupéré et installer les dépendances de l'application.
+
+Dépendances PHP :
+
+```
+/var/www/MyDocClient$ composer install
+```
+
+Dépendances JS :
+
+```
+/var/www/MyDocClient$ yarn install
+```
+
+Build des assets :
+
+```
+/var/www/MyDocClient$ yarn build
+```
+
+### Édition de la configuration
+
+La configuration spécifique à l'environnement se fait au travers des fichiers `.env` à la racine de l'application.
+
+Dans tous les environnements, les fichiers suivants sont chargés s'ils existent,
+le suivant prenant le pas sur le précédent :
+
+$APP_ENV remplacé par l'environnement (dev ou prod) :
+
+* .env contient les valeurs par défaut des variables d'environnement nécessaires à l'application
+* .env.local fichier non vérsionné avec remplacements locaux
+* .env.$APP_ENV valeurs par défaut spécifiques à l'environnement versionné
+* .env.$APP_ENV.local remplacements spécifiques à l'environnement non versionné
+
+Les variables d'environnement réelles (configurée au niveau système ou serveur web) l'emportent sur les fichiers .env.
+
+NE DÉFINISSEZ PAS DE SECRETS DE PRODUCTION DANS CE DOSSIER NI DANS AUCUN AUTRE DOSSIER VERSIONNÉ.
+
+Exécutez `composer dump-env prod` pour compiler les fichiers .env pour une utilisation en production (nécessite symfony/flex >=1.2).
+
+https://symfony.com/doc/current/best_practices.html#use-environment-variables-for-infrastructure-configuration
+
+Par exemple, pour définir votre environnement de production, créez le fichier `.env.prod` et éditez les paramètres de
+connexion à la base de données (vérifiez la version de votre serveur de base de données) et la clé API de votre compte SendinBlue.
+
+
+```
+APP_ENV=prod
+DATABASE_URL="mysql://user:password@127.0.0.1:3306/my-doc?charset=utf8mb4&serverVersion=mariadb-10.x.x"
+MAILER_DSN=sendinblue+api://KEY@default
+```
+
+### Base de données
+
+Création de la base de données
+
+```
+/var/www/MyDocClient$ php bin/console doctrine:database:create
+```
