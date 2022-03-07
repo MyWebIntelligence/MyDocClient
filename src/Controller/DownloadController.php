@@ -139,7 +139,8 @@ class DownloadController extends AbstractController
         $searchData = ['q' => ''];
 
         if ($searchParams = $request->cookies->get('searchParams')) {
-            $searchData = json_decode($searchParams, true, 512, JSON_THROW_ON_ERROR);
+            $params = json_decode($searchParams, true, 512, JSON_THROW_ON_ERROR);
+            $searchData = array_merge($searchData, $params);
         }
 
         $queryBuilder = $documentRepository->getSearchDocumentsQueryBuilder($project, $searchData['q']);
@@ -193,8 +194,7 @@ class DownloadController extends AbstractController
         $archive->open($archiveFilePath, ZipArchive::CREATE | ZIPARCHIVE::OVERWRITE);
 
         $documents = $this->getDocuments($project, $request, $documentRepository);
-        $headers = array_values(Document::getMetadataDict());
-        $headers[] = 'Tags';
+        $headers = array_merge(['Id'], array_values(Document::getMetadataDict()), ['Tags']);
 
         $csvFilename = sprintf("%s.csv", $exportBaseName);
         $csvFilepath = $this->exportService->temp($csvFilename);
@@ -215,6 +215,7 @@ class DownloadController extends AbstractController
             $tags = array_unique($tags);
 
             $data = [
+                $document->getId(),
                 $document->getTitle(),
                 $document->getCreator(),
                 $document->getContributor(),
