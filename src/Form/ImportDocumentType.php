@@ -33,6 +33,7 @@ class ImportDocumentType extends AbstractType
                         ],
                     ])
                 ],
+                'help' => sprintf("%s fichiers ou taille de %s maximum", ini_get('max_file_uploads'), ini_get('upload_max_filesize'))
             ]);
     }
 

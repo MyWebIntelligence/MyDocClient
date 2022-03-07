@@ -54,7 +54,17 @@
             {{ form_row(form.project.name) }}
             {{ form_row(form.project.description) }}
             {{ form_row(form.project.language) }}
-            {{ form_row(form.import.files) }}
+
+            <div class="mb-3">
+                {{ form_label(form.import.files) }}
+
+                <p class="text-muted">Vous pouvez importer plusieurs fichiers au format TXT ou MD, les archives au format ZIP
+                    seront décompressées et leur contenu (TXT ou MD) importé.</p>
+
+                {{ form_widget(form.import.files) }}
+                {{ form_help(form.import.files) }}
+            </div>
+
             <button type="submit" class="btn btn-primary"><i class="bi-save me-2"></i>Enregistrer</button>
             {{ form_end(form) }}
         </div>
