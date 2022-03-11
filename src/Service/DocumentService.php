@@ -119,8 +119,12 @@ class DocumentService
                     $violations = $this->validator->validate($file, $this->getFileConstraint());
 
                     if ($violations->count() === 0) {
-                        $this->import($project, $file, $file->getBasename());
-                        $succeeded[] = $file->getBasename();
+                        try {
+                            $this->import($project, $file, $file->getBasename());
+                            $succeeded[] = $file->getBasename();
+                        } catch (\Exception $exception) {
+                            $errors[$file->getBasename()] = DocumentController::INVALID_YAML_MSG;
+                        }
                     } else {
                         /** @var ConstraintViolation $violation */
                         foreach ($violations as $violation) {
