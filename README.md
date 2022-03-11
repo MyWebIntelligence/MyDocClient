@@ -120,13 +120,13 @@ le suivant prenant le pas sur le précédent :
 $APP_ENV remplacé par l'environnement (dev ou prod) :
 
 * .env contient les valeurs par défaut des variables d'environnement nécessaires à l'application
-* .env.local fichier non vérsionné avec remplacements locaux
+* .env.local fichier non versionné avec remplacements locaux
 * .env.$APP_ENV valeurs par défaut spécifiques à l'environnement versionné
 * .env.$APP_ENV.local remplacements spécifiques à l'environnement non versionné
 
 Les variables d'environnement réelles (configurée au niveau système ou serveur web) l'emportent sur les fichiers .env.
 
-NE DÉFINISSEZ PAS DE SECRETS DE PRODUCTION DANS CE DOSSIER NI DANS AUCUN AUTRE DOSSIER VERSIONNÉ.
+NE DÉFINISSEZ PAS DE SECRETS DE PRODUCTION DANS CE FICHIER NI DANS AUCUN AUTRE FICHIER VERSIONNÉ.
 
 Exécutez `composer dump-env prod` pour compiler les fichiers .env pour une utilisation en production (nécessite symfony/flex >=1.2).
 
