@@ -18,13 +18,13 @@
                     <div class="accordion-body px-1">
                         {% for meta, label in document.metadataDict %}
                             {% set value = attribute(document, meta) %}
+                            {% set size = value|length %}
                             <div class="d-flex small mb-1">
                                 <div class="text-muted">{{ label }}</div>
                                 <div class="ms-2 me-auto">
-                                    {% if meta == 'Description' and value|length > 150 %}
-                                        {{ value|slice(0, 140) }}...
-                                    {% else %}
-                                        {{ value ?: '-' }}
+                                    {% if size == 0 %}-
+                                    {% elseif size > 150 %}{{ value|slice(0, 140) }}...
+                                    {% else %}{{ value }}
                                     {% endif %}
                                 </div>
                             </div>
