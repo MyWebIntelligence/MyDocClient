@@ -3,6 +3,7 @@ import Modal from "bootstrap/js/dist/modal";
 const annotationContainer = document.getElementById('annotationContainer');
 const confirmDeleteModal = Modal.getOrCreateInstance(document.getElementById('confirmDeleteModal'));
 const confirmDeleteButton = document.getElementById('confirmDeleteButton');
+const dlAnnotationMdBtn = document.getElementById('dlAnnotationMdBtn');
 
 const confirmDeletion = () => {
     if (deleteCallback) {
@@ -20,6 +21,11 @@ window.addEventListener('click', (event) => {
         event.preventDefault();
         const form = event.target.closest('form');
         const data = new URLSearchParams(new FormData(form));
+        if (dlAnnotationMdBtn) {
+            let url = dlAnnotationMdBtn.getAttribute('href');
+            url = url.indexOf('?') > 0 ? url.replace(/\?.*/, `?${data}`) : `${url}?${data}`;
+            dlAnnotationMdBtn.setAttribute('href', url);
+        }
         fetch(`${form.getAttribute('action')}?${data}`)
             .then(res => res.text())
             .then(data => annotationContainer.innerHTML = data);

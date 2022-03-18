@@ -83,13 +83,13 @@
     {{ active_tab == tab_attr_id ? 'active' : '' }}
 {% endmacro %}
 
-{% macro username(user) %}
-    {% if user.firstName is defined or user.lastName is defined %}
-    {{ user.firstName }} {{ user.lastName }}
-    {% else %}
-    {{ user.email }}
-    {% endif %}
-{% endmacro %}
+{%- macro username(user) -%}
+{% if user.firstName is defined or user.lastName is defined %}
+{{ user.firstName }} {{ user.lastName -}}
+{% else %}
+{{ user.email -}}
+{% endif %}
+{%- endmacro -%}
 
 {% macro tag_select(tags, select_id, options) %}
     <select id="{{ select_id }}" class="form-select" name="tag">

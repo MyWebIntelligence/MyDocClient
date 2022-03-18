@@ -8,6 +8,7 @@ use App\Entity\Project;
 use App\Entity\User;
 use App\Repository\AnnotationRepository;
 use App\Repository\DocumentRepository;
+use App\Service\AnnotationService;
 use App\Service\ExportService;
 use App\Service\Gexf;
 use JsonException;
@@ -15,6 +16,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use ZipArchive;
@@ -129,6 +131,43 @@ class DownloadController extends AbstractController
         fclose($file);
 
         return $this->exportService->serveFile($exportFilePath, 'text/csv');
+    }
+
+    /**
+     * @Route("/telecharger-annotations-md/{id}", name="download_annotations_md")
+     */
+    public function filteredAnnotationToMarkdown(
+        Project $project,
+        Request $request,
+        AnnotationRepository $annotationRepository,
+        AnnotationService $annotationService): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        if ($user->canRead($project)) {
+            if (!$request->query->get('project')) {
+                $request->query->set('project', $project->getId());
+            }
+
+            $filteredAnnotations = $annotationRepository->getFiltered($request);
+
+            $text = $this->renderView('annotation/md.html.twig', [
+                'annotationsByTag' => $annotationService->getTagIndexed($filteredAnnotations),
+            ]);
+
+            $response = new Response($text);
+            $disposition = $response->headers->makeDisposition(
+                ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+                sprintf('annotations-%s.md', date('YmdHis'))
+            );
+
+            $response->headers->set('Content-Disposition', $disposition);
+
+            return $response;
+        }
+
+        return new Response('Contenu inaccessible', Response::HTTP_UNAUTHORIZED);
     }
 
     /**

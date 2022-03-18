@@ -1,0 +1,19 @@
+{% import 'macros.html.twig' as macro %}
+{% set prevIndex = null %}
+{% for index, tagAnnotations in annotationsByTag %}
+{% if index != prevIndex %}
+# {% set prevIndex = index %}{% set firstTag = (tagAnnotations|first).tag %}{% for ancestor in firstTag.ancestors %}{{ ancestor.name }} / {% endfor %}{{ firstTag.name }}
+{% endif %}
+
+{% for annotation in tagAnnotations %}
+{{ macro.username(annotation.createdBy) }} dans [*{{ annotation.document.title }}*]({{ url('user_document', {id: annotation.document.id}) }})
+
+{% for line in annotation.content|split("\n") %}
+> {{ line }}
+{% endfor %}
+
+{{ annotation.comment }}
+
+{% endfor %}
+
+{% endfor %}
