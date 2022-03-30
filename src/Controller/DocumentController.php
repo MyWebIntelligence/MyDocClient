@@ -272,6 +272,8 @@ class DocumentController extends AbstractController
             $entityManager->remove($document);
             $entityManager->flush();
             $this->addFlash('info', sprintf("Le document %s a été supprimé", $document->getTitle()));
+
+            return $this->redirectToRoute('user_view_project', ['id' => $project->getId()]);
         }
 
         $this->addFlash('danger', sprintf("Vous n'avez pas la permission de supprimer le document %s", $document->getTitle()));
