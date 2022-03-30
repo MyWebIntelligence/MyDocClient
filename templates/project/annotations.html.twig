@@ -31,6 +31,7 @@
     {% include('annotation/index.html.twig') with {
         project: project,
         document: null,
+        tagTree: tagTree,
         annotationsByTag: annotationsByTag,
         authors: authors,
     } only %}

@@ -97,11 +97,18 @@
             <option value=""></option>
         {% endif %}
         {% for tag in tags %}
-            <option value="{{ tag.id }}" {{ options != null and options.params.get('tag') == tag.id ? 'selected' : '' }}>
-                {% for i in range(0, tag.lvl*2) %}{{ "&nbsp;" }}{% endfor %}
-                {{ tag.name }}</option>
+            {{ _self.tag_option(tag, options) }}
         {% endfor %}
     </select>
+{% endmacro %}
+
+{% macro tag_option(tag, options) %}
+    <option value="{{ tag.id }}" {{ options != null and options.params.get('tag') == tag.id ? 'selected' : '' }}>
+        {% for i in range(0, tag.lvl*2) %}{{ "&nbsp;" }}{% endfor %}
+        {{ tag.name }}</option>
+    {% for child in tag.children %}
+    {{ _self.tag_option(child, options) }}
+    {% endfor %}
 {% endmacro %}
 
 {% macro author_select(authors, selectId, options) %}

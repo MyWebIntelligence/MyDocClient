@@ -162,6 +162,7 @@
                     {% include'annotation/index.html.twig' with {
                         project: document.project,
                         document: document,
+                        tagTree: tagTree,
                         annotationsByTag: annotationsByTag,
                         authors: annotationAuthors,
                     } only %}
@@ -184,7 +185,8 @@
         {% include 'document/_modals/selection-tools.html.twig' with {
             document: document,
             documents: documents,
-            search: search
+            search: search,
+            tagTree: tagTree,
         } only %}
 
         {% include 'document/_modals/delete-document.html.twig' with {

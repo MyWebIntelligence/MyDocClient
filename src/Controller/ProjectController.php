@@ -288,12 +288,14 @@ class ProjectController extends AbstractController
     public function annotations(
         Project $project,
         AnnotationRepository $annotationRepository,
+        TagRepository $tagRepository,
         AnnotationService $annotationService): Response
     {
         $annotations = $annotationRepository->getProjectAnnotations($project);
 
         return $this->render('project/annotations.html.twig', [
             'authors' => $annotationService->getAuthors($annotations),
+            'tagTree' => $tagRepository->getProjectTags($project, true),
             'annotationsByTag' => $annotationService->getTagIndexed($annotations),
             'project' => $project,
             'document' => null,

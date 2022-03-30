@@ -8,7 +8,7 @@
             {% endif %}
             <div class="col">
                 <label class="form-label" for="filterByTag">Tag</label>
-                {{ macro.tag_select(project.tags, 'filterByTag', {with_empty: true, params: app.request.query}) }}
+                {{ macro.tag_select(tagTree, 'filterByTag', {with_empty: true, params: app.request.query}) }}
             </div>
             <div class="col">
                 <label class="form-label" for="filterByAuthor">Auteur</label>
