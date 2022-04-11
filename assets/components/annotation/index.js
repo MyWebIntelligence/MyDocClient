@@ -1,8 +1,8 @@
 import Modal from "bootstrap/js/dist/modal";
 
 const annotationContainer = document.getElementById('annotationContainer');
-const confirmDeleteModal = Modal.getOrCreateInstance(document.getElementById('confirmDeleteModal'));
-const confirmDeleteButton = document.getElementById('confirmDeleteButton');
+const confirmDeleteAnnotationModal = Modal.getOrCreateInstance(document.getElementById('confirmDeleteAnnotationModal'));
+const confirmDeleteAnnotationButton = document.getElementById('confirmDeleteButton');
 const dlAnnotationMdBtn = document.getElementById('dlAnnotationMdBtn');
 
 const confirmDeletion = () => {
@@ -47,11 +47,11 @@ window.addEventListener('click', (event) => {
                     }
                 });
 
-            confirmDeleteModal.hide();
+            confirmDeleteAnnotationModal.hide();
         }
     }
 });
 
-if (confirmDeleteButton) {
-    confirmDeleteButton.addEventListener('click', confirmDeletion);
+if (confirmDeleteAnnotationButton) {
+    confirmDeleteAnnotationButton.addEventListener('click', confirmDeletion);
 }

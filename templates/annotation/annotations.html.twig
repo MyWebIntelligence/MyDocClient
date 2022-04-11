@@ -30,7 +30,7 @@
                            data-block-id="annotation_{{ annotation.id }}"
                            class="delete-annotation text-danger ms-2"
                            data-bs-toggle="modal"
-                           data-bs-target="#confirmDeleteModal"><i class="bi-trash"></i></a>
+                           data-bs-target="#confirmDeleteAnnotationModal"><i class="bi-trash"></i></a>
                         {% endif %}
                     </small>
                 </div>
@@ -43,14 +43,14 @@
     </div>
 
     <div class="modal fade"
-         id="confirmDeleteModal"
+         id="confirmDeleteAnnotationModal"
          tabindex="-1"
-         aria-labelledby="confirmDeleteModalLabel"
+         aria-labelledby="confirmDeleteAnnotationModal"
          aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="confirmDeleteModalLabel">Supprimer une annotation</h5>
+                    <h5 class="modal-title" id="confirmDeleteAnnotationModalLabel">Supprimer une annotation</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
                 </div>
                 <div class="modal-body">
@@ -58,7 +58,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                    <button type="button" class="btn btn-danger" id="confirmDeleteButton">Supprimer</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteAnnotationButton">Supprimer</button>
                 </div>
             </div>
         </div>
