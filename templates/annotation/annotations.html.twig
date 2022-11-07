@@ -25,7 +25,7 @@
                            class="ms-1"
                            target="_blank"><i class="bi-box-arrow-up-right"></i></a>
 
-                        {% if app.user == annotation.createdBy or app.user.owner(annotation.document.project) %}
+                        {% if app.user == annotation.createdBy or app.user.projectOwner(annotation.document.project) %}
                         <a href="{{ path('delete_annotation', {id: annotation.id}) }}"
                            data-block-id="annotation_{{ annotation.id }}"
                            class="delete-annotation text-danger ms-2"
