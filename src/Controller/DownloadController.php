@@ -51,7 +51,7 @@ class DownloadController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
 
-        if (!$user->canRead($document->getProject())) {
+        if (!$user->canReadProject($document->getProject())) {
             $this->addFlash('danger', DocumentController::RESTRICT_ACCESS_MESSAGE);
             return $this->redirectToRoute('user_projects');
         }
@@ -79,7 +79,7 @@ class DownloadController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
 
-        if (!$user->canRead($project)) {
+        if (!$user->canReadProject($project)) {
             $this->addFlash('danger', ProjectController::RESTRICT_ACCESS_MESSAGE);
             return $this->redirectToRoute('user_projects');
         }
@@ -145,7 +145,7 @@ class DownloadController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
 
-        if ($user->canRead($project)) {
+        if ($user->canReadProject($project)) {
             if (!$request->query->get('project')) {
                 $request->query->set('project', $project->getId());
             }
@@ -199,7 +199,7 @@ class DownloadController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
 
-        if (!$user->canRead($project)) {
+        if (!$user->canReadProject($project)) {
             $this->addFlash('danger', ProjectController::RESTRICT_ACCESS_MESSAGE);
             return $this->redirectToRoute('user_projects');
         }
@@ -222,7 +222,7 @@ class DownloadController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
 
-        if (!$user->canRead($project)) {
+        if (!$user->canReadProject($project)) {
             $this->addFlash('danger', ProjectController::RESTRICT_ACCESS_MESSAGE);
             return $this->redirectToRoute('user_projects');
         }

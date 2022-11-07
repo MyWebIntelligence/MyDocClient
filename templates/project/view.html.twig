@@ -10,7 +10,7 @@
             <div class="d-flex align-items-center mb-3">
                 <h1 class="m-0">{{ project.name }}</h1>
                 <div class="ms-auto">
-                    {% if app.user.isOwner(project) %}
+                    {% if app.user.isProjectOwner(project) %}
                     <a href="#"
                        class="btn"
                        role="button"
@@ -20,7 +20,7 @@
                     </a>
                     {% endif %}
 
-                    {% if app.user.canEdit(project) %}
+                    {% if app.user.canEditProject(project) %}
                     <a href="{{ path('download', {id: project.id}) }}"
                        class="btn"
                        role="button">
@@ -28,7 +28,7 @@
                     </a>
                     {% endif %}
 
-                    {% if app.user.isOwner(project) %}
+                    {% if app.user.isProjectOwner(project) %}
                     <a href="#"
                        class="btn"
                        role="button"
@@ -76,13 +76,13 @@
     </div>
 
     {# OWNER MODALS #}
-    {% if app.user.isOwner(project) %}
+    {% if app.user.isProjectOwner(project) %}
         {% include 'project/_modals/edit-project.html.twig' with {project: project, editForm: editForm} only %}
         {% include 'project/_modals/share-project.html.twig' with {project: project} only %}
     {% endif %}
 
     {# EDITOR MODALS #}
-    {% if app.user.canEdit(project) %}
+    {% if app.user.canEditProject(project) %}
         {% include 'project/_modals/export-documents.html.twig' with {project: project} only %}
         {% include 'project/_modals/import-documents.html.twig' with {importForm: importForm} only %}
         {% include 'project/_modals/delete-documents.html.twig' with {project: project, documents: documents} only %}

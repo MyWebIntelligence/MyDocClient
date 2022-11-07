@@ -130,7 +130,7 @@ class ProjectController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
 
-        if (!$user->canRead($project)) {
+        if (!$user->canReadProject($project)) {
             $this->addFlash("danger", self::RESTRICT_ACCESS_MESSAGE);
             return $this->redirectToRoute('home');
         }
@@ -154,10 +154,10 @@ class ProjectController extends AbstractController
 
         $response = $this->render('project/view.html.twig', [
             'project' => $project,
-            'projectRole' => $user->getRole($project),
+            'projectRole' => $user->getProjectRole($project),
             'documents' => $documents,
             'tagTree' => $tagRepository->getProjectTags($project, true),
-            'canEdit' => $user->canEdit($project),
+            'canEdit' => $user->canEditProject($project),
             'editForm' => $editForm->createView(),
             'importForm' => $importForm->createView(),
             'search' => $request->query->get('q'),
@@ -180,7 +180,7 @@ class ProjectController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
 
-        if (!$user->canEdit($project)) {
+        if (!$user->canEditProject($project)) {
             $this->addFlash("danger", self::RESTRICT_ACCESS_MESSAGE);
             return $this->redirectToRoute('home');
         }
@@ -208,7 +208,7 @@ class ProjectController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
 
-        if (!$user->canRead($project)) {
+        if (!$user->canReadProject($project)) {
             $this->addFlash("danger", self::RESTRICT_ACCESS_MESSAGE);
             return $this->redirectToRoute('home');
         }
@@ -263,7 +263,7 @@ class ProjectController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
 
-        if (!$user->isOwner($project)) {
+        if (!$user->isProjectOwner($project)) {
             $this->addFlash("danger", self::RESTRICT_ACCESS_MESSAGE);
             return $this->redirectToRoute('home');
         }

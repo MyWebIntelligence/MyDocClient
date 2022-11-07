@@ -32,7 +32,7 @@ class TagController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
 
-        if (!$user->canEdit($project)) {
+        if (!$user->canEditProject($project)) {
             return $this->json([
                 'res' => false,
                 'message' => "Vous n'êtes pas autorisé à agir sur ce projet",
@@ -69,7 +69,7 @@ class TagController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
 
-        if (!$user->canEdit($project)) {
+        if (!$user->canEditProject($project)) {
             return $this->json([
                 'res' => false,
                 'message' => "Vous n'êtes pas autorisé à agir sur ce projet",
@@ -102,7 +102,7 @@ class TagController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
 
-        if (!$user->canEdit($project)) {
+        if (!$user->canEditProject($project)) {
             return $this->json([
                 'res' => false,
                 'message' => "Vous n'êtes pas autorisé à agir sur ce projet",
@@ -148,7 +148,7 @@ class TagController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
 
-        if (!$user->canEdit($project)) {
+        if (!$user->canEditProject($project)) {
             return $this->json([
                 'res' => false,
                 'message' => "Vous n'êtes pas autorisé à agir sur ce projet",

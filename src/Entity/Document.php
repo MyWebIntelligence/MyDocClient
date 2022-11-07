@@ -12,6 +12,9 @@ use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Yaml;
 
 /**
+ * Document entity based on Dublin Core Metadata Element Set
+ * @link https://www.dublincore.org/specifications/dublin-core/dces/
+ *
  * @ORM\Entity(repositoryClass=DocumentRepository::class)
  * @ORM\Table(indexes={@ORM\Index(name="search_idx", columns={"title", "description", "content"}, flags={"fulltext"})})
  */
@@ -429,7 +432,7 @@ class Document
     {
         $content = ['---'];
 
-        foreach ($this->getMetadataDict() as $meta => $label) {
+        foreach (self::getMetadataDict() as $meta => $label) {
             $content[] = sprintf(
                 '%s: "%s"',
                 $meta,

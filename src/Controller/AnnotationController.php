@@ -30,7 +30,7 @@ class AnnotationController extends AbstractController
         $user = $this->getUser();
         $project = $projectRepository->find($request->query->get('project'));
 
-        if ($project && $user->canRead($project)) {
+        if ($project && $user->canReadProject($project)) {
             $filteredAnnotations = $annotationRepository->getFiltered($request);
 
             $html = $this->renderView('annotation/annotations.html.twig', [
@@ -53,7 +53,7 @@ class AnnotationController extends AbstractController
         $document = $annotation->getDocument();
 
         if ($document && $project = $document->getProject()) {
-            if ($user->isOwner($project) || $user === $annotation->getCreatedBy()) {
+            if ($user->isProjectOwner($project) || $user === $annotation->getCreatedBy()) {
                 $entityManager->remove($annotation);
                 $entityManager->flush();
 

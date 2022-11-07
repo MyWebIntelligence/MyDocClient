@@ -360,20 +360,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function isOwner(Project $project): bool
+    public function isProjectOwner(Project $project): bool
     {
         return $this === $project->getOwner();
     }
 
-    public function canEdit(Project $project): bool
+    public function canEditProject(Project $project): bool
     {
-        return $this->isOwner($project)
+        return $this->isProjectOwner($project)
             || $this->isGrantedProject($project, Permission::ROLE_EDITOR);
     }
 
-    public function canRead(Project $project): bool
+    public function canReadProject(Project $project): bool
     {
-        return $this->isOwner($project)
+        return $this->isProjectOwner($project)
             || $this->isGrantedProject($project, Permission::ROLE_EDITOR)
             || $this->isGrantedProject($project, Permission::ROLE_READER);
     }
@@ -389,9 +389,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return false;
     }
 
-    public function getRole(Project $project): string
+    public function getProjectRole(Project $project): string
     {
-        if ($this->isOwner($project)) {
+        if ($this->isProjectOwner($project)) {
             return 'Propriétaire';
         }
 
