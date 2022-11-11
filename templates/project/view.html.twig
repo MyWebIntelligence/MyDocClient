@@ -20,14 +20,6 @@
                     </a>
                     {% endif %}
 
-                    {% if app.user.canEditProject(project) %}
-                    <a href="{{ path('download', {id: project.id}) }}"
-                       class="btn"
-                       role="button">
-                        <i class="h5 bi-download"></i>
-                    </a>
-                    {% endif %}
-
                     {% if app.user.isProjectOwner(project) %}
                     <a href="#"
                        class="btn"
