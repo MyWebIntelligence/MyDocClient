@@ -74,7 +74,7 @@ class DownloadController extends AbstractController
     /**
      * @Route("/telecharger-annotations/{id}", name="download_annotations")
      */
-    public function annotations(Project $project, AnnotationRepository $annotationRepository)
+    public function annotations(Project $project, Request $request, AnnotationRepository $annotationRepository)
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -84,7 +84,8 @@ class DownloadController extends AbstractController
             return $this->redirectToRoute('user_projects');
         }
 
-        $annotations = $annotationRepository->getProjectAnnotations($project);
+        $filteredAnnotations = $annotationRepository->getFiltered($request);
+
         $exportFileName = $this->exportService->timestamp('mydoc-annotations-%s.csv');
         $exportFilePath = $this->exportService->temp($exportFileName);
         $file = fopen($exportFilePath,'wb+');
@@ -100,7 +101,7 @@ class DownloadController extends AbstractController
         ], ';');
 
         /** @var Annotation $annotation */
-        foreach ($annotations as $annotation) {
+        foreach ($filteredAnnotations as $annotation) {
             $document = $annotation->getDocument();
             $tag = $annotation->getTag();
             $user = $annotation->getCreatedBy();

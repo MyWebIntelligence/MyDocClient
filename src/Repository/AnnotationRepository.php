@@ -50,10 +50,10 @@ class AnnotationRepository extends ServiceEntityRepository
         return $queryBuilder->getQuery()->getResult();
     }
 
-    public function getFiltered(Request $request)
+    public function getFiltered(Request $request, Project $project = null)
     {
         $params = $request->query;
-        $project = $this->projectRepository->find($params->get('project'));
+        $project = $project ?? $this->projectRepository->find($params->get('project'));
 
         $queryBuilder = $this->createQueryBuilder('a')
             ->join(Document::class, 'd', 'WITH', 'd = a.document')

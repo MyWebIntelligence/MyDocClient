@@ -1,6 +1,6 @@
 {% import 'macros.html.twig' as macro %}
 <div class="p-2">
-    <form action="{{ path('async_filter_annotations') }}" class="mb-3">
+    <form action="{{ path('user_project_annotations', {id: project.id}) }}" class="mb-3" method="get">
         <div class="row row-cols-lg-4 align-items-end g-2">
             <input type="hidden" name="project" value="{{ project.id }}">
             {% if document %}
@@ -15,7 +15,7 @@
                 {{ macro.author_select(authors, 'filterByAuthor', {with_empty: true, params: app.request.query}) }}
             </div>
             <div class="col-auto">
-                <button id="annotationFilterBtn" type="button" class="btn btn-primary">Filtrer</button>
+                <button id="annotationFilterBtn" type="submit" class="btn btn-primary">Filtrer</button>
             </div>
         </div>
     </form>

@@ -19,10 +19,10 @@
     <div class="d-flex align-items-center">
         <h1>Annotations</h1>
         <div class="ms-auto">
-            <a href="{{ path('download_annotations', {id: project.id}) }}" class="btn btn-primary">
-                <i class="bi-download me-2"></i>Télécharger CSV
+            <a href="{{ path('download_annotations', {id: project.id}) ~ '?' ~ app.request.queryString }}" class="btn btn-primary">
+                <i class="bi-download me-2"></i>Sélection vers CSV
             </a>
-            <a href="{{ path('download_annotations_md', {id: project.id}) }}" id="dlAnnotationMdBtn" class="btn btn-primary">
+            <a href="{{ path('download_annotations_md', {id: project.id}) ~ '?' ~ app.request.queryString }}" id="dlAnnotationMdBtn" class="btn btn-primary">
                 <i class="bi-download me-2"></i>Sélection vers Markdown
             </a>
         </div>

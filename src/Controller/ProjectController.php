@@ -287,19 +287,28 @@ class ProjectController extends AbstractController
      */
     public function annotations(
         Project $project,
+        Request $request,
         AnnotationRepository $annotationRepository,
         TagRepository $tagRepository,
         AnnotationService $annotationService): Response
     {
-        $annotations = $annotationRepository->getProjectAnnotations($project);
+        /** @var User $user */
+        $user = $this->getUser();
 
-        return $this->render('project/annotations.html.twig', [
-            'authors' => $annotationService->getAuthors($annotations),
-            'tagTree' => $tagRepository->getProjectTags($project, true),
-            'annotationsByTag' => $annotationService->getTagIndexed($annotations),
-            'project' => $project,
-            'document' => null,
-        ]);
+        if ($user->canReadProject($project)) {
+            $annotations = $annotationRepository->getProjectAnnotations($project);
+            $filteredAnnotations = $annotationRepository->getFiltered($request, $project);
+
+            return $this->render('project/annotations.html.twig', [
+                'authors' => $annotationService->getAuthors($annotations),
+                'tagTree' => $tagRepository->getProjectTags($project, true),
+                'annotationsByTag' => $annotationService->getTagIndexed($filteredAnnotations),
+                'project' => $project,
+                'document' => null,
+            ]);
+        }
+
+        return $this->redirectToRoute('home');
     }
 
 }
