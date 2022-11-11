@@ -9,6 +9,7 @@ use App\Entity\User;
 use App\Repository\AnnotationRepository;
 use App\Repository\DocumentRepository;
 use App\Service\AnnotationService;
+use App\Service\DocumentService;
 use App\Service\ExportService;
 use App\Service\Gexf;
 use JsonException;
@@ -218,7 +219,11 @@ class DownloadController extends AbstractController
      * @Route("/telecharger-csv/{id}", name="download_csv")
      * @throws JsonException
      */
-    public function csv(Project $project, Request $request, DocumentRepository $documentRepository): Response
+    public function csv(
+        Project $project,
+        Request $request,
+        DocumentRepository $documentRepository,
+        DocumentService $documentService): Response
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -234,7 +239,11 @@ class DownloadController extends AbstractController
         $archive->open($archiveFilePath, ZipArchive::CREATE | ZIPARCHIVE::OVERWRITE);
 
         $documents = $this->getDocuments($project, $request, $documentRepository);
-        $headers = array_merge(['Id'], array_values(Document::getMetadataDict()), ['Tags']);
+        $headers = array_merge(
+            ['Id'],
+            array_values(Document::getMetadataDict()),
+            ['Tags', 'Internal links', 'External links']
+        );
 
         $csvFilename = sprintf("%s.csv", $exportBaseName);
         $csvFilepath = $this->exportService->temp($csvFilename);
@@ -245,6 +254,7 @@ class DownloadController extends AbstractController
         /** @var Document $document */
         foreach ($documents as $document) {
             $tags = [];
+            $links = $documentService->getLinks($document);
 
             foreach ($document->getAnnotations() as $annotation) {
                 if ($tag = $annotation->getTag()) {
@@ -272,6 +282,8 @@ class DownloadController extends AbstractController
                 $document->getRights(),
                 $document->getSource(),
                 implode(', ', $tags),
+                implode(', ', $links['internal']),
+                implode(', ', $links['external']),
             ];
 
             fputcsv($csvFile, $data, ";");

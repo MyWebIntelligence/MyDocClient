@@ -7,7 +7,7 @@ import './tag-tree'
 window.addEventListener('load', () => {
     const cbCheckAll = document.getElementById('cb_document_all')
     const cbChecks = document.querySelectorAll('.cb_document')
-    const selectionMenu = document.getElementById('deleteSelected')
+    const deleteBtn = document.getElementById('deleteSelected')
     const deleteDocuments = document.getElementById('delete_documents')
 
     function getSelectedDelete(item) {
@@ -15,8 +15,15 @@ window.addEventListener('load', () => {
     }
 
     function setSelectionMenu(state) {
-        state ? selectionMenu.removeAttribute('disabled')
-              : selectionMenu.setAttribute('disabled', 'disabled')
+        if (state === true) {
+            deleteBtn.removeAttribute('disabled')
+            deleteBtn.classList.remove('d-none')
+            deleteBtn.classList.add('d-inline')
+        } else {
+            deleteBtn.setAttribute('disabled', 'disabled')
+            deleteBtn.classList.add('d-none')
+            deleteBtn.classList.remove('d-inline')
+        }
     }
 
 

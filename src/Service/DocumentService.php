@@ -8,6 +8,7 @@ use App\Entity\Project;
 use App\Repository\DocumentRepository;
 use DateTimeImmutable;
 use Doctrine\Persistence\ManagerRegistry;
+use Exception;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\Form\FormInterface;
@@ -122,7 +123,7 @@ class DocumentService
                         try {
                             $this->import($project, $file, $file->getBasename());
                             $succeeded[] = $file->getBasename();
-                        } catch (\Exception $exception) {
+                        } catch (Exception $exception) {
                             $errors[$file->getBasename()] = DocumentController::INVALID_YAML_MSG;
                         }
                     } else {
@@ -166,7 +167,7 @@ class DocumentService
         $manager->flush();
     }
 
-    public function getLinks(Document $document, Request $request): array
+    public function getLinks(Document $document): array
     {
         $links = ['internal' => [], 'external' => []];
 

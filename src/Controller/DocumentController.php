@@ -78,7 +78,7 @@ class DocumentController extends AbstractController
             'projectRole' => $user->getProjectRole($document->getProject()),
             'canEdit' => $user->canEditProject($document->getProject()),
             'lexicon' => $textProcessor->countWords($document->getWords()),
-            'links' => $documentService->getLinks($document, $request),
+            'links' => $documentService->getLinks($document),
             'tagTree' => $tagRepository->getProjectTags($document->getProject(), true),
             'search' => $request->query->get('q'),
         ]);
