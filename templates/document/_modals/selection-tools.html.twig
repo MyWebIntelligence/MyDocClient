@@ -42,7 +42,8 @@
                              id="selectionToolsAnnotations"
                              role="tabpanel"
                              aria-labelledby="selectionToolsAnnotationsLabel">
-                            <form method="post"
+                            <form id="annotateForm"
+                                  method="post"
                                   action="{{ path('user_tag_document', {id: document.id ?? 0}) }}">
                                 <div class="mb-3">
                                     <label for="annotationSelection" class="visually-hidden mb-2">Sélection</label>
@@ -66,7 +67,7 @@
                                         {{ macro.tag_select(tagTree, 'annotationTag') }}
                                     </div>
                                     <div class="col-auto">
-                                        <button type="submit" name="action" value="tag-document" class="btn btn-primary">
+                                        <button type="submit" id="submitAnnotation" name="action" value="tag-document" class="btn btn-primary">
                                             <i class="bi-tag me-1"></i>Annoter
                                         </button>
                                     </div>

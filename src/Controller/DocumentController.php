@@ -289,9 +289,19 @@ class DocumentController extends AbstractController
         Document $document,
         Request $request,
         TagRepository $tagRepository,
-        EntityManagerInterface $entityManager): RedirectResponse
+        EntityManagerInterface $entityManager): JsonResponse
     {
-        if (($request->request->get('action') === 'tag-document') && ($tag = $tagRepository->find($request->request->get('tag')))) {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        if (!$user->canEditProject($document->getProject())) {
+            return new JsonResponse([
+                'message' => "L'édition de ce projet n'est pas permise",
+                'error' => true,
+            ]);
+        }
+
+        if ($tag = $tagRepository->find($request->request->get('tag'))) {
             $annotation = new Annotation();
             $annotation->setContent($request->request->get('selection'));
             $annotation->setComment($request->request->get('comment'));
@@ -299,12 +309,17 @@ class DocumentController extends AbstractController
             $annotation->setTag($tag);
             $entityManager->persist($annotation);
             $entityManager->flush();
-            $this->addFlash('success', "L'annotation a été sauvegardée");
-        } else {
-            $this->addFlash('danger', "L'annotation n'a pas été sauvegardée");
+
+            return new JsonResponse([
+                'message' => "L'annotation a été sauvegardée",
+                'error' => false,
+            ]);
         }
 
-        return $this->redirectToRoute('user_document', ['id' => $document->getId()]);
+        return new JsonResponse([
+            'message' => "Erreur, le tag n'a pas été trouvé",
+            'error' => true,
+        ]);
     }
 
     /**

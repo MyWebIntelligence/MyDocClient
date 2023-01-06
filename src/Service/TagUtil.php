@@ -3,7 +3,6 @@
 namespace App\Service;
 
 use App\Entity\Tag;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 
 class TagUtil
@@ -34,9 +33,7 @@ class TagUtil
         Tag $parent = null,
         int $level = 0): void
     {
-        $treeRepository = $this->entityManager->getRepository(Tag::class);
-
-        foreach ($structure as $i => $node) {
+        foreach ($structure as $node) {
             if (array_key_exists($node->id, $indexedTagCollection)) {
                 /** @var Tag $tag */
                 $tag = $indexedTagCollection[$node->id];

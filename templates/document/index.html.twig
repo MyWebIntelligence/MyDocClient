@@ -211,6 +211,7 @@
 
 {% block javascripts %}
     {{ parent() }}
+    <script>const documentId = {{ document.id }};</script>
     {{ encore_entry_script_tags('document') }}
     {{ encore_entry_script_tags('annotation') }}
 {% endblock %}

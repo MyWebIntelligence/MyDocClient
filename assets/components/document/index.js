@@ -16,11 +16,12 @@ const annotationSelection = document.getElementById('annotationSelection');
 const linkSelection = document.getElementById('linkSelection');
 const preview = document.getElementById('markdownPreview');
 const toolsModal = Modal.getOrCreateInstance(document.getElementById('selectionToolsModal'));
-const annotationTools = document.getElementById('annotationTools');
+const annotateForm = document.getElementById('annotateForm');
 const tabButtons = document.querySelectorAll('#documentRenderMode button[data-bs-toggle="tab"]');
 const asyncSearchBtn = document.getElementById('asyncSearch');
 const asyncDocuments = document.getElementById('asyncDocuments');
 const searchBar = document.getElementById('document_search');
+const annotationTabPanel = document.getElementById('renderAnnotations');
 const links = document.querySelectorAll('.og-preview');
 
 const extractOg = (response) => {
@@ -92,6 +93,18 @@ const searchDocuments = (event) => {
         .then(data => asyncDocuments.innerHTML = data);
 };
 
+const asyncPostForm = async (form) => {
+    const formData = new FormData(form);
+    const response = await fetch(form.getAttribute('action'), {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: new URLSearchParams(Object.fromEntries(formData)),
+    });
+
+    return response.json();
+}
 
 window.addEventListener('load', () => {
     // Save opened tab for preselection
@@ -108,7 +121,22 @@ window.addEventListener('load', () => {
 
     if (submitAnnotation) {
         submitAnnotation.addEventListener('click', (event) => {
-            annotationTools.submit();
+            event.preventDefault();
+            event.stopPropagation();
+            asyncPostForm(annotateForm)
+                .then(res => {
+                    if (res.hasOwnProperty('error') && res.error === false) {
+                        toolsModal.hide();
+                        annotateForm.reset();
+                        fetch(`/annotations/refresh/${documentId}`)
+                            .then(res => res.text())
+                            .then(html => annotationTabPanel.innerHTML = html);
+                    } else {
+                        if (res.hasOwnProperty('message')) {
+                            console.log(res.message);
+                        }
+                    }
+                });
         });
     }
 

@@ -3,9 +3,11 @@
 namespace App\Controller;
 
 use App\Entity\Annotation;
+use App\Entity\Document;
 use App\Entity\User;
 use App\Repository\AnnotationRepository;
 use App\Repository\ProjectRepository;
+use App\Repository\TagRepository;
 use App\Service\AnnotationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -63,5 +65,21 @@ class AnnotationController extends AbstractController
 
 
         return new JsonResponse(false);
+    }
+
+    /**
+     * @Route("/annotations/refresh/{id}", name="refresh_annotations")
+     */
+    public function refreshTabPanel(Document $document, TagRepository $tagRepository, AnnotationService $annotationService): Response
+    {
+        $annotations = $document->getAnnotations();
+
+        return $this->render('annotation/index.html.twig', [
+            'project' => $document->getProject(),
+            'document' => $document,
+            'tagTree' => $tagRepository->getProjectTags($document->getProject(), true),
+            'annotationsByTag' => $annotationService->getTagIndexed($annotations),
+            'authors' => $annotationService->getAuthors($annotations),
+        ]);
     }
 }
