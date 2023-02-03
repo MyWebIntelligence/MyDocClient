@@ -1,0 +1,32 @@
+{% import 'macros.html.twig' as macro %}
+<form id="{{ formId }}"
+      method="post"
+      action="{{ formAction }}">
+    <div class="mb-3">
+        <label for="{{ formId }}_annotationSelection" class="visually-hidden mb-2">Sélection</label>
+        <textarea id="{{ formId }}_annotationSelection"
+                  name="selection"
+                  class="form-control citation bg-white shadow-none"
+                  rows="5"
+                  readonly="readonly">{{ form is defined ? form.content.vars.value }}</textarea>
+    </div>
+    <div class="mb-3">
+        <label for="{{ formId }}_annotationComment" class="mb-2">Commentaire</label>
+        <textarea id="{{ formId }}_annotationComment" class="form-control" name="comment">{{ form is defined ? form.comment.vars.value }}</textarea>
+    </div>
+
+    <div>
+        <label for="{{ formId }}_annotationTag" class="mb-2">Tag associé</label>
+    </div>
+
+    <div class="row g-1">
+        <div class="col">
+            {{ macro.tag_select(tagTree, formId ~ '_annotationTag', null, form is defined ? form.tag.vars.value : '') }}
+        </div>
+        <div class="col-auto">
+            <button type="submit" id="{{ formId }}_submitAnnotation" name="action" value="tag-document" class="btn btn-primary">
+                <i class="bi-tag me-1"></i>Annoter
+            </button>
+        </div>
+    </div>
+</form>

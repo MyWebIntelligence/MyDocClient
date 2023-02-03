@@ -11,16 +11,17 @@
         #}
         <div class="col-auto">
             <button class="btn btn-outline-danger d-none"
-               id="deleteSelected"
-               data-bs-toggle="modal"
-               data-bs-target="#confirmDeleteModal"
-               disabled>
+                    type="button"
+                    id="deleteSelected"
+                    data-bs-toggle="modal"
+                    data-bs-target="#confirmDeleteModal"
+                    disabled>
                 <i class="bi-trash"></i>
             </button>
         </div>
         <div class="col-auto">
-            <button type="button"
-                    class="btn btn-primary"
+            <button class="btn btn-primary"
+                    type="button"
                     data-bs-toggle="modal"
                     data-bs-target="#importDocumentModal">
                 <i class="bi-folder-plus me-2"></i>Importer
@@ -46,7 +47,6 @@
                         <i class="bi-search"></i>
                     </button>
                     <span class="badge rounded-circle bg-secondary"
-                          type="button"
                           data-bs-toggle="modal"
                           data-bs-target="#searchHelpModal">?</span>
                 </div>
@@ -55,8 +55,8 @@
     </div>
     {% if canEdit %}
     <div class="col-auto">
-        <button type="button"
-                class="btn btn-primary"
+        <button class="btn btn-primary"
+                type="button"
                 data-bs-toggle="modal"
                 data-bs-target="#exportDocumentModal">
             <i class="bi-download me-2"></i>Exporter

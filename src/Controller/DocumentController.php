@@ -14,7 +14,6 @@ use App\Repository\TagRepository;
 use App\Service\AnnotationService;
 use App\Service\DocumentService;
 use App\Service\TextProcessor;
-use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
@@ -44,13 +43,13 @@ class DocumentController extends AbstractController
      * @throws Exception
      */
     public function index(
-        Document $document,
-        Request $request,
-        DocumentService $documentService,
+        Document           $document,
+        Request            $request,
+        DocumentService    $documentService,
         DocumentRepository $documentRepository,
-        AnnotationService $annotationService,
-        TextProcessor $textProcessor,
-        TagRepository $tagRepository): Response
+        AnnotationService  $annotationService,
+        TextProcessor      $textProcessor,
+        TagRepository      $tagRepository): Response
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -91,11 +90,11 @@ class DocumentController extends AbstractController
      *     requirements={"id": "\d+"})
      */
     public function new(
-        Project $project,
-        Request $request,
+        Project         $project,
+        Request         $request,
         DocumentService $documentService,
-        TextProcessor $textProcessor,
-        TagRepository $tagRepository): Response
+        TextProcessor   $textProcessor,
+        TagRepository   $tagRepository): Response
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -163,7 +162,7 @@ class DocumentController extends AbstractController
 
         $metas = $document->getMetadataDict();
 
-        array_walk($metas, static function(&$value, $meta) use ($document) {
+        array_walk($metas, static function (&$value, $meta) use ($document) {
             $value = $document->{'get' . ucfirst($meta)}();
         });
 
@@ -186,8 +185,8 @@ class DocumentController extends AbstractController
      *     requirements={"id": "\d+"})
      */
     public function importDocuments(
-        Project $project,
-        Request $request,
+        Project         $project,
+        Request         $request,
         DocumentService $documentService): Response
     {
         /** @var User $user */
@@ -234,9 +233,9 @@ class DocumentController extends AbstractController
      *     requirements={"id": "\d+"})
      */
     public function deleteDocuments(
-        Project $project,
-        Request $request,
-        DocumentRepository $documentRepository,
+        Project                $project,
+        Request                $request,
+        DocumentRepository     $documentRepository,
         EntityManagerInterface $entityManager): RedirectResponse
     {
         /** @var User $user */
@@ -263,7 +262,7 @@ class DocumentController extends AbstractController
      * @Route("/delete-document/{id}", name="user_delete_document")
      */
     public function deleteDocument(
-        Document $document,
+        Document               $document,
         EntityManagerInterface $entityManager): RedirectResponse
     {
         /** @var User $user */
@@ -286,9 +285,9 @@ class DocumentController extends AbstractController
      * @Route("/tag-document/{id}", name="user_tag_document")
      */
     public function tagDocument(
-        Document $document,
-        Request $request,
-        TagRepository $tagRepository,
+        Document               $document,
+        Request                $request,
+        TagRepository          $tagRepository,
         EntityManagerInterface $entityManager): JsonResponse
     {
         /** @var User $user */
@@ -328,11 +327,11 @@ class DocumentController extends AbstractController
      *     requirements={"source":"\d+","target":"\d+"})
      */
     public function linkDocuments(
-        Request $request,
+        Request                $request,
         EntityManagerInterface $entityManager,
-        DocumentRepository $documentRepository,
-        $source,
-        $target)
+        DocumentRepository     $documentRepository,
+                               $source,
+                               $target): JsonResponse
     {
         $sourceDocument = $documentRepository->find($source);
         $targetDocument = $documentRepository->find($target);
@@ -344,20 +343,17 @@ class DocumentController extends AbstractController
             $link->setContent($request->request->get('selection'));
             $entityManager->persist($link);
             $entityManager->flush();
-            $this->addFlash('success', "Le document a été lié");
-        } else {
-            $this->addFlash('danger', "Le document n'a pas pu être lié");
         }
 
-        return $this->redirectToRoute('user_document', ['id' => $source]);
+        return $this->json(true);
     }
 
     /**
      * @Route("/async-search/{id}", name="user_documents_async_search")
      */
     public function asyncSearch(
-        Document $document,
-        Request $request,
+        Document           $document,
+        Request            $request,
         DocumentRepository $documentRepository,
         PaginatorInterface $paginator): Response
     {
@@ -380,4 +376,15 @@ class DocumentController extends AbstractController
             ])
         );
     }
- }
+
+    /**
+     * @Route("/async-links/{id}", name="user_project_async_links")
+     */
+    public function asyncLinks(Document $document, DocumentService $documentService): Response
+    {
+        return $this->render('document/_partials/links.html.twig', [
+            'links' => $documentService->getLinks($document),
+        ]);
+    }
+
+}

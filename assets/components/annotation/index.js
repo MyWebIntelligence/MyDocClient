@@ -1,8 +1,9 @@
 import Modal from "bootstrap/js/dist/modal";
 
 const confirmDeleteAnnotationModal = Modal.getOrCreateInstance(document.getElementById('confirmDeleteAnnotationModal'));
-const confirmDeleteAnnotationButton = document.getElementById('confirmDeleteButton');
-const dlAnnotationMdBtn = document.getElementById('dlAnnotationMdBtn');
+const confirmDeleteAnnotationButton = document.getElementById('confirmDeleteAnnotationButton');
+const editAnnotationModal = Modal.getOrCreateInstance(document.getElementById('editAnnotationModal'));
+const editAnnotationContainer = document.getElementById('editAnnotationContainer');
 
 const confirmDeletion = () => {
     if (deleteCallback) {
@@ -11,31 +12,42 @@ const confirmDeletion = () => {
     }
 };
 
-let deleteButton;
 let deleteCallback;
 
 window.addEventListener('click', (event) => {
     // Delete annotation
-    deleteButton = event.target.closest('a');
+    const button = event.target.closest('a, button');
 
-    if (deleteButton && deleteButton.classList.contains('delete-annotation')) {
-        deleteCallback = () => {
+    if (button) {
+        if (button.classList.contains('delete-annotation')) {
+            deleteCallback = () => {
+                event.preventDefault();
+                const block = document.getElementById(button.dataset.blockId);
+
+                fetch(button.getAttribute('href'))
+                    .then(res => res.text())
+                    .then(data => {
+                        if (JSON.parse(data)) {
+                            block.remove();
+                        }
+                    });
+
+                confirmDeleteAnnotationModal.hide();
+            }
+        } else if (button.classList.contains('edit-annotation')) {
             event.preventDefault();
-            const block = document.getElementById(deleteButton.dataset.blockId);
-
-            fetch(deleteButton.getAttribute('href'))
+            const block = document.getElementById(button.dataset.blockId);
+            fetch(`/annotations/edit-form/${button.dataset.annotationId}`)
                 .then(res => res.text())
                 .then(data => {
-                    if (JSON.parse(data)) {
-                        block.remove();
-                    }
+                    editAnnotationContainer.innerHTML = data;
+                    editAnnotationModal.show();
                 });
-
-            confirmDeleteAnnotationModal.hide();
         }
     }
 });
 
 if (confirmDeleteAnnotationButton) {
+    console.log('delete');
     confirmDeleteAnnotationButton.addEventListener('click', confirmDeletion);
 }

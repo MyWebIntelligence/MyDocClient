@@ -40,37 +40,16 @@
     </div>
 {% endmacro %}
 
-{% macro asyncDocumentLinkRow(source, target) %}
-    {% if source != target %}
-    <tr>
-        <td>
-            <a href="{{ path('user_link_documents', {source: source.id, target: target.id}) }}"
-               class="btn btn-primary btn-sm btn-link-document">Lier</a>
-        </td>
-        <td>
-            {{ target.title ?: 'document ' ~ target.id }}
-            <a href="{{ path('user_document', {id: target.id}) }}" target="_blank">
-                <i class="bi-box-arrow-up-right ms-2"></i>
-            </a>
-        </td>
-        <td>{{ target.creator }}</td>
-        <td>{{ target.date }}</td>
-        <td>{{ target.publisher }}</td>
-        <td>{{ target.type }}</td>
-    </tr>
-    {% endif %}
-{% endmacro %}
-
 {% macro tabButton(id, label, icon_class) %}
     {% set tab_attr_id = id ~ '-tab' %}
     {% set active_tab = app.request.cookies.get('activeDocumentTab', 'renderPreview-tab') %}
     {% set is_active = active_tab == tab_attr_id %}
     <li class="nav-item" role="presentation">
         <button class="nav-link {{ _self.active_tab(id) }}"
+                type="button"
                 id="{{ tab_attr_id }}"
                 data-bs-toggle="tab"
                 data-bs-target="#{{ id }}"
-                type="button"
                 role="tab"
                 aria-controls="{{ id }}"
                 aria-selected="{{ is_active ? 'true' : 'false' }}"><i class="{{ icon_class}} me-2"></i>{{ label }}</button>
@@ -91,19 +70,20 @@
 {% endif %}
 {%- endmacro -%}
 
-{% macro tag_select(tags, select_id, options) %}
+{% macro tag_select(tags, select_id, options, default_value = '') %}
     <select id="{{ select_id }}" class="form-select" name="tag">
         {% if options != null and options.with_empty == true %}
             <option value=""></option>
         {% endif %}
         {% for tag in tags %}
-            {{ _self.tag_option(tag, options) }}
+            {{ _self.tag_option(tag, options, default_value) }}
         {% endfor %}
     </select>
 {% endmacro %}
 
-{% macro tag_option(tag, options) %}
-    <option value="{{ tag.id }}" {{ options != null and options.params.get('tag') == tag.id ? 'selected' : '' }}>
+{% macro tag_option(tag, options, default_value) %}
+    {% set is_opt = options != null and options.params.get('tag') == tag.id %}
+    <option value="{{ tag.id }}" {{ default_value == tag.id or is_opt ? 'selected' : '' }}>
         {% for i in range(0, tag.lvl*2) %}{{ "&nbsp;" }}{% endfor %}
         {{ tag.name }}</option>
     {% for child in tag.children %}
@@ -112,7 +92,7 @@
 {% endmacro %}
 
 {% macro author_select(authors, selectId, options) %}
-    <select id="" class="form-select" name="author">
+    <select class="form-select" name="author">
         {% if options != null and options.with_empty == true %}
         <option value=""></option>
         {% endif %}

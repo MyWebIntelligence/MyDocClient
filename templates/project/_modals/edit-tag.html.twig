@@ -1,5 +1,5 @@
 <div id="renameTagModal"
-     class="modal fade"
+     class="modal fade tag-modal"
      tabindex="-1"
      aria-labelledby="renameTagModalLabel"
      aria-hidden="true">
@@ -7,7 +7,7 @@
         <div class="modal-content">
             <form id="renameTagForm" action="{{ path('user_project_rename_tag', {id: project.id}) }}" method="post">
                 <div class="modal-header">
-                    <h5 class="modal-title fw-bold" id="renameTagModalLabel">Renommer le tag <span id="renameTag_name"></span></h5>
+                    <h5 class="modal-title fw-bold" id="renameTagModalLabel">Éditer le tag <span id="renameTag_name"></span></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
                 </div>
                 <div class="modal-body">
@@ -18,7 +18,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="renameTag_newDescription" class="form-label">Nouvelle description</label>
-                        <textarea id="renameTag_newDescription" type="text" name="description" class="form-control" required></textarea>
+                        <textarea id="renameTag_newDescription" name="description" class="form-control"></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">

@@ -1,7 +1,5 @@
-import '../project/new-tag';
-import '../project/delete-tag';
-import '../project/rename-tag';
-import '../project/tag-tree';
+import '../project/tag';
+import '../annotation/index';
 import Modal from 'bootstrap/js/dist/modal';
 import {marked} from 'marked';
 import jsCookie from "js-cookie";
@@ -11,12 +9,13 @@ const initialContent = documentContent ? documentContent.value : '';
 const changesUnsaved = document.getElementById('changesUnsaved');
 const initMetaBtn = document.getElementById('init_meta_btn');
 const annotateBtn = document.getElementById('annotate_btn');
-const submitAnnotation = document.getElementById('submitAnnotation');
-const annotationSelection = document.getElementById('annotationSelection');
+const submitCreateAnnotation = document.getElementById('createAnnotation_submitAnnotation');
+const annotationSelection = document.getElementById('createAnnotation_annotationSelection');
 const linkSelection = document.getElementById('linkSelection');
 const preview = document.getElementById('markdownPreview');
 const toolsModal = Modal.getOrCreateInstance(document.getElementById('selectionToolsModal'));
-const annotateForm = document.getElementById('annotateForm');
+const createAnnotationForm = document.getElementById('createAnnotation');
+const editAnnotationModal = Modal.getOrCreateInstance(document.getElementById('editAnnotationModal'));
 const tabButtons = document.querySelectorAll('#documentRenderMode button[data-bs-toggle="tab"]');
 const asyncSearchBtn = document.getElementById('asyncSearch');
 const asyncDocuments = document.getElementById('asyncDocuments');
@@ -34,7 +33,7 @@ const extractOg = (response) => {
         const content = meta.getAttribute("content");
 
         if (property !== null && property.startsWith('og:')) {
-            const type =  property.replace("og:", "");
+            const type = property.replace("og:", "");
         }
     })
 };
@@ -93,7 +92,7 @@ const searchDocuments = (event) => {
         .then(data => asyncDocuments.innerHTML = data);
 };
 
-const asyncPostForm = async (form) => {
+const asyncPostForm = async (form, type) => {
     const formData = new FormData(form);
     const response = await fetch(form.getAttribute('action'), {
         method: 'POST',
@@ -103,7 +102,12 @@ const asyncPostForm = async (form) => {
         body: new URLSearchParams(Object.fromEntries(formData)),
     });
 
-    return response.json();
+    switch (type) {
+        case 'json':
+            return response.json();
+        default:
+            return response.text();
+    }
 }
 
 window.addEventListener('load', () => {
@@ -119,15 +123,16 @@ window.addEventListener('load', () => {
     // Set Markdown preview
     preview.innerHTML = marked.parse(preview.innerHTML);
 
-    if (submitAnnotation) {
-        submitAnnotation.addEventListener('click', (event) => {
+
+    if (submitCreateAnnotation) {
+        submitCreateAnnotation.addEventListener('click', (event) => {
             event.preventDefault();
             event.stopPropagation();
-            asyncPostForm(annotateForm)
+            asyncPostForm(createAnnotationForm, 'json')
                 .then(res => {
                     if (res.hasOwnProperty('error') && res.error === false) {
                         toolsModal.hide();
-                        annotateForm.reset();
+                        createAnnotationForm.reset();
                         fetch(`/annotations/refresh/${documentId}`)
                             .then(res => res.text())
                             .then(html => annotationTabPanel.innerHTML = html);
@@ -139,6 +144,28 @@ window.addEventListener('load', () => {
                 });
         });
     }
+
+    document.body.addEventListener('click', (event) => {
+        if (event.target.getAttribute('id') === 'editAnnotation_submitAnnotation') {
+            const editAnnotationForm = document.getElementById('editAnnotation');
+            event.preventDefault();
+            event.stopPropagation();
+            asyncPostForm(editAnnotationForm, 'json')
+                .then(res => {
+                    if (res.hasOwnProperty('error') && res.error === false) {
+                        editAnnotationModal.hide();
+                        editAnnotationForm.reset();
+                        fetch(`/annotations/refresh/${documentId}`)
+                            .then(res => res.text())
+                            .then(html => annotationTabPanel.innerHTML = html);
+                    } else {
+                        if (res.hasOwnProperty('message')) {
+                            console.log(res.message);
+                        }
+                    }
+                });
+        }
+    })
 
     if (documentContent) {
         const fetchMeta = () => {
@@ -189,12 +216,26 @@ window.addEventListener('click', (event) => {
 
         form.setAttribute('action', event.target.getAttribute('href'));
         form.setAttribute('method', 'POST');
+        form.style.opacity = '0';
 
         selection.setAttribute('name', 'selection');
         selection.value = linkSelection.value;
 
         form.appendChild(selection);
         document.body.appendChild(form);
-        form.submit();
+
+        asyncPostForm(form).then(data => {
+            document.body.removeChild(form);
+            event.target.classList.add('disabled');
+            event.target.innerHTML = 'Lié';
+            fetch(`/async-links/${documentId}`)
+                .then(res => res.text())
+                .then(data => {
+                    const linkContainer = document.getElementById('documentLinks');
+                    if (linkContainer) {
+                        linkContainer.innerHTML = data;
+                    }
+                })
+        });
     }
 });

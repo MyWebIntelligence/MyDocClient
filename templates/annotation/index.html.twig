@@ -21,6 +21,9 @@
     </form>
 
     <div id="annotationContainer">
-        {% include('annotation/annotations.html.twig') with {annotationsByTag} only %}
+        {% include('annotation/annotations.html.twig') with {
+            annotationsByTag,
+            tagTree
+        } only %}
     </div>
 </div>

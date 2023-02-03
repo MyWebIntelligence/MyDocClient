@@ -1,4 +1,4 @@
-{% import 'macros.html.twig' as macros %}
+{% import 'macros.html.twig' as macro %}
 <div class="table-responsive" id="asyncDocuments">
     <table class="table halign-rows">
         <thead>
@@ -38,7 +38,28 @@
         </thead>
         <tbody>
         {% for document in documents %}
-            {{ macros.asyncDocumentLinkRow(source, document) }}
+            {% if source != document %}
+                <tr>
+                    <td style="width: 10%">
+                        {% if document.id not in links['internal']|keys %}
+                        <a href="{{ path('user_link_documents', {source: source.id, target: document.id}) }}"
+                           class="btn btn-primary btn-sm btn-link-document w-100">Lier</a>
+                        {% else %}
+                        <button type="button" class="btn btn-primary btn-sm btn-link-document disabled w-100">Lié</button>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {{ document.title ?: 'document ' ~ document.id }}
+                        <a href="{{ path('user_document', {id: document.id}) }}" target="_blank">
+                            <i class="bi-box-arrow-up-right ms-2"></i>
+                        </a>
+                    </td>
+                    <td>{{ document.creator }}</td>
+                    <td>{{ document.date }}</td>
+                    <td>{{ document.publisher }}</td>
+                    <td>{{ document.type }}</td>
+                </tr>
+            {% endif %}
         {% else %}
             <tr>
                 <td colspan="6" class="text-center text-muted py-4">

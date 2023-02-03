@@ -5,16 +5,15 @@
 
 {% block meta %}
 {% if document.id %}
-<meta property="og:type" content= "website" />
-<meta property="og:url" content="{{ url('user_document', {id: document.id}) }}"/>
-<meta property="og:site_name" content="MyDoc Intelligence" />
-<meta property="og:title" content="{{ document.title }}" />
-<meta property="og:description" content="{{ document.description }}" />
+<meta property="og:type" content= "website">
+<meta property="og:url" content="{{ url('user_document', {id: document.id}) }}">
+<meta property="og:site_name" content="MyDoc Intelligence">
+<meta property="og:title" content="{{ document.title }}">
+<meta property="og:description" content="{{ document.description }}">
 {% endif %}
 {% endblock %}
 
 {% block body %}
-    {{ form_start(form) }}
     <div class="my-2">
         <div class="row">
             <div class="col-6">
@@ -64,41 +63,17 @@
                     </div>
 
                     {# LINKS #}
-                    {% if links is defined %}
-                        <div class="mt-5 mb-3">
-                            <div class="row">
-                                <div class="col-6">
-                                    <h5 class="fw-bold">Liens internes</h5>
-                                    <ul class="list-unstyled">
-                                        {% for link in links['internal'] %}
-                                            <li class="text-truncate">
-                                                <a href="{{ path('user_document', {id: link.id}) }}">{{ link.title }}</a>
-                                            </li>
-                                        {% else %}
-                                            <li class="text-muted">Aucun lien</li>
-                                        {% endfor %}
-                                    </ul>
-                                </div>
-                                <div class="col-6">
-                                    <h5 class="fw-bold">Liens externes</h5>
-                                    <ul class="list-unstyled">
-                                        {% for link in links['external'] %}
-                                            <li class="text-truncate">
-                                                <a href="{{ link }}" target="_blank" class="og-preview">{{ link }}</a>
-                                            </li>
-                                        {% else %}
-                                            <li class="text-muted">Aucun lien</li>
-                                        {% endfor %}
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    {% endif %}
+                    <div id="documentLinks">
+                    {% include 'document/_partials/links.html.twig' with {
+                        links: links
+                    } %}
+                    </div>
                 </div>
 
                 {% if canEdit %}
                 {# EDIT #}
                 <div class="tab-pane fade show {{ macro.active_tab('renderEdit') }}" id="renderEdit" role="tabpanel" aria-labelledby="renderEdit-tab">
+                    {{ form_start(form) }}
                     {{ form_row(form.content, {label: false, attr: {class: 'border-top-0 shadow-none selectable'}}) }}
                     <div class="text-end">
                         <button id="init_meta_btn"
@@ -187,6 +162,7 @@
             documents: documents,
             search: search,
             tagTree: tagTree,
+            links: links
         } only %}
 
         {% include 'document/_modals/delete-document.html.twig' with {
@@ -211,7 +187,10 @@
 
 {% block javascripts %}
     {{ parent() }}
-    <script>const documentId = {{ document.id }};</script>
+    <script>
+        const projectId = {{ document.project.id }};
+        const documentId = {{ document.id }};
+    </script>
     {{ encore_entry_script_tags('document') }}
     {{ encore_entry_script_tags('annotation') }}
 {% endblock %}

@@ -1,0 +1,30 @@
+{% if links is defined %}
+    <div class="mt-5 mb-3">
+        <div class="row">
+            <div class="col-6">
+                <h5 class="fw-bold">Liens internes</h5>
+                <ul class="list-unstyled">
+                    {% for link in links['internal'] %}
+                        <li class="text-truncate">
+                            <a href="{{ path('user_document', {id: link.id}) }}">{{ link.title }}</a>
+                        </li>
+                    {% else %}
+                        <li class="text-muted">Aucun lien</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="col-6">
+                <h5 class="fw-bold">Liens externes</h5>
+                <ul class="list-unstyled">
+                    {% for link in links['external'] %}
+                        <li class="text-truncate">
+                            <a href="{{ link }}" target="_blank" class="og-preview">{{ link }}</a>
+                        </li>
+                    {% else %}
+                        <li class="text-muted">Aucun lien</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endif %}

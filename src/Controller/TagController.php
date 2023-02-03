@@ -12,6 +12,7 @@ use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class TagController extends AbstractController
@@ -171,6 +172,22 @@ class TagController extends AbstractController
         return $this->json([
             'res' => false,
             'message' => "La tag n'existe pas"
+        ]);
+    }
+
+    /**
+     * @Route("/tags/async-tag-tree/{id}", name="user_project_async_tag_tree")
+     */
+    public function asyncTagTree(Project $project, TagRepository $tagRepository): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $tagTree = $tagRepository->getProjectTags($project, true);
+
+        return $this->render('project/_partials/tag-tree.html.twig', [
+            'tagTree' => $tagTree,
+            'project' => $project,
+            'canEdit' => $user->canEditProject($project)
         ]);
     }
 }

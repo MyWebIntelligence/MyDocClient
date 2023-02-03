@@ -176,14 +176,14 @@ class DocumentService
         }
 
         foreach ($document->getSourceOf() as $link) {
-            $links['internal'][] = $link->getTarget();
+            $target = $link->getTarget();
+            $links['internal'][$target->getId()] = $target;
         }
 
         foreach ($document->getTargetOf() as $link) {
-            $links['internal'][] = $link->getSource();
+            $source = $link->getSource();
+            $links['internal'][$source->getId()] = $source;
         }
-
-        $links['internal'] = array_unique($links['internal']);
 
         return $links;
     }

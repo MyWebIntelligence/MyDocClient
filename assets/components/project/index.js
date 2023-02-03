@@ -1,8 +1,5 @@
-import './new-tag'
-import './delete-tag'
-import './rename-tag'
+import './tag'
 import './share'
-import './tag-tree'
 
 window.addEventListener('load', () => {
     const cbCheckAll = document.getElementById('cb_document_all')

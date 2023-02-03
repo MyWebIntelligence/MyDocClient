@@ -26,6 +26,11 @@
                            target="_blank"><i class="bi-box-arrow-up-right"></i></a>
 
                         {% if app.user == annotation.createdBy or app.user.projectOwner(annotation.document.project) %}
+                        <a href="#"
+                           class="edit-annotation text-primary ms-2"
+                           data-block-id="annotation_{{ annotation.id }}"
+                           data-annotation-id="{{ annotation.id }}"><i class="bi-pencil"></i></a>
+
                         <a href="{{ path('delete_annotation', {id: annotation.id}) }}"
                            data-block-id="annotation_{{ annotation.id }}"
                            class="delete-annotation text-danger ms-2"
@@ -48,7 +53,7 @@
 <div class="modal fade"
      id="confirmDeleteAnnotationModal"
      tabindex="-1"
-     aria-labelledby="confirmDeleteAnnotationModal"
+     aria-labelledby="confirmDeleteAnnotationModalLabel"
      aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -62,6 +67,25 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
                 <button type="button" class="btn btn-danger" id="confirmDeleteAnnotationButton">Supprimer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade"
+     id="editAnnotationModal"
+     tabindex="-1"
+     aria-labelledby="editAnnotationModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editAnnotationModalLabel">Éditer l'annotation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body" id="editAnnotationContainer"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">Annuler</button>
             </div>
         </div>
     </div>

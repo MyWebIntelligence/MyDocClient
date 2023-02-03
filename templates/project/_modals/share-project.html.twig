@@ -14,6 +14,7 @@
             </div>
             <div class="col-auto text-right">
                 <button class="btn btn-sm btn-outline-danger delete-user-role"
+                        type="button"
                         data-user-email="{{ permission ? permission.user.email : '__email__' }}"
                         data-delete-url="{{ path('user_project_invite_delete', {id: project.id}) }}">
                     <i class="bi-trash"></i>
