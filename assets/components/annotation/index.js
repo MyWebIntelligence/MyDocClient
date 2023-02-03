@@ -48,6 +48,5 @@ window.addEventListener('click', (event) => {
 });
 
 if (confirmDeleteAnnotationButton) {
-    console.log('delete');
     confirmDeleteAnnotationButton.addEventListener('click', confirmDeletion);
 }
