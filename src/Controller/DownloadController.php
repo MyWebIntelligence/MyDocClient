@@ -19,6 +19,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use ZipArchive;
 
@@ -223,7 +224,8 @@ class DownloadController extends AbstractController
         Project $project,
         Request $request,
         DocumentRepository $documentRepository,
-        DocumentService $documentService): Response
+        DocumentService $documentService,
+        UrlGeneratorInterface $urlGenerator): Response
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -282,7 +284,9 @@ class DownloadController extends AbstractController
                 $document->getRights(),
                 $document->getSource(),
                 implode(', ', $tags),
-                implode(', ', $links['internal']),
+                implode(', ', array_map(function(Document $document) use ($urlGenerator) {
+                    return $urlGenerator->generate('user_document', ['id' => $document->getId(), UrlGeneratorInterface::ABSOLUTE_URL]);
+                }, $links['internal'])),
                 implode(', ', $links['external']),
             ];
 
