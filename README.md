@@ -53,6 +53,12 @@ MyDoc is also an indispensable tool for building annotation corpora for natural 
 
 ### Example Screenshots
 
+# Galerie d'images
+
+| Image 1                     | Image 2                     | Image 3                     | Image 4                     |
+|------------------------------|------------------------------|------------------------------|------------------------------|
+| ![Screen shoot 01](screen01.png) | ![Screen shoot 02](screen02.png) | ![Screen shoot 03](screen03.png) | ![Screen shoot 04](screen04.png) |
+
 ## 🤝 Contributors
 
 - **Pr. Franck Cormerais**: Project Lead
