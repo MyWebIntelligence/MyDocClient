@@ -1,4 +1,71 @@
-# MyDocClient
+# MyDoc: An Innovative Platform for Collaborative Corpus Annotation
+
+MyDoc is an innovative platform designed to meet the needs of researchers, practitioners, and professionals working with complex corpora. By combining collaboration, customization, and advanced analysis, MyDoc transforms how corpora are studied and annotated, making the process more intuitive, dynamic, and collaborative.
+
+<div align="center">
+  <iframe width="560" height="315" src="https://www.youtube.com/embed/772E1gq5A8o" 
+  title="Démonstration MyDoc" frameborder="0" 
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
+
+## ✨ A Vision for Research and Document Analysis
+
+The MyDoc project was born out of the need to simplify corpus annotation and analysis in an environment where online collaboration and digital tools are essential. The platform is built on a strong idea: to allow geographically dispersed or interdisciplinary teams to work together smoothly and effectively on various types of corpora.
+
+Whether it's annotating a literary text, analyzing a political speech, or structuring scientific data, MyDoc adapts to different needs thanks to its intuitive interface and powerful tools.
+
+## 🌟 Why Is MyDoc Unique?
+
+**1. Collaboration at the Heart of the User Experience**  
+MyDoc is designed as a collective workspace. You can share documents, collaborate in real-time on annotations, and open discussions directly on the platform. Each project becomes a true digital laboratory where a team cleans, annotates, and categorizes document passages for subsequent analysis.
+
+**2. Tools Tailored to Your Specific Needs**  
+With MyDoc, you don't have to adapt to the tool—it adapts to your projects. The platform allows for the creation of customized annotations, flexible corpus structuring, and data exploration from various perspectives through an efficient search engine.
+
+**3. An Intuitive Interface for All Users**  
+No need to be a technical expert to use MyDoc. The user interface is designed to be accessible to beginners while offering advanced features for experienced users.
+
+**4. Annotation Export for NLP, LLM and co
+
+The goal of MyDoc is not only to provide a centralized collaboration tool for researchers to manage and annotate corpora collectively, but also to enable fine-tuned exports of annotations according to specific parameters and stages of analysis.
+
+MyDoc is also an indispensable tool for building annotation corpora for natural language processing (NLP) tasks or fine-tuning large language models.
+## 🚀 Key Features
+
+### Collaborative Annotation
+
+- Ability to work on projects as a team.
+- Creation of customized metadata to structure annotations.
+- Support for various types of annotations (textual, categorical, etc.).
+
+### Corpus Management
+
+- Import and export documents in standard formats.
+- Organize corpora into folders or projects for optimized management.
+- Advanced search within annotated corpora.
+
+### User Interface
+
+- **Simplified Navigation**: A clear interface providing quick access to projects, annotations, and documents.
+- **Visual Annotations**: Highlighted annotated elements for better readability.
+
+### Analysis and Visualization
+
+- Generate analytical reports based on annotations.
+- Visualize relationships within corpora using interactive graphs.
+- Integration with textual statistics tools.
+
+### Example Screenshots
+
+## 🤝 Contributors
+
+- **Pr. Franck Cormerais**: Project Lead
+- **Dr. Amar Lakel**: Development Lead
+- **Jean Devalance**: Frontend and Backend Developer
+
+## 📝 License
+
+This project is licensed under the MIT License.
 
 ## Documents
 
