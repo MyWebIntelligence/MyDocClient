@@ -2,11 +2,7 @@
 
 MyDoc is an innovative platform designed to meet the needs of researchers, practitioners, and professionals working with complex corpora. By combining collaboration, customization, and advanced analysis, MyDoc transforms how corpora are studied and annotated, making the process more intuitive, dynamic, and collaborative.
 
-<div align="center">
-  <iframe width="560" height="315" src="https://www.youtube.com/embed/772E1gq5A8o" 
-  title="Démonstration MyDoc" frameborder="0" 
-  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-</div>
+https://www.youtube.com/watch?v=772E1gq5A8o
 
 ## ✨ A Vision for Research and Document Analysis
 
