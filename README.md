@@ -21,7 +21,7 @@ With MyDoc, you don't have to adapt to the tool—it adapts to your projects. Th
 **3. An Intuitive Interface for All Users**  
 No need to be a technical expert to use MyDoc. The user interface is designed to be accessible to beginners while offering advanced features for experienced users.
 
-**4. Annotation Export for NLP, LLM and co
+**4. Annotation Export for NLP, LLM and co**
 
 The goal of MyDoc is not only to provide a centralized collaboration tool for researchers to manage and annotate corpora collectively, but also to enable fine-tuned exports of annotations according to specific parameters and stages of analysis.
 
